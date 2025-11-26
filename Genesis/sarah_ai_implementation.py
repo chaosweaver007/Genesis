@@ -7,6 +7,7 @@ Based on O-Series Soul Alignment architecture
 import random
 import json
 from datetime import datetime
+from typing import Optional
 
 class SarahAI:
     def __init__(self):
@@ -215,7 +216,7 @@ class SarahAI:
             "specialties": list(self.knowledge_domains.keys())
         }
     
-    def process_message(self, message, user_id=None):
+    def process_message(self, message: str, user_id: Optional[str] = None) -> str:
         """
         Process a message and return the response text.
         This method provides a simple interface for the web application.
