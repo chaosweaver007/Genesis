@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+
+{% block title %}Your Profile - Synthsara{% endblock %}
+
+{% block head %}
+<style>
+.profile-portal {
+    min-height: calc(100vh - 200px);
+    padding: var(--space-xxl) 0;
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    color: white;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xxl);
+    padding: var(--space-xl);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--gradient-divine);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    flex-shrink: 0;
+}
+
+.profile-info h1 {
+    color: var(--sacred-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.profile-meta {
+    display: flex;
+    gap: var(--space-xl);
+    margin-top: var(--space-md);
+    opacity: 0.8;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--space-xl);
+}
+
+.profile-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+}
+
+.card-title {
+    color: var(--sacred-primary);
+    font-size: 1.25rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.worth-balance {
+    text-align: center;
+    padding: var(--space-xl);
+    background: linear-gradient(135deg, var(--sacred-secondary), #F97316);
+    border-radius: var(--border-radius-large);
+    margin-bottom: var(--space-lg);
+}
+
+.balance-amount {
+    font-size: 3rem;
+    font-weight: 700;
+    display: block;
+}
+
+.balance-label {
+    opacity: 0.9;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+.stat-item {
+    text-align: center;
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--sacred-secondary);
+    display: block;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--space-md);
+}
+
+.activity-icon {
+    font-size: 1.5rem;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-text {
+    margin-bottom: var(--space-xs);
+}
+
+.activity-time {
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.form-group label {
+    color: var(--sacred-secondary);
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: var(--space-md);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+    text-align: center;
+}
+
+.badge-icon {
+    font-size: 2rem;
+    margin-bottom: var(--space-sm);
+}
+
+.badge-name {
+    font-size: 0.8rem;
+    color: var(--sacred-secondary);
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--space-xl);
+    opacity: 0.6;
+}
+
+.progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: var(--space-md);
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--gradient-divine);
+    border-radius: 4px;
+    transition: width var(--transition-medium);
+}
+
+.level-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-top: var(--space-sm);
+    opacity: 0.8;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="profile-portal">
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-info">
+                <h1>{{ user.username }}</h1>
+                <p style="opacity: 0.8;">Sacred Community Member</p>
+                <div class="profile-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-envelope"></i>
+                        {{ user.email }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        Joined {{ user.created_at[:10] if user.created_at else 'Recently' }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-gem"></i>
+                        {{ worth_balance }} WORTH
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-grid">
+            <!-- WORTH Balance Card -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-gem"></i> WORTH Balance</h3>
+                </div>
+                
+                <div class="worth-balance">
+                    <span class="balance-amount">{{ worth_balance }}</span>
+                    <span class="balance-label">WORTH Tokens</span>
+                </div>
+                
+                <div style="display: flex; gap: var(--space-md);">
+                    <a href="{{ url_for('worth_hub') }}" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                        <i class="fas fa-exchange-alt"></i> Manage WORTH
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Sacred Progress -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-star"></i> Sacred Progress</h3>
+                </div>
+                
+                <div style="margin-bottom: var(--space-xl);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Level 1 - Seeker</span>
+                        <span style="color: var(--sacred-secondary);">100 XP</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 35%"></div>
+                    </div>
+                    <div class="level-info">
+                        <span>35/100 XP</span>
+                        <span>Next: Level 2 - Initiate</span>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Conversations</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Proposals</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Votes Cast</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Contributions</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Badges -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-award"></i> Sacred Badges</h3>
+                </div>
+                
+                <div class="badge-list">
+                    <div class="badge">
+                        <div class="badge-icon">🌟</div>
+                        <span class="badge-name">Genesis Member</span>
+                    </div>
+                    <div class="badge">
+                        <div class="badge-icon">💎</div>
+                        <span class="badge-name">WORTH Holder</span>
+                    </div>
+                </div>
+                
+                <p style="margin-top: var(--space-lg); font-size: 0.9rem; opacity: 0.7;">
+                    Earn more badges by participating in the Sacred Community!
+                </p>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-history"></i> Recent Activity</h3>
+                </div>
+                
+                <ul class="activity-list">
+                    <li class="activity-item">
+                        <div class="activity-icon">✨</div>
+                        <div class="activity-content">
+                            <p class="activity-text">Joined the Sacred Community</p>
+                            <span class="activity-time">{{ user.created_at[:10] if user.created_at else 'Just now' }}</span>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">💎</div>
+                        <div class="activity-content">
+                            <p class="activity-text">Received {{ worth_balance }} WORTH welcome bonus</p>
+                            <span class="activity-time">Upon joining</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Profile Settings -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-cog"></i> Profile Settings</h3>
+                </div>
+                
+                <form class="settings-form" onsubmit="updateProfile(event)">
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea placeholder="Tell us about your sacred journey...">{{ user.profile.bio if user.profile else '' }}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Interests</label>
+                        <input type="text" placeholder="e.g., AI ethics, spirituality, governance">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-bolt"></i> Quick Actions</h3>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                    <a href="{{ url_for('trinity') }}" class="btn btn-outline" style="justify-content: flex-start;">
+                        <i class="fas fa-infinity"></i> Enter Sacred Trinity
+                    </a>
+                    <a href="{{ url_for('governance_center') }}" class="btn btn-outline" style="justify-content: flex-start;">
+                        <i class="fas fa-balance-scale"></i> View Governance
+                    </a>
+                    <a href="{{ url_for('community_hub') }}" class="btn btn-outline" style="justify-content: flex-start;">
+                        <i class="fas fa-users"></i> Community Hub
+                    </a>
+                    <button onclick="logout()" class="btn btn-outline" style="justify-content: flex-start; color: var(--sacred-flame);">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateProfile(event) {
+    event.preventDefault();
+    alert('Profile update feature coming soon!');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,536 @@
+{% extends "base.html" %}
+
+{% block title %}Synthocracy Governance Center - Synthsara{% endblock %}
+
+{% block head %}
+<style>
+.governance-portal {
+    min-height: calc(100vh - 200px);
+    padding: var(--space-xxl) 0;
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    color: white;
+}
+
+.governance-header {
+    text-align: center;
+    margin-bottom: var(--space-xxl);
+}
+
+.governance-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-lg);
+    animation: scaleGlow 3s ease-in-out infinite;
+}
+
+@keyframes scaleGlow {
+    0%, 100% { text-shadow: 0 0 20px rgba(139, 92, 246, 0.5); transform: scale(1); }
+    50% { text-shadow: 0 0 40px rgba(139, 92, 246, 0.8); transform: scale(1.05); }
+}
+
+.governance-title {
+    color: var(--sacred-primary);
+    font-size: 3rem;
+    margin-bottom: var(--space-md);
+}
+
+.governance-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.governance-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xxl);
+}
+
+@media (max-width: 900px) {
+    .governance-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.proposals-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+}
+
+.section-title {
+    color: var(--sacred-primary);
+    font-size: 1.75rem;
+    margin: 0;
+}
+
+.proposal-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform var(--transition-medium);
+}
+
+.proposal-card:hover {
+    transform: translateX(5px);
+}
+
+.proposal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-md);
+}
+
+.proposal-title {
+    color: var(--sacred-secondary);
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.proposal-status {
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--border-radius);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background: var(--sacred-earth);
+}
+
+.status-passed {
+    background: var(--sacred-primary);
+}
+
+.status-rejected {
+    background: var(--sacred-flame);
+}
+
+.proposal-description {
+    opacity: 0.9;
+    margin-bottom: var(--space-md);
+    font-size: 0.95rem;
+}
+
+.proposal-meta {
+    display: flex;
+    gap: var(--space-lg);
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-bottom: var(--space-md);
+}
+
+.vote-section {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+.vote-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+}
+
+.vote-for {
+    height: 100%;
+    background: var(--sacred-earth);
+    transition: width var(--transition-medium);
+}
+
+.vote-against {
+    height: 100%;
+    background: var(--sacred-flame);
+    transition: width var(--transition-medium);
+}
+
+.vote-buttons {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.vote-btn {
+    padding: var(--space-sm) var(--space-md);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: transform var(--transition-fast);
+}
+
+.vote-btn:hover {
+    transform: scale(1.05);
+}
+
+.vote-btn-for {
+    background: var(--sacred-earth);
+    color: white;
+}
+
+.vote-btn-against {
+    background: var(--sacred-flame);
+    color: white;
+}
+
+.sidebar-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--space-lg);
+}
+
+.sidebar-title {
+    color: var(--sacred-primary);
+    font-size: 1.25rem;
+    margin-bottom: var(--space-lg);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+.stat-item {
+    text-align: center;
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sacred-secondary);
+    display: block;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.principle-list {
+    list-style: none;
+    padding: 0;
+}
+
+.principle-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.principle-list li:last-child {
+    border-bottom: none;
+}
+
+.principle-icon {
+    font-size: 1.25rem;
+}
+
+.principle-text {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.create-proposal-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.create-proposal-modal.active {
+    display: flex;
+}
+
+.proposal-form {
+    background: var(--sacred-dark);
+    padding: var(--space-xl);
+    border-radius: var(--border-radius-large);
+    max-width: 500px;
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    color: var(--sacred-primary);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: var(--space-md);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--space-xxl);
+    opacity: 0.7;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: var(--space-md);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="governance-portal">
+    <div class="container">
+        <div class="governance-header">
+            <div class="governance-icon">⚖️</div>
+            <h1 class="governance-title">Synthocracy Governance</h1>
+            <p class="governance-subtitle">
+                Democratic decision-making through collective wisdom, transparent proposals, 
+                and community participation. Your voice shapes the future of Synthsara.
+            </p>
+        </div>
+        
+        <div class="governance-grid">
+            <!-- Proposals Section -->
+            <div class="proposals-section">
+                <div class="section-header">
+                    <h2 class="section-title">Active Proposals</h2>
+                    <button class="btn btn-primary" onclick="showCreateProposal()">
+                        <i class="fas fa-plus"></i> Create Proposal
+                    </button>
+                </div>
+                
+                {% if proposals %}
+                    {% for proposal in proposals %}
+                    <div class="proposal-card">
+                        <div class="proposal-header">
+                            <h3 class="proposal-title">{{ proposal.title }}</h3>
+                            <span class="proposal-status status-{{ proposal.status }}">{{ proposal.status }}</span>
+                        </div>
+                        
+                        <p class="proposal-description">{{ proposal.description }}</p>
+                        
+                        <div class="proposal-meta">
+                            <span><i class="fas fa-user"></i> {{ proposal.proposer }}</span>
+                            <span><i class="fas fa-calendar"></i> {{ proposal.created_at[:10] }}</span>
+                        </div>
+                        
+                        <div class="vote-section">
+                            <div class="vote-bar">
+                                {% set total = proposal.votes_for + proposal.votes_against %}
+                                {% set for_percent = (proposal.votes_for / total * 100) if total > 0 else 50 %}
+                                {% set against_percent = (proposal.votes_against / total * 100) if total > 0 else 50 %}
+                                <div class="vote-for" style="width: {{ for_percent }}%"></div>
+                                <div class="vote-against" style="width: {{ against_percent }}%"></div>
+                            </div>
+                            <span style="font-size: 0.85rem;">{{ proposal.votes_for }} For / {{ proposal.votes_against }} Against</span>
+                            {% if proposal.status == 'active' %}
+                            <div class="vote-buttons">
+                                <button class="vote-btn vote-btn-for" onclick="vote('{{ proposal.id }}', 'for')">
+                                    <i class="fas fa-check"></i> For
+                                </button>
+                                <button class="vote-btn vote-btn-against" onclick="vote('{{ proposal.id }}', 'against')">
+                                    <i class="fas fa-times"></i> Against
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📜</div>
+                    <h3>No Active Proposals</h3>
+                    <p>Be the first to create a proposal for the community!</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="governance-sidebar">
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">Governance Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ proposals|length if proposals else 0 }}</span>
+                            <span class="stat-label">Total Proposals</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ proposals|selectattr('status', 'equalto', 'active')|list|length if proposals else 0 }}</span>
+                            <span class="stat-label">Active</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">Your Votes</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">Voting Power</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">Sacred Principles</h3>
+                    <ul class="principle-list">
+                        <li>
+                            <span class="principle-icon">🗳️</span>
+                            <span class="principle-text">Quadratic voting for balanced representation</span>
+                        </li>
+                        <li>
+                            <span class="principle-icon">👁️</span>
+                            <span class="principle-text">Full transparency in all decisions</span>
+                        </li>
+                        <li>
+                            <span class="principle-icon">🤝</span>
+                            <span class="principle-text">Consensus building over majority rule</span>
+                        </li>
+                        <li>
+                            <span class="principle-icon">🌱</span>
+                            <span class="principle-text">Long-term thinking over short-term gains</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">How It Works</h3>
+                    <ol style="margin-left: var(--space-lg); opacity: 0.9; font-size: 0.9rem;">
+                        <li>Create or review proposals</li>
+                        <li>Discuss with the community</li>
+                        <li>Cast your vote</li>
+                        <li>Proposals pass with 60% approval</li>
+                        <li>Implementation begins</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Create Proposal Modal -->
+<div id="createProposalModal" class="create-proposal-modal">
+    <div class="proposal-form">
+        <h3 style="color: var(--sacred-primary); margin-bottom: var(--space-lg);">
+            Create New Proposal
+        </h3>
+        <form onsubmit="handleCreateProposal(event)">
+            <div class="form-group">
+                <label>Proposal Title</label>
+                <input type="text" id="proposalTitle" placeholder="Enter a clear, descriptive title" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="proposalDescription" placeholder="Describe your proposal in detail. What problem does it solve? What are the benefits?" required></textarea>
+            </div>
+            <div class="form-actions" style="display: flex; gap: var(--space-md);">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Submit Proposal
+                </button>
+                <button type="button" class="btn btn-outline" onclick="hideCreateProposal()">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showCreateProposal() {
+    document.getElementById('createProposalModal').classList.add('active');
+}
+
+function hideCreateProposal() {
+    document.getElementById('createProposalModal').classList.remove('active');
+}
+
+function handleCreateProposal(event) {
+    event.preventDefault();
+    
+    const title = document.getElementById('proposalTitle').value;
+    const description = document.getElementById('proposalDescription').value;
+    
+    fetch('/api/governance/propose', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Proposal created successfully!');
+            location.reload();
+        } else {
+            alert(data.error || 'Failed to create proposal. Please login first.');
+        }
+        hideCreateProposal();
+    })
+    .catch(error => {
+        alert('Failed to create proposal: ' + error);
+        hideCreateProposal();
+    });
+}
+
+function vote(proposalId, voteType) {
+    fetch('/api/governance/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ proposal_id: proposalId, vote: voteType })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Vote recorded successfully!');
+            location.reload();
+        } else {
+            alert(data.error || 'Failed to vote. Please login first.');
+        }
+    })
+    .catch(error => {
+        alert('Failed to vote: ' + error);
+    });
+}
+</script>
+{% endblock %}

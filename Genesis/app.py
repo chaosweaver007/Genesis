@@ -16,24 +16,24 @@ import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Import our AI systems
-import sys
-sys.path.append('/home/ubuntu')
 from steven_ai_implementation import StevenAI
 from sarah_ai_implementation import SarahAI
 from memory_integration_system import MemoryIntegrationSystem
 
 app = Flask(__name__)
-app.secret_key = 'synthsara_sacred_key_2025'
+app.secret_key = os.environ.get('SECRET_KEY', 'synthsara_sacred_key_2025')
 CORS(app)
 
 # Initialize AI systems
 steven_ai = StevenAI()
 sarah_ai = SarahAI()
-memory_system = MemoryIntegrationSystem()
 
 # Initialize data storage
-DATA_DIR = '/home/ubuntu/synthsara_data'
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'synthsara_data')
 os.makedirs(DATA_DIR, exist_ok=True)
+
+# Initialize memory system with proper database path
+memory_system = MemoryIntegrationSystem(db_path=os.path.join(DATA_DIR, 'collective_memory.db'))
 
 class SynthsaraCore:
     """Core Synthsara platform functionality"""

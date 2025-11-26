@@ -186,6 +186,20 @@ class MemoryIntegrationSystem:
         logger.info(f"Conversation stored: {conversation_id} (consent: {user_consent_level})")
         return conversation_id
     
+    def store_interaction(self, user_id: str, ai_persona: str, message: str, response: str) -> str:
+        """
+        Simplified method to store an interaction (alias for store_conversation).
+        Used by the web API for simpler interaction logging.
+        """
+        return self.store_conversation(
+            session_id=user_id,
+            user_message=message,
+            ai_response=response,
+            ai_persona=ai_persona,
+            ai_mode='default',
+            user_consent_level='private'
+        )
+    
     def _hash_content(self, content: str) -> str:
         """Create a secure hash of content for privacy protection"""
         return hashlib.sha256(content.encode('utf-8')).hexdigest()

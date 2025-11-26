@@ -1,0 +1,511 @@
+{% extends "base.html" %}
+
+{% block title %}Ethical Data Marketplace - Synthsara{% endblock %}
+
+{% block head %}
+<style>
+.marketplace-portal {
+    min-height: calc(100vh - 200px);
+    padding: var(--space-xxl) 0;
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    color: white;
+}
+
+.marketplace-header {
+    text-align: center;
+    margin-bottom: var(--space-xxl);
+}
+
+.marketplace-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-lg);
+    animation: exchangeGlow 3s ease-in-out infinite;
+}
+
+@keyframes exchangeGlow {
+    0%, 100% { text-shadow: 0 0 20px rgba(5, 150, 105, 0.5); }
+    50% { text-shadow: 0 0 40px rgba(5, 150, 105, 0.8); }
+}
+
+.marketplace-title {
+    color: var(--sacred-earth);
+    font-size: 3rem;
+    margin-bottom: var(--space-md);
+}
+
+.marketplace-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.marketplace-tabs {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+
+.tab-btn {
+    padding: var(--space-md) var(--space-xl);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transition: all var(--transition-medium);
+}
+
+.tab-btn.active {
+    background: var(--sacred-earth);
+}
+
+.tab-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.marketplace-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xxl);
+}
+
+.listing-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+}
+
+.listing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.listing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-md);
+}
+
+.listing-type {
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--border-radius);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    background: var(--sacred-primary);
+}
+
+.listing-title {
+    color: var(--sacred-secondary);
+    font-size: 1.25rem;
+    margin-bottom: var(--space-sm);
+}
+
+.listing-description {
+    opacity: 0.9;
+    margin-bottom: var(--space-md);
+    font-size: 0.95rem;
+}
+
+.listing-meta {
+    display: flex;
+    gap: var(--space-lg);
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-bottom: var(--space-md);
+}
+
+.listing-price {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.price-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--sacred-secondary);
+}
+
+.price-unit {
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+.listing-actions {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.ethics-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--space-xxl);
+}
+
+.ethics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-lg);
+}
+
+.ethics-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+}
+
+.ethics-icon {
+    font-size: 2rem;
+}
+
+.ethics-text h4 {
+    color: var(--sacred-earth);
+    margin-bottom: var(--space-xs);
+}
+
+.ethics-text p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.create-listing-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.create-listing-modal.active {
+    display: flex;
+}
+
+.listing-form {
+    background: var(--sacred-dark);
+    padding: var(--space-xl);
+    border-radius: var(--border-radius-large);
+    max-width: 500px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    color: var(--sacred-earth);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: var(--space-md);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--space-xxl);
+    opacity: 0.7;
+    grid-column: 1 / -1;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: var(--space-md);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+}
+
+.section-title {
+    color: var(--sacred-earth);
+    font-size: 1.75rem;
+    margin: 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="marketplace-portal">
+    <div class="container">
+        <div class="marketplace-header">
+            <div class="marketplace-icon">🔄</div>
+            <h1 class="marketplace-title">Ethical Data Marketplace</h1>
+            <p class="marketplace-subtitle">
+                Fair data exchange with privacy protection, community ownership, 
+                and ethical monetization. Your data, your terms, fair compensation.
+            </p>
+        </div>
+        
+        <!-- Marketplace Tabs -->
+        <div class="marketplace-tabs">
+            <button class="tab-btn active" onclick="switchTab('browse')">
+                <i class="fas fa-search"></i> Browse
+            </button>
+            <button class="tab-btn" onclick="switchTab('my-listings')">
+                <i class="fas fa-list"></i> My Listings
+            </button>
+            <button class="tab-btn" onclick="switchTab('purchases')">
+                <i class="fas fa-shopping-cart"></i> Purchases
+            </button>
+        </div>
+        
+        <!-- Section Header -->
+        <div class="section-header">
+            <h2 class="section-title">Available Data</h2>
+            <button class="btn btn-primary" onclick="showCreateListing()">
+                <i class="fas fa-plus"></i> List Data
+            </button>
+        </div>
+        
+        <!-- Marketplace Listings -->
+        <div class="marketplace-grid" id="listingsGrid">
+            {% if listings %}
+                {% for listing in listings %}
+                <div class="listing-card">
+                    <div class="listing-header">
+                        <span class="listing-type">{{ listing.data_type }}</span>
+                    </div>
+                    
+                    <h3 class="listing-title">{{ listing.title }}</h3>
+                    <p class="listing-description">{{ listing.description }}</p>
+                    
+                    <div class="listing-meta">
+                        <span><i class="fas fa-user"></i> {{ listing.seller }}</span>
+                        <span><i class="fas fa-calendar"></i> {{ listing.created_at[:10] }}</span>
+                    </div>
+                    
+                    <div class="listing-price">
+                        <div>
+                            <span class="price-amount">{{ listing.price_worth }}</span>
+                            <span class="price-unit"> WORTH</span>
+                        </div>
+                        <div class="listing-actions">
+                            <button class="btn btn-primary btn-small" onclick="purchaseData('{{ listing.id }}')">
+                                <i class="fas fa-shopping-cart"></i> Purchase
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📊</div>
+                <h3>No Data Listed Yet</h3>
+                <p>Be the first to contribute ethical data to the marketplace!</p>
+                <button class="btn btn-primary" onclick="showCreateListing()" style="margin-top: var(--space-md);">
+                    <i class="fas fa-plus"></i> List Your Data
+                </button>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Ethics Section -->
+        <div class="ethics-section">
+            <h3 style="color: var(--sacred-earth); margin-bottom: var(--space-xl); text-align: center;">
+                Ethical Data Principles
+            </h3>
+            
+            <div class="ethics-grid">
+                <div class="ethics-item">
+                    <div class="ethics-icon">🔒</div>
+                    <div class="ethics-text">
+                        <h4>Privacy First</h4>
+                        <p>All data is anonymized and encrypted. You control what is shared and with whom.</p>
+                    </div>
+                </div>
+                
+                <div class="ethics-item">
+                    <div class="ethics-icon">💰</div>
+                    <div class="ethics-text">
+                        <h4>Fair Compensation</h4>
+                        <p>Data providers receive equitable payment in WORTH tokens for their contributions.</p>
+                    </div>
+                </div>
+                
+                <div class="ethics-item">
+                    <div class="ethics-icon">🤝</div>
+                    <div class="ethics-text">
+                        <h4>Consent Always</h4>
+                        <p>Explicit consent required for all data transactions. Revoke access anytime.</p>
+                    </div>
+                </div>
+                
+                <div class="ethics-item">
+                    <div class="ethics-icon">🌍</div>
+                    <div class="ethics-text">
+                        <h4>Community Benefit</h4>
+                        <p>A portion of all transactions funds community projects and public goods.</p>
+                    </div>
+                </div>
+                
+                <div class="ethics-item">
+                    <div class="ethics-icon">👁️</div>
+                    <div class="ethics-text">
+                        <h4>Transparency</h4>
+                        <p>Clear audit trails for all data usage. Know exactly how your data is being used.</p>
+                    </div>
+                </div>
+                
+                <div class="ethics-item">
+                    <div class="ethics-icon">⚖️</div>
+                    <div class="ethics-text">
+                        <h4>No Exploitation</h4>
+                        <p>Data cannot be used for harmful purposes. Strict ethical review process.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Create Listing Modal -->
+<div id="createListingModal" class="create-listing-modal">
+    <div class="listing-form">
+        <h3 style="color: var(--sacred-earth); margin-bottom: var(--space-lg);">
+            List Data for Sale
+        </h3>
+        <form onsubmit="handleCreateListing(event)">
+            <div class="form-group">
+                <label>Data Title</label>
+                <input type="text" id="listingTitle" placeholder="Descriptive title for your data" required>
+            </div>
+            <div class="form-group">
+                <label>Data Type</label>
+                <select id="listingType" required>
+                    <option value="">Select type...</option>
+                    <option value="survey">Survey Data</option>
+                    <option value="research">Research Data</option>
+                    <option value="analytics">Analytics Data</option>
+                    <option value="behavioral">Behavioral Data</option>
+                    <option value="feedback">Feedback Data</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="listingDescription" placeholder="Describe your data, its source, and potential uses" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Price (WORTH Tokens)</label>
+                <input type="number" id="listingPrice" min="1" placeholder="Enter price" required>
+            </div>
+            <div class="form-actions" style="display: flex; gap: var(--space-md);">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-upload"></i> List Data
+                </button>
+                <button type="button" class="btn btn-outline" onclick="hideCreateListing()">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function switchTab(tab) {
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // In a full implementation, this would filter the listings
+    console.log('Switched to tab:', tab);
+}
+
+function showCreateListing() {
+    document.getElementById('createListingModal').classList.add('active');
+}
+
+function hideCreateListing() {
+    document.getElementById('createListingModal').classList.remove('active');
+}
+
+function handleCreateListing(event) {
+    event.preventDefault();
+    
+    const title = document.getElementById('listingTitle').value;
+    const dataType = document.getElementById('listingType').value;
+    const description = document.getElementById('listingDescription').value;
+    const price = document.getElementById('listingPrice').value;
+    
+    fetch('/api/marketplace/list', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            title, 
+            data_type: dataType, 
+            description, 
+            price_worth: parseInt(price) 
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Data listed successfully!');
+            location.reload();
+        } else {
+            alert(data.error || 'Failed to list data. Please login first.');
+        }
+        hideCreateListing();
+    })
+    .catch(error => {
+        alert('Failed to list data: ' + error);
+        hideCreateListing();
+    });
+}
+
+function purchaseData(listingId) {
+    if (confirm('Are you sure you want to purchase this data?')) {
+        // In a full implementation, this would handle the purchase
+        alert('Purchase feature coming soon!');
+    }
+}
+</script>
+{% endblock %}
