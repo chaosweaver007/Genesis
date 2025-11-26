@@ -65,7 +65,11 @@ class MemoryIntegrationSystem:
     while maintaining privacy, consent, and ethical boundaries.
     """
     
-    def __init__(self, db_path: str = "/home/ubuntu/collective_memory.db"):
+    def __init__(self, db_path: str = None):
+        if db_path is None:
+            # Use a default path relative to the current directory
+            import os
+            db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'collective_memory.db')
         self.db_path = db_path
         self.init_database()
         
