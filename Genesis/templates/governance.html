@@ -353,7 +353,7 @@
                         
                         <div class="proposal-meta">
                             <span><i class="fas fa-user"></i> {{ proposal.proposer }}</span>
-                            <span><i class="fas fa-calendar"></i> {{ proposal.created_at[:10] }}</span>
+                            <span><i class="fas fa-calendar"></i> {{ proposal.created_at[:10] if proposal.created_at else 'Unknown' }}</span>
                         </div>
                         
                         <div class="vote-section">

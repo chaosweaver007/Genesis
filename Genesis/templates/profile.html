@@ -271,7 +271,7 @@
                     </span>
                     <span class="meta-item">
                         <i class="fas fa-calendar"></i>
-                        Joined {{ user.created_at[:10] if user.created_at else 'Recently' }}
+                        Joined {{ (user.created_at|string)[:10] if user.created_at else 'Recently' }}
                     </span>
                     <span class="meta-item">
                         <i class="fas fa-gem"></i>
@@ -373,7 +373,7 @@
                         <div class="activity-icon">✨</div>
                         <div class="activity-content">
                             <p class="activity-text">Joined the Sacred Community</p>
-                            <span class="activity-time">{{ user.created_at[:10] if user.created_at else 'Just now' }}</span>
+                            <span class="activity-time">{{ (user.created_at|string)[:10] if user.created_at else 'Just now' }}</span>
                         </div>
                     </li>
                     <li class="activity-item">
