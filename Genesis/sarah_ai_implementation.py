@@ -214,6 +214,15 @@ class SarahAI:
             "approach": "Heart-centered, gentle, nurturing, and deeply wise",
             "specialties": list(self.knowledge_domains.keys())
         }
+    
+    def process_message(self, message: str, user_id: str = None) -> str:
+        """Process a user message and return Sarah's response text.
+        
+        This method provides a simple interface for the web API,
+        returning just the response text string.
+        """
+        response_data = self.generate_response(message)
+        return response_data["response"]
 
 # Test Sarah AI
 if __name__ == "__main__":

@@ -412,6 +412,14 @@ I say this with all love and wisdom and acceptance: trust the process of your ow
         response_lower = response.lower()
         return any(indicator in response_lower for indicator in ethical_indicators)
     
+    def process_message(self, message: str, user_id: str = None) -> str:
+        """Process a user message and return Steven's response text.
+        
+        This method provides a simple interface for the web API,
+        returning just the response text string.
+        """
+        return self.generate_response(message)
+    
     def get_knowledge_summary(self) -> str:
         """Return summary of integrated knowledge"""
         return f"""

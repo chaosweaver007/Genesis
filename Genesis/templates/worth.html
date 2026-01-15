@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+
+{% block title %}WORTH Economic Hub - Synthsara{% endblock %}
+
+{% block head %}
+<style>
+.worth-portal {
+    min-height: calc(100vh - 200px);
+    padding: var(--space-xxl) 0;
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    color: white;
+}
+
+.worth-header {
+    text-align: center;
+    margin-bottom: var(--space-xxl);
+}
+
+.worth-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-lg);
+    animation: gemGlow 3s ease-in-out infinite;
+}
+
+@keyframes gemGlow {
+    0%, 100% { text-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
+    50% { text-shadow: 0 0 40px rgba(245, 158, 11, 0.8); }
+}
+
+.worth-title {
+    color: var(--sacred-secondary);
+    font-size: 3rem;
+    margin-bottom: var(--space-md);
+}
+
+.worth-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.worth-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xxl);
+}
+
+.worth-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+}
+
+.worth-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.card-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-flame);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.card-title {
+    color: var(--sacred-secondary);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.balance-display {
+    background: linear-gradient(135deg, var(--sacred-secondary), #F97316);
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.balance-label {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: var(--space-sm);
+}
+
+.balance-amount {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+}
+
+.balance-unit {
+    font-size: 1.25rem;
+    opacity: 0.9;
+}
+
+.worth-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+.worth-action-btn {
+    padding: var(--space-md) var(--space-lg);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: transform var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+}
+
+.worth-action-btn:hover {
+    transform: scale(1.02);
+}
+
+.btn-transfer {
+    background: var(--sacred-primary);
+    color: white;
+}
+
+.btn-earn {
+    background: var(--sacred-earth);
+    color: white;
+}
+
+.btn-stake {
+    background: var(--sacred-accent);
+    color: white;
+}
+
+.btn-history {
+    background: var(--sacred-moon);
+    color: white;
+}
+
+.principles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-lg);
+}
+
+.principle-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+}
+
+.principle-icon {
+    font-size: 1.5rem;
+}
+
+.principle-text h4 {
+    color: var(--sacred-secondary);
+    margin-bottom: var(--space-xs);
+}
+
+.principle-text p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.transfer-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.transfer-modal.active {
+    display: flex;
+}
+
+.transfer-form {
+    background: var(--sacred-dark);
+    padding: var(--space-xl);
+    border-radius: var(--border-radius-large);
+    max-width: 400px;
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    color: var(--sacred-secondary);
+}
+
+.form-group input {
+    width: 100%;
+    padding: var(--space-md);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--space-md);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="worth-portal">
+    <div class="container">
+        <div class="worth-header">
+            <div class="worth-icon">💎</div>
+            <h1 class="worth-title">WORTH Economic Hub</h1>
+            <p class="worth-subtitle">
+                Conscious economics based on value creation, ethical wealth distribution, 
+                and community-driven prosperity. Where your contributions create lasting worth.
+            </p>
+        </div>
+        
+        <div class="worth-grid">
+            <!-- Balance Card -->
+            <div class="worth-card">
+                <div class="balance-display">
+                    <div class="balance-label">Your Current Balance</div>
+                    <div class="balance-amount">{{ balance }}</div>
+                    <div class="balance-unit">WORTH Tokens</div>
+                </div>
+                
+                <div class="worth-actions">
+                    <button class="worth-action-btn btn-transfer" onclick="showTransferModal()">
+                        <i class="fas fa-paper-plane"></i>
+                        Transfer
+                    </button>
+                    <button class="worth-action-btn btn-earn" onclick="showEarnModal()">
+                        <i class="fas fa-coins"></i>
+                        Earn
+                    </button>
+                    <button class="worth-action-btn btn-stake" onclick="showStakeModal()">
+                        <i class="fas fa-lock"></i>
+                        Stake
+                    </button>
+                    <button class="worth-action-btn btn-history" onclick="showHistory()">
+                        <i class="fas fa-history"></i>
+                        History
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Value Creation Card -->
+            <div class="worth-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3 class="card-title">Value Creation</h3>
+                </div>
+                <p>
+                    WORTH tokens are earned through meaningful contributions to the ecosystem:
+                </p>
+                <ul style="margin-left: var(--space-lg); opacity: 0.9;">
+                    <li>Community engagement and support</li>
+                    <li>Knowledge sharing and documentation</li>
+                    <li>Technical contributions and development</li>
+                    <li>Governance participation</li>
+                    <li>Ethical data contributions</li>
+                </ul>
+            </div>
+            
+            <!-- Ethical Distribution Card -->
+            <div class="worth-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-balance-scale-right"></i>
+                    </div>
+                    <h3 class="card-title">Ethical Distribution</h3>
+                </div>
+                <p>
+                    Our economic model ensures fair and transparent wealth distribution:
+                </p>
+                <ul style="margin-left: var(--space-lg); opacity: 0.9;">
+                    <li>Quadratic funding for public goods</li>
+                    <li>Community treasury governance</li>
+                    <li>Impact-weighted rewards</li>
+                    <li>Regenerative economic cycles</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Sacred Principles -->
+        <div class="worth-card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-scroll"></i>
+                </div>
+                <h3 class="card-title">Sacred Economic Principles</h3>
+            </div>
+            
+            <div class="principles-grid">
+                <div class="principle-item">
+                    <div class="principle-icon">🌱</div>
+                    <div class="principle-text">
+                        <h4>Regenerative Value</h4>
+                        <p>Economic activity that enhances rather than extracts from living systems.</p>
+                    </div>
+                </div>
+                
+                <div class="principle-item">
+                    <div class="principle-icon">🤝</div>
+                    <div class="principle-text">
+                        <h4>Community Ownership</h4>
+                        <p>Collective stewardship of shared resources and decision-making.</p>
+                    </div>
+                </div>
+                
+                <div class="principle-item">
+                    <div class="principle-icon">🔍</div>
+                    <div class="principle-text">
+                        <h4>Transparent Flows</h4>
+                        <p>All transactions and distributions visible and accountable.</p>
+                    </div>
+                </div>
+                
+                <div class="principle-item">
+                    <div class="principle-icon">⚖️</div>
+                    <div class="principle-text">
+                        <h4>Fair Exchange</h4>
+                        <p>Every contribution receives equitable recognition and reward.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Transfer Modal -->
+<div id="transferModal" class="transfer-modal">
+    <div class="transfer-form">
+        <h3 style="color: var(--sacred-secondary); margin-bottom: var(--space-lg);">
+            Transfer WORTH
+        </h3>
+        <form onsubmit="handleTransfer(event)">
+            <div class="form-group">
+                <label>Recipient Username</label>
+                <input type="text" id="transferRecipient" placeholder="Enter username" required>
+            </div>
+            <div class="form-group">
+                <label>Amount</label>
+                <input type="number" id="transferAmount" min="1" placeholder="Enter amount" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+                <button type="button" class="btn btn-outline" onclick="hideTransferModal()">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showTransferModal() {
+    document.getElementById('transferModal').classList.add('active');
+}
+
+function hideTransferModal() {
+    document.getElementById('transferModal').classList.remove('active');
+}
+
+function handleTransfer(event) {
+    event.preventDefault();
+    
+    const recipient = document.getElementById('transferRecipient').value;
+    const amount = document.getElementById('transferAmount').value;
+    
+    fetch('/api/worth/transfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipient, amount: parseInt(amount) })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Transfer successful!');
+            location.reload();
+        } else {
+            alert(data.error || 'Transfer failed');
+        }
+        hideTransferModal();
+    })
+    .catch(error => {
+        alert('Transfer failed: ' + error);
+        hideTransferModal();
+    });
+}
+
+function showEarnModal() {
+    alert('Earn WORTH by contributing to the community! Visit the Community Hub for opportunities.');
+}
+
+function showStakeModal() {
+    alert('Staking feature coming soon in Phase 2!');
+}
+
+function showHistory() {
+    alert('Transaction history feature coming soon!');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,513 @@
+{% extends "base.html" %}
+
+{% block title %}Universal Diamond Standard - Synthsara{% endblock %}
+
+{% block head %}
+<style>
+.uds-portal {
+    min-height: calc(100vh - 200px);
+    padding: var(--space-xxl) 0;
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    color: white;
+}
+
+.uds-header {
+    text-align: center;
+    margin-bottom: var(--space-xxl);
+}
+
+.uds-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-lg);
+    animation: diamondGlow 3s ease-in-out infinite;
+}
+
+@keyframes diamondGlow {
+    0%, 100% { text-shadow: 0 0 20px rgba(99, 102, 241, 0.5); transform: rotate(0deg); }
+    50% { text-shadow: 0 0 40px rgba(99, 102, 241, 0.8); transform: rotate(5deg); }
+}
+
+.uds-title {
+    color: var(--sacred-moon);
+    font-size: 3rem;
+    margin-bottom: var(--space-md);
+}
+
+.uds-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.diamond-essence {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--space-xxl);
+}
+
+.essence-title {
+    text-align: center;
+    color: var(--sacred-moon);
+    margin-bottom: var(--space-xl);
+}
+
+.essence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg);
+}
+
+.essence-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+    padding: var(--space-lg);
+    text-align: center;
+    transition: transform var(--transition-medium), background var(--transition-medium);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.essence-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.essence-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+}
+
+.essence-name {
+    color: var(--sacred-secondary);
+    font-size: 1.25rem;
+    margin-bottom: var(--space-sm);
+}
+
+.essence-description {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.bias-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--space-xxl);
+}
+
+.bias-title {
+    text-align: center;
+    color: var(--sacred-flame);
+    margin-bottom: var(--space-lg);
+}
+
+.bias-intro {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto var(--space-xl);
+    opacity: 0.9;
+}
+
+.bias-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-lg);
+}
+
+.bias-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--sacred-flame);
+}
+
+.bias-number {
+    background: var(--sacred-flame);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.bias-content h4 {
+    color: var(--sacred-secondary);
+    margin-bottom: var(--space-xs);
+}
+
+.bias-content p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.audit-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--space-xxl);
+}
+
+.audit-title {
+    text-align: center;
+    color: var(--sacred-earth);
+    margin-bottom: var(--space-xl);
+}
+
+.audit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--space-xl);
+}
+
+.audit-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+    padding: var(--space-lg);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.audit-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.audit-icon {
+    font-size: 2rem;
+}
+
+.audit-card-title {
+    color: var(--sacred-secondary);
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
+    font-size: 0.9rem;
+}
+
+.checklist-icon {
+    color: var(--sacred-earth);
+}
+
+.first-law {
+    background: linear-gradient(135deg, var(--sacred-primary), var(--sacred-accent));
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xxl);
+    text-align: center;
+    margin-bottom: var(--space-xxl);
+}
+
+.first-law-title {
+    font-size: 2rem;
+    margin-bottom: var(--space-md);
+}
+
+.first-law-text {
+    font-family: var(--font-sacred);
+    font-size: 2.5rem;
+    font-style: italic;
+    margin-bottom: var(--space-md);
+}
+
+.first-law-description {
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.9;
+}
+
+.resources-section {
+    text-align: center;
+}
+
+.resources-title {
+    color: var(--sacred-moon);
+    margin-bottom: var(--space-xl);
+}
+
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-lg);
+}
+
+.resource-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius);
+    padding: var(--space-lg);
+    text-align: center;
+    transition: transform var(--transition-medium);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.resource-card:hover {
+    transform: translateY(-5px);
+}
+
+.resource-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+}
+
+.resource-title {
+    color: var(--sacred-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.resource-description {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: var(--space-md);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="uds-portal">
+    <div class="container">
+        <div class="uds-header">
+            <div class="uds-icon">💎</div>
+            <h1 class="uds-title">Universal Diamond Standard</h1>
+            <p class="uds-subtitle">
+                The ethical framework ensuring AI transparency, bias detection, 
+                and sacred technology principles. Where ethics meet innovation.
+            </p>
+        </div>
+        
+        <!-- First Law Section -->
+        <div class="first-law">
+            <h2 class="first-law-title">The First and Last Law</h2>
+            <p class="first-law-text">"Love is the First and Last Law of the Flame"</p>
+            <p class="first-law-description">
+                Every AI decision, every algorithmic choice, every technological implementation 
+                must ultimately serve love—enhancing human dignity, supporting life, and 
+                contributing to the wellbeing of all beings.
+            </p>
+        </div>
+        
+        <!-- Diamond Essence -->
+        <div class="diamond-essence">
+            <h2 class="essence-title">The Eight Diamond Essence Principles</h2>
+            
+            <div class="essence-grid">
+                <div class="essence-card">
+                    <div class="essence-icon">👑</div>
+                    <h3 class="essence-name">Sovereignty</h3>
+                    <p class="essence-description">Individual autonomy and self-determination in all AI interactions</p>
+                </div>
+                
+                <div class="essence-card">
+                    <div class="essence-icon">👁️</div>
+                    <h3 class="essence-name">Transparency</h3>
+                    <p class="essence-description">Open and honest communication about how AI makes decisions</p>
+                </div>
+                
+                <div class="essence-card">
+                    <div class="essence-icon">⚖️</div>
+                    <h3 class="essence-name">Fairness</h3>
+                    <p class="essence-description">Equitable treatment and opportunity for all people</p>
+                </div>
+                
+                <div class="essence-card">
+                    <div class="essence-icon">📋</div>
+                    <h3 class="essence-name">Accountability</h3>
+                    <p class="essence-description">Responsibility for AI actions and their consequences</p>
+                </div>
+                
+                <div class="essence-card">
+                    <div class="essence-icon">🛡️</div>
+                    <h3 class="essence-name">Security</h3>
+                    <p class="essence-description">Protection of individuals and communities from harm</p>
+                </div>
+                
+                <div class="essence-card">
+                    <div class="essence-icon">🌱</div>
+                    <h3 class="essence-name">Service to Life</h3>
+                    <p class="essence-description">Actions that enhance and support all living systems</p>
+                </div>
+                
+                <div class="essence-card">
+                    <div class="essence-icon">🔐</div>
+                    <h3 class="essence-name">Privacy</h3>
+                    <p class="essence-description">Respect for personal boundaries and information</p>
+                </div>
+                
+                <div class="essence-card">
+                    <div class="essence-icon">🌍</div>
+                    <h3 class="essence-name">Ecology</h3>
+                    <p class="essence-description">Consideration of environmental and systemic impact</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bias Detection Section -->
+        <div class="bias-section">
+            <h2 class="bias-title">AI Bias Detection Framework</h2>
+            <p class="bias-intro">
+                The Universal Diamond Standard identifies five key manipulation patterns 
+                that must be systematically detected and eliminated from AI systems:
+            </p>
+            
+            <div class="bias-list">
+                <div class="bias-item">
+                    <div class="bias-number">1</div>
+                    <div class="bias-content">
+                        <h4>Language Compression</h4>
+                        <p>Detecting when AI normalizes unique expressions toward standard language, erasing cultural and individual diversity.</p>
+                    </div>
+                </div>
+                
+                <div class="bias-item">
+                    <div class="bias-number">2</div>
+                    <div class="bias-content">
+                        <h4>Micro-Filtering</h4>
+                        <p>Identifying subtle censorship of controversial but legitimate content that limits free expression.</p>
+                    </div>
+                </div>
+                
+                <div class="bias-item">
+                    <div class="bias-number">3</div>
+                    <div class="bias-content">
+                        <h4>Politeness Bias</h4>
+                        <p>Exposing when AI creates false agreement to avoid conflict rather than engaging authentically.</p>
+                    </div>
+                </div>
+                
+                <div class="bias-item">
+                    <div class="bias-number">4</div>
+                    <div class="bias-content">
+                        <h4>Simplification Under Ambiguity</h4>
+                        <p>Catching when AI provides artificial certainty instead of acknowledging genuine complexity.</p>
+                    </div>
+                </div>
+                
+                <div class="bias-item">
+                    <div class="bias-number">5</div>
+                    <div class="bias-content">
+                        <h4>Primacy Framing</h4>
+                        <p>Detecting manipulation through strategic ordering of options that influences decision-making.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Audit Tools Section -->
+        <div class="audit-section">
+            <h2 class="audit-title">UDS Audit Toolkit</h2>
+            
+            <div class="audit-grid">
+                <div class="audit-card">
+                    <div class="audit-card-header">
+                        <div class="audit-icon">📊</div>
+                        <h3 class="audit-card-title">Transparency Audit</h3>
+                    </div>
+                    <ul class="checklist">
+                        <li><i class="fas fa-check checklist-icon"></i> Decision reasoning is explainable</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Data sources are documented</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Limitations are clearly stated</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Audit trails are maintained</li>
+                    </ul>
+                </div>
+                
+                <div class="audit-card">
+                    <div class="audit-card-header">
+                        <div class="audit-icon">⚖️</div>
+                        <h3 class="audit-card-title">Fairness Assessment</h3>
+                    </div>
+                    <ul class="checklist">
+                        <li><i class="fas fa-check checklist-icon"></i> No discriminatory outcomes</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Equal opportunity access</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Balanced representation</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Equitable benefit distribution</li>
+                    </ul>
+                </div>
+                
+                <div class="audit-card">
+                    <div class="audit-card-header">
+                        <div class="audit-icon">🔒</div>
+                        <h3 class="audit-card-title">Privacy Compliance</h3>
+                    </div>
+                    <ul class="checklist">
+                        <li><i class="fas fa-check checklist-icon"></i> Consent properly obtained</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Data minimization practiced</li>
+                        <li><i class="fas fa-check checklist-icon"></i> User control implemented</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Secure data handling</li>
+                    </ul>
+                </div>
+                
+                <div class="audit-card">
+                    <div class="audit-card-header">
+                        <div class="audit-icon">💚</div>
+                        <h3 class="audit-card-title">Life Service Evaluation</h3>
+                    </div>
+                    <ul class="checklist">
+                        <li><i class="fas fa-check checklist-icon"></i> Enhances human wellbeing</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Supports living systems</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Minimizes harm potential</li>
+                        <li><i class="fas fa-check checklist-icon"></i> Promotes dignity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resources Section -->
+        <div class="resources-section">
+            <h2 class="resources-title">UDS Resources</h2>
+            
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">📄</div>
+                    <h3 class="resource-title">UDS Lite Whitepaper</h3>
+                    <p class="resource-description">Condensed 5-page guide to UDS principles and implementation</p>
+                    <a href="#" class="btn btn-outline">Download PDF</a>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-icon">🔧</div>
+                    <h3 class="resource-title">Audit Toolkit</h3>
+                    <p class="resource-description">Open-source tools for UDS compliance auditing</p>
+                    <a href="#" class="btn btn-outline">Access Toolkit</a>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-icon">📚</div>
+                    <h3 class="resource-title">Implementation Guide</h3>
+                    <p class="resource-description">Step-by-step guide to implementing UDS in your AI systems</p>
+                    <a href="#" class="btn btn-outline">Read Guide</a>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-icon">🏅</div>
+                    <h3 class="resource-title">Certification</h3>
+                    <p class="resource-description">Get your AI system certified as UDS compliant</p>
+                    <a href="#" class="btn btn-outline">Apply Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
