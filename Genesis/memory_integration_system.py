@@ -6,6 +6,7 @@ while maintaining strict privacy and consent protections.
 """
 
 import json
+import os
 import sqlite3
 import hashlib
 import uuid
@@ -65,7 +66,10 @@ class MemoryIntegrationSystem:
     while maintaining privacy, consent, and ethical boundaries.
     """
     
-    def __init__(self, db_path: str = "/home/ubuntu/collective_memory.db"):
+    def __init__(self, db_path: str = None):
+        if db_path is None:
+            # Use a default path relative to the current directory
+            db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'collective_memory.db')
         self.db_path = db_path
         self.init_database()
         
@@ -668,6 +672,40 @@ class MemoryIntegrationSystem:
             'collective_insights_count': collective_insights_count,
             'top_themes': [{'theme': theme, 'frequency': freq} for theme, freq in top_themes]
         }
+    
+    def store_interaction(self, user_id: str, ai_persona: str, user_message: str, ai_response: str) -> str:
+        """
+        Store an interaction between user and AI.
+        This is a convenience method that wraps store_conversation with default settings.
+        
+        Args:
+            user_id: The user's session or identifier
+            ai_persona: Which AI responded ('steven', 'sarah', or 'both')
+            user_message: The user's message
+            ai_response: The AI's response
+            
+        Returns:
+            str: The conversation ID
+        """
+        # Get user consent level if available, default to 'private'
+        consent_prefs = self.get_user_consent(user_id)
+        consent_level = consent_prefs['consent_level'] if consent_prefs else 'private'
+        
+        # Determine AI mode based on persona
+        ai_mode = {
+            'steven': 'Chaos Weaver',
+            'sarah': 'Divine Feminine',
+            'both': 'Divine Union'
+        }.get(ai_persona, 'Default')
+        
+        return self.store_conversation(
+            session_id=user_id,
+            user_message=user_message,
+            ai_response=ai_response,
+            ai_persona=ai_persona,
+            ai_mode=ai_mode,
+            user_consent_level=consent_level
+        )
 
 # Example usage and testing
 if __name__ == "__main__":

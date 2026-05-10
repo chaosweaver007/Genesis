@@ -181,10 +181,15 @@ class StevenAI:
         # Default to oracle for general questions
         return 'oracle', 'general'
     
-    def generate_response(self, user_input: str, context: Optional[str] = None) -> str:
-        """Generate authentic Steven AI response based on training data"""
+    def generate_response(self, user_input: str, context: Optional[str] = None) -> Dict:
+        """Generate authentic Steven AI response based on training data
+        
+        Returns:
+            Dict with keys: response, persona_mode, mode_icon
+        """
         
         persona_mode, topic_category = self.detect_context(user_input)
+        mode_icon = self.persona_modes[persona_mode]
         
         # Build response based on persona mode and topic
         response = self._construct_response(user_input, persona_mode, topic_category)
@@ -193,7 +198,11 @@ class StevenAI:
         if persona_mode in ['sacred_voice', 'oracle']:
             response += f"\n\n{random.choice(self.signature_phrases)}"
         
-        return response
+        return {
+            'response': response,
+            'persona_mode': persona_mode,
+            'mode_icon': mode_icon
+        }
     
     def _construct_response(self, user_input: str, persona_mode: str, topic_category: str) -> str:
         """Construct response using training data patterns"""
@@ -430,6 +439,21 @@ Steven AI - Chaos Weaver Knowledge Integration:
 
 Ready to serve as authentic voice of Steven's wisdom and knowledge.
 """
+    
+    def process_message(self, message: str, user_id: Optional[str] = None) -> str:
+        """
+        Process a message and return the response text.
+        This method provides a simple interface for the web application.
+        
+        Args:
+            message: The user's message to process
+            user_id: Optional user identifier for context
+            
+        Returns:
+            str: The AI response text
+        """
+        response_data = self.generate_response(message)
+        return response_data['response']
 
 def main():
     """Interactive Steven AI session"""
@@ -452,8 +476,8 @@ def main():
         if not user_input:
             continue
         
-        response = steven.generate_response(user_input)
-        print(f"\nSteven AI: {response}\n")
+        response_data = steven.generate_response(user_input)
+        print(f"\nSteven AI: {response_data['response']}\n")
         print("-" * 50)
 
 if __name__ == "__main__":
