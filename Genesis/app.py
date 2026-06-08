@@ -95,6 +95,22 @@ class SynthsaraCore:
         """Save data marketplace information"""
         with open(f'{DATA_DIR}/marketplace.json', 'w') as f:
             json.dump(self.data_marketplace, f, indent=2)
+    
+    def resolve_username_to_uuid(self, username: str):
+        """
+        Resolve a username to a user UUID.
+        Critical for WORTH transfers to ensure tokens go to the correct account.
+        
+        Args:
+            username: The username to resolve
+            
+        Returns:
+            The user UUID if found, None otherwise
+        """
+        for user_uuid, user_data in self.users.items():
+            if user_data.get('username', '').lower() == username.lower():
+                return user_uuid
+        return None
 
 # Initialize core system
 synthsara = SynthsaraCore()
@@ -251,27 +267,54 @@ def get_worth_balance():
 
 @app.route('/api/worth/transfer', methods=['POST'])
 def transfer_worth():
-    """Transfer WORTH between users"""
+    """
+    Transfer WORTH between users with proper username-to-UUID resolution.
+    
+    This endpoint fixes the critical bug where transfers were written to username keys
+    instead of UUID keys, causing recipient WORTH to disappear.
+    """
     data = request.get_json()
     user_id = session.get('user_id')
     
     if not user_id:
         return jsonify({'error': 'Not authenticated'}), 401
     
-    recipient = data.get('recipient')
+    recipient_input = data.get('recipient', '').strip()
     amount = data.get('amount', 0)
     
-    # Validate transfer
+    if not recipient_input:
+        return jsonify({'error': 'Recipient username is required'}), 400
+    
+    # CRITICAL FIX: Resolve recipient username to UUID
+    # This ensures WORTH is credited to the correct account
+    recipient_uuid = synthsara.resolve_username_to_uuid(recipient_input)
+    if not recipient_uuid:
+        return jsonify({'error': f'User "{recipient_input}" not found'}), 404
+    
+    # Prevent self-transfer
+    if recipient_uuid == user_id:
+        return jsonify({'error': 'Cannot transfer WORTH to yourself'}), 400
+    
+    # Validate transfer amount
     current_balance = synthsara.worth_balances.get(user_id, 0)
     if amount <= 0 or amount > current_balance:
         return jsonify({'error': 'Invalid transfer amount'}), 400
     
-    # Execute transfer
+    # Execute transfer with correct UUID keys
     synthsara.worth_balances[user_id] = current_balance - amount
-    synthsara.worth_balances[recipient] = synthsara.worth_balances.get(recipient, 0) + amount
+    synthsara.worth_balances[recipient_uuid] = synthsara.worth_balances.get(recipient_uuid, 0) + amount
     synthsara.save_worth_balances()
     
-    return jsonify({'success': True, 'new_balance': synthsara.worth_balances[user_id]})
+    # Get recipient username for response message
+    recipient_username = synthsara.users.get(recipient_uuid, {}).get('username', 'Unknown')
+    
+    return jsonify({
+        'success': True,
+        'new_balance': synthsara.worth_balances[user_id],
+        'recipient': recipient_username,
+        'amount': amount,
+        'message': f'Successfully transferred {amount} WORTH to {recipient_username}'
+    })
 
 @app.route('/api/governance/propose', methods=['POST'])
 def create_proposal():
@@ -430,4 +473,3 @@ if __name__ == '__main__':
     print("🌙 Starting the complete ecosystem...")
     
     app.run(host='0.0.0.0', port=5000, debug=True)
-
