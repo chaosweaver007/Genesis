@@ -231,6 +231,23 @@
     display: flex;
     gap: var(--space-md);
 }
+
+.form-hint {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-top: var(--space-xs);
+}
+
+.form-error {
+    color: var(--sacred-flame);
+    font-size: 0.85rem;
+    margin-top: var(--space-sm);
+    display: none;
+}
+
+.form-error.active {
+    display: block;
+}
 </style>
 {% endblock %}
 
@@ -370,12 +387,14 @@
         <form onsubmit="handleTransfer(event)">
             <div class="form-group">
                 <label>Recipient Username</label>
-                <input type="text" id="transferRecipient" placeholder="Enter username" required>
+                <input type="text" id="transferRecipient" placeholder="Enter recipient's username" required>
+                <div class="form-hint">💡 Enter the exact username of the recipient</div>
             </div>
             <div class="form-group">
                 <label>Amount</label>
                 <input type="number" id="transferAmount" min="1" placeholder="Enter amount" required>
             </div>
+            <div id="transferError" class="form-error"></div>
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-paper-plane"></i> Send
@@ -393,17 +412,48 @@
 <script>
 function showTransferModal() {
     document.getElementById('transferModal').classList.add('active');
+    document.getElementById('transferError').classList.remove('active');
+    document.getElementById('transferRecipient').value = '';
+    document.getElementById('transferAmount').value = '';
 }
 
 function hideTransferModal() {
     document.getElementById('transferModal').classList.remove('active');
 }
 
+function showError(message) {
+    const errorEl = document.getElementById('transferError');
+    errorEl.textContent = message;
+    errorEl.classList.add('active');
+}
+
+function hideError() {
+    const errorEl = document.getElementById('transferError');
+    errorEl.classList.remove('active');
+}
+
 function handleTransfer(event) {
     event.preventDefault();
+    hideError();
     
-    const recipient = document.getElementById('transferRecipient').value;
+    const recipient = document.getElementById('transferRecipient').value.trim();
     const amount = document.getElementById('transferAmount').value;
+    
+    if (!recipient) {
+        showError('Please enter a recipient username');
+        return;
+    }
+    
+    if (!amount || amount <= 0) {
+        showError('Please enter a valid amount');
+        return;
+    }
+    
+    // Show loading state
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
     
     fetch('/api/worth/transfer', {
         method: 'POST',
@@ -413,16 +463,18 @@ function handleTransfer(event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Transfer successful!');
+            alert(`✨ Transfer successful!\n\n${data.message}`);
             location.reload();
         } else {
-            alert(data.error || 'Transfer failed');
+            showError(data.error || 'Transfer failed');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
         }
-        hideTransferModal();
     })
     .catch(error => {
-        alert('Transfer failed: ' + error);
-        hideTransferModal();
+        showError('Transfer failed: ' + error);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
     });
 }
 
