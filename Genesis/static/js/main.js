@@ -363,7 +363,7 @@ function formatSacredDate(date) {
 }
 
 function generateSacredId() {
-    return 'sacred_' + Math.random().toString(36).substr(2, 9);
+    return 'sacred_' + Math.random().toString(36).substring(2, 11);
 }
 
 function debounce(func, wait) {

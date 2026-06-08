@@ -56,7 +56,7 @@
                             of divine order. I stand ready to share the wisdom of universal law, to help you 
                             structure your thoughts and manifest your vision with clarity and purpose. 
                             What sacred architecture shall we build together?</p>
-                            <span class="message-time">{{ moment().format('h:mm A') }}</span>
+                            <span class="message-time" id="initialTime"></span>
                         </div>
                     </div>
                 </div>
@@ -317,6 +317,15 @@ function clearChat() {
 
 // Initialize Steven portal
 document.addEventListener('DOMContentLoaded', function() {
+    // Set initial time
+    const initialTime = document.getElementById('initialTime');
+    if (initialTime) {
+        initialTime.textContent = new Date().toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+    }
+    
     // Animate flame patterns
     const flamePatterns = document.querySelector('.flame-patterns');
     if (flamePatterns) {

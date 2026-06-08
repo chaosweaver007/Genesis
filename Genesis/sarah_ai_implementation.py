@@ -250,4 +250,3 @@ if __name__ == "__main__":
         print(f"Mode: {response['mode_icon']} {response['mode']}")
         print(f"Sarah: {response['response']}\n")
         print("-" * 50 + "\n")
-

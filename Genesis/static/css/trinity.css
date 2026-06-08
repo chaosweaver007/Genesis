@@ -1,0 +1,383 @@
+/* Trinity Portal Styles */
+
+.trinity-hero {
+    min-height: 100vh;
+    padding: var(--space-xxl) 0;
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    color: white;
+}
+
+.trinity-header {
+    text-align: center;
+    margin-bottom: var(--space-xxl);
+}
+
+.trinity-title {
+    font-size: 3rem;
+    color: var(--sacred-secondary);
+    margin-bottom: var(--space-md);
+}
+
+.trinity-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.trinity-visualization {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--space-xxl);
+}
+
+.trinity-mandala {
+    position: relative;
+    width: 400px;
+    height: 400px;
+}
+
+@media (max-width: 500px) {
+    .trinity-mandala {
+        width: 300px;
+        height: 300px;
+    }
+}
+
+.trinity-pillar {
+    position: absolute;
+    width: 140px;
+    padding: var(--space-lg);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-medium);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.trinity-pillar.animate-in {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.trinity-pillar:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sarah-pillar {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.sarah-pillar.animate-in {
+    transform: translateX(-50%) scale(1);
+}
+
+.steven-pillar {
+    bottom: 0;
+    left: 10%;
+}
+
+.collective-pillar {
+    bottom: 0;
+    right: 10%;
+}
+
+.pillar-symbol {
+    font-size: 2rem;
+    margin-bottom: var(--space-sm);
+}
+
+.sarah-pillar .pillar-symbol { color: var(--sacred-moon); }
+.steven-pillar .pillar-symbol { color: var(--sacred-flame); }
+.collective-pillar .pillar-symbol { color: var(--sacred-primary); }
+
+.pillar-content h3 {
+    font-size: 1rem;
+    margin-bottom: var(--space-xs);
+}
+
+.pillar-subtitle {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-bottom: var(--space-sm);
+}
+
+.pillar-content p {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin: 0;
+}
+
+.pillar-energy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--border-radius-large);
+    opacity: 0.7;
+    pointer-events: none;
+    transition: all var(--transition-medium);
+}
+
+.sarah-energy { box-shadow: 0 0 30px rgba(99, 102, 241, 0.3); }
+.steven-energy { box-shadow: 0 0 30px rgba(239, 68, 68, 0.3); }
+.collective-energy { box-shadow: 0 0 30px rgba(139, 92, 246, 0.3); }
+
+.trinity-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.sacred-flame-large {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: var(--space-sm);
+}
+
+.center-text {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.energy-connections {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.connection {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+    opacity: 0;
+    transition: opacity var(--transition-slow);
+}
+
+.connection.active {
+    opacity: 1;
+}
+
+.sarah-steven {
+    width: 150px;
+    top: 120px;
+    left: 60px;
+    transform: rotate(45deg);
+}
+
+.steven-collective {
+    width: 100px;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.collective-sarah {
+    width: 150px;
+    top: 120px;
+    right: 60px;
+    transform: rotate(-45deg);
+}
+
+/* Trinity Principles */
+.trinity-principles {
+    padding: var(--space-xxl) 0;
+    background: var(--sacred-light);
+}
+
+.principles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+}
+
+.principle-card {
+    background: white;
+    border-radius: var(--border-radius-large);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+
+.principle-header {
+    padding: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    color: white;
+}
+
+.divine-feminine .principle-header { background: var(--gradient-moon); }
+.divine-masculine .principle-header { background: var(--gradient-flame); }
+.unity-consciousness .principle-header { background: var(--gradient-divine); }
+
+.principle-header i {
+    font-size: 1.5rem;
+}
+
+.principle-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.principle-content {
+    padding: var(--space-lg);
+}
+
+.principle-content p {
+    color: var(--sacred-dark);
+    opacity: 0.8;
+    margin-bottom: var(--space-md);
+}
+
+.principle-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.principle-content li {
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--sacred-dark);
+}
+
+.principle-content li:before {
+    content: '◆';
+    color: var(--sacred-primary);
+    font-size: 0.6rem;
+}
+
+/* Trinity Interaction */
+.trinity-interaction {
+    padding: var(--space-xxl) 0;
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    color: white;
+}
+
+.interaction-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+}
+
+.interaction-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    overflow: hidden;
+    transition: transform var(--transition-medium);
+}
+
+.interaction-card:hover {
+    transform: translateY(-10px);
+}
+
+.option-visual {
+    position: relative;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.option-symbol {
+    font-size: 4rem;
+    position: relative;
+    z-index: 1;
+}
+
+.option-energy {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    opacity: 0.3;
+}
+
+.sarah-glow { background: radial-gradient(circle, var(--sacred-moon), transparent); }
+.steven-glow { background: radial-gradient(circle, var(--sacred-flame), transparent); }
+.collective-glow { background: radial-gradient(circle, var(--sacred-primary), transparent); }
+
+.option-content {
+    padding: var(--space-lg);
+}
+
+.option-content h3 {
+    color: var(--sacred-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.option-content p {
+    opacity: 0.8;
+    margin-bottom: var(--space-md);
+}
+
+.option-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.feature {
+    padding: var(--space-xs) var(--space-sm);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    font-size: 0.75rem;
+}
+
+.option-action {
+    padding: var(--space-lg);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sarah-btn { background: var(--gradient-moon) !important; }
+.steven-btn { background: var(--gradient-flame) !important; }
+.collective-btn { background: var(--gradient-divine) !important; }
+
+/* Trinity Wisdom */
+.trinity-wisdom {
+    padding: var(--space-xxl) 0;
+    background: var(--sacred-light);
+}
+
+.wisdom-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.wisdom-content h2 {
+    color: var(--sacred-primary);
+    margin-bottom: var(--space-xl);
+}
+
+.wisdom-text p {
+    color: var(--sacred-dark);
+    opacity: 0.8;
+    line-height: 1.8;
+    margin-bottom: var(--space-lg);
+}
+
+.wisdom-text blockquote {
+    font-family: var(--font-sacred);
+    font-style: italic;
+    font-size: 1.25rem;
+    color: var(--sacred-primary);
+    padding: var(--space-lg);
+    background: rgba(139, 92, 246, 0.05);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--sacred-primary);
+}

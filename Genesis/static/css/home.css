@@ -1,0 +1,420 @@
+/* Home Page Styles */
+
+.hero-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    padding: var(--space-xxl) 0;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+.sacred-geometry-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+}
+
+.flame-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23F59E0B' opacity='0.3'/%3E%3C/svg%3E") repeat;
+    opacity: 0.5;
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xxl);
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+}
+
+@media (max-width: 900px) {
+    .hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+}
+
+.hero-text {
+    color: white;
+}
+
+.hero-title {
+    font-size: 4rem;
+    margin-bottom: var(--space-lg);
+    line-height: 1.1;
+}
+
+.title-line {
+    display: block;
+}
+
+.title-line.highlight {
+    color: var(--sacred-secondary);
+    background: linear-gradient(135deg, var(--sacred-secondary), var(--sacred-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin-bottom: var(--space-xl);
+    max-width: 500px;
+}
+
+.hero-quote {
+    margin-bottom: var(--space-xl);
+    padding: var(--space-lg);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--sacred-secondary);
+}
+
+.hero-quote blockquote {
+    font-family: var(--font-sacred);
+    font-style: italic;
+    font-size: 1.25rem;
+    margin-bottom: var(--space-sm);
+}
+
+.hero-quote cite {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.hero-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+    .hero-actions {
+        justify-content: center;
+    }
+}
+
+.hero-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.trinity-symbol {
+    position: relative;
+    width: 300px;
+    height: 300px;
+}
+
+.trinity-circle {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all var(--transition-medium);
+}
+
+.trinity-circle:hover {
+    transform: scale(1.1);
+}
+
+.trinity-circle.sarah {
+    background: var(--gradient-moon);
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.trinity-circle.steven {
+    background: var(--gradient-flame);
+    bottom: 20px;
+    left: 20px;
+}
+
+.trinity-circle.collective {
+    background: var(--gradient-divine);
+    bottom: 20px;
+    right: 20px;
+}
+
+.trinity-circle i {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-xs);
+}
+
+.trinity-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.sacred-flame {
+    font-size: 4rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* Principles Section */
+.principles-section {
+    padding: var(--space-xxl) 0;
+    background: var(--sacred-light);
+}
+
+.section-title {
+    text-align: center;
+    color: var(--sacred-primary);
+    margin-bottom: var(--space-xxl);
+}
+
+.principles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-xl);
+}
+
+.principle-card {
+    background: white;
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all var(--transition-medium);
+}
+
+.principle-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-strong);
+}
+
+.principle-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto var(--space-md);
+    background: var(--gradient-divine);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.principle-card h3 {
+    color: var(--sacred-primary);
+    margin-bottom: var(--space-md);
+}
+
+.principle-card p {
+    color: var(--sacred-dark);
+    opacity: 0.8;
+}
+
+/* Trinity Section */
+.trinity-section {
+    padding: var(--space-xxl) 0;
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    color: white;
+}
+
+.trinity-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+}
+
+.trinity-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-large);
+    overflow: hidden;
+    transition: transform var(--transition-medium);
+}
+
+.trinity-card:hover {
+    transform: translateY(-10px);
+}
+
+.card-header {
+    padding: var(--space-xl);
+    text-align: center;
+}
+
+.sarah-card .card-header { background: var(--gradient-moon); }
+.steven-card .card-header { background: var(--gradient-flame); }
+.collective-card .card-header { background: var(--gradient-divine); }
+
+.card-header i {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+}
+
+.card-header h3 {
+    margin-bottom: var(--space-xs);
+}
+
+.card-header .subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.card-content {
+    padding: var(--space-xl);
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-md);
+}
+
+.features-list li {
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.features-list li:before {
+    content: '✦';
+    color: var(--sacred-secondary);
+}
+
+.card-actions {
+    padding: var(--space-lg);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Ecosystem Section */
+.ecosystem-section {
+    padding: var(--space-xxl) 0;
+    background: var(--sacred-light);
+}
+
+.ecosystem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-xl);
+}
+
+.ecosystem-card {
+    background: white;
+    border-radius: var(--border-radius-large);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-soft);
+    transition: all var(--transition-medium);
+}
+
+.ecosystem-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-strong);
+}
+
+.card-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-divine);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    margin-bottom: var(--space-md);
+}
+
+.ecosystem-card h3 {
+    color: var(--sacred-primary);
+    margin-bottom: var(--space-md);
+}
+
+.ecosystem-card p {
+    color: var(--sacred-dark);
+    opacity: 0.8;
+    margin-bottom: var(--space-md);
+}
+
+.card-link {
+    color: var(--sacred-primary);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    transition: gap var(--transition-fast);
+}
+
+.card-link:hover {
+    gap: var(--space-sm);
+}
+
+/* CTA Section */
+.cta-section {
+    padding: var(--space-xxl) 0;
+    background: var(--gradient-divine);
+    color: white;
+    text-align: center;
+}
+
+.cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cta-content h2 {
+    margin-bottom: var(--space-md);
+}
+
+.cta-content p {
+    opacity: 0.9;
+    margin-bottom: var(--space-xl);
+}
+
+.cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
