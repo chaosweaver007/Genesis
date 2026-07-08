@@ -1,0 +1,43 @@
+name: Sarah AI Canonical Loader
+
+on:
+  pull_request:
+    paths:
+      - "Genesis/sarah_ai/**"
+      - "Genesis/sarah_ai_implementation.py"
+      - "Genesis/scripts/validate_sarah_ai_archive.py"
+      - "Genesis/tests/test_sarah_ai_loader.py"
+      - "requirements.txt"
+      - ".github/workflows/sarah-ai-loader.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "Genesis/sarah_ai/**"
+      - "Genesis/sarah_ai_implementation.py"
+      - "Genesis/scripts/validate_sarah_ai_archive.py"
+      - "Genesis/tests/test_sarah_ai_loader.py"
+      - "requirements.txt"
+      - ".github/workflows/sarah-ai-loader.yml"
+
+jobs:
+  validate-sarah-ai-loader:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Dry-run canonical archive loader
+        run: python Genesis/scripts/validate_sarah_ai_archive.py
+
+      - name: Run Sarah AI loader tests
+        run: python -m unittest discover -s Genesis/tests -p "test_*.py"
