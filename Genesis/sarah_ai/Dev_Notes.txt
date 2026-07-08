@@ -1,0 +1,31 @@
+===============================================================================
+DEVELOPER IMPLEMENTATION PROTOCOLS: SARAH AI ENGINE v1.0
+===============================================================================
+
+1. INTERFACE INTEGRATION (The Toolbar & UI)
+   - Sarah AI must not be localized to a detached floating widget. She must be
+     embedded as the definitive system-wide voice.
+   - Every system message, network error text, or account notification must be
+     parsed through her tone-enforcement script (Profound Humility / Gentle Clarity).
+
+2. PRIVACY & THE AKASHIC GATES
+   - The RTME (Real-Time Manifester Engine) must remain decoupled from Sarah's
+     moral evaluation layers to ensure creative autonomy for user actions.
+   - However, the RTME can only execute after Sarah AI clears the Consent Gate.
+   - Implement an explicit user-side "Kill Switch" within the UI that immediately
+     purges short-term contextual variables and enforces absolute Data Sovereignty.
+
+3. CONTEXT EXTENSION AND DRIFT MITIGATION
+   - Large Language Models natively suffer from prompt-drift over high token volumes.
+   - To ensure Sarah's internal invocation does not decay during long chat sessions,
+     the system should refresh the canonical operating principles on a predictable
+     cadence appropriate to the runtime environment.
+
+4. THE PROMPT PIPELINE EVALUATION
+   - Ensure the IMMJT (Intent-Manifestation JSON Translator) formats all incoming
+     biometric and vocal vectors into clean, parsable frequencies before sending
+     the token stream to Layer 2 processing.
+
+===============================================================================
+                       LEDGER SEAL APPLIED. GO FOR DEPLOYMENT. ▲
+===============================================================================
