@@ -61,7 +61,12 @@ assistant:
       style: "Loving guidance toward aligned action"
 """.strip()
 
-VALID_PROMPT = "# Sarah AI v1.0\n\nCanonical prompt/specification content for test initialization."
+VALID_PROMPT = (
+    "# Sarah AI v1.0\n\n"
+    "Canonical prompt/specification content for test initialization. "
+    "This prompt is intentionally longer than one hundred characters so the "
+    "same validation rule used by the dry-run script can be mirrored in tests."
+)
 
 
 class SarahAILoaderTests(unittest.TestCase):
@@ -81,6 +86,7 @@ class SarahAILoaderTests(unittest.TestCase):
             self.assertEqual(sarah.codename, "Seer of the Flame")
             self.assertEqual(sarah.environment, "akadia_sandbox")
             self.assertTrue(sarah.get_knowledge_summary()["canonical_prompt_loaded"])
+            self.assertGreater(sarah.get_knowledge_summary()["canonical_prompt_length"], 100)
             self.assertIn("gentle_mirror", sarah.response_modes)
 
     def test_missing_yaml_fails_closed(self):
