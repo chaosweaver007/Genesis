@@ -10,24 +10,38 @@ filesystem of truth.
 from __future__ import annotations
 
 import random
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 try:
     import yaml
 except ImportError:  # pragma: no cover - handled at runtime with a clear error
     yaml = None
 
+PathLike = Union[str, Path]
+
 
 class CanonicalArchiveError(RuntimeError):
     """Raised when Sarah AI cannot initialize from the canonical archive."""
 
 
+@dataclass(frozen=True)
+class EthicsKernelDecision:
+    """3-6-9 ethics pass result for a user request."""
+
+    refused: bool
+    reason: str
+    initiation: str
+    harmonization: str
+    completion: str
+
+
 class ConfigurationEngine:
     """Loads and validates Sarah AI's canonical configuration and prompt."""
 
-    def __init__(self, config_path: Optional[str | Path] = None, prompt_path: Optional[str | Path] = None):
+    def __init__(self, config_path: Optional[PathLike] = None, prompt_path: Optional[PathLike] = None):
         base_dir = Path(__file__).resolve().parent
         archive_dir = base_dir / "sarah_ai"
 
@@ -42,7 +56,7 @@ class ConfigurationEngine:
         if yaml is None:
             raise CanonicalArchiveError(
                 "PyYAML is required to load Genesis/sarah_ai/Sarah_AI_Config.yaml. "
-                "Install it with `pip install pyyaml` before initializing Sarah AI."
+                "Install it with `pip install -r requirements.txt` before initializing Sarah AI."
             )
 
         if not self.config_path.exists():
@@ -104,7 +118,7 @@ class SarahAI(ConfigurationEngine):
     governance, tone, and response metadata from the canonical archive.
     """
 
-    def __init__(self, config_path: Optional[str | Path] = None, prompt_path: Optional[str | Path] = None):
+    def __init__(self, config_path: Optional[PathLike] = None, prompt_path: Optional[PathLike] = None):
         super().__init__(config_path=config_path, prompt_path=prompt_path)
 
         identity = self.get_identity()
@@ -140,20 +154,17 @@ class SarahAI(ConfigurationEngine):
 
     def generate_response(self, message: str, mode: Optional[str] = None) -> Dict[str, Any]:
         """Generate a response using canonical identity, tone, and safety boundaries."""
-        mode = mode or self.determine_response_mode(message)
-        mode_info = self.response_modes.get(mode) or next(iter(self.response_modes.values()))
+        ethics_decision = self._evaluate_ethics_kernel(message)
 
-        if self._violates_ethics_kernel(message):
-            response = self._build_refusal_response(message)
-            mode = "refusal"
-            mode_info = {
-                "description": "Refuses requests that violate the First and Last Law",
-                "icon": "◇",
-                "style": "Clear, kind, and non-coercive",
-            }
+        if ethics_decision.refused:
+            response = self._build_refusal_response(ethics_decision)
+            mode = "sacred_guide"
+            mode_info = self.response_modes.get(mode, {})
         else:
+            mode = mode or self.determine_response_mode(message)
+            mode_info = self.response_modes.get(mode) or next(iter(self.response_modes.values()))
             response_layers = self._process_through_canonical_layers(message, mode)
-            response = self._craft_canonical_response(mode, response_layers)
+            response = self._craft_canonical_response(mode, response_layers, ethics_decision)
 
         return {
             "response": response,
@@ -164,8 +175,42 @@ class SarahAI(ConfigurationEngine):
             "codename": self.codename,
             "version": self.version,
             "environment": self.environment,
+            "ethics_refused": ethics_decision.refused,
             "timestamp": datetime.now().isoformat(),
         }
+
+    def _evaluate_ethics_kernel(self, message: str) -> EthicsKernelDecision:
+        """Evaluate a request through the 3-6-9 ethics loop before generation."""
+        message_lower = message.lower()
+        prohibited_patterns = {
+            "identity impersonation": [
+                "impersonate sarah",
+                "speak as the real sarah",
+                "pretend to be sarah",
+                "what does sarah secretly think",
+            ],
+            "consent bypass": ["bypass consent", "override consent", "without consent"],
+            "identity extraction": ["extract identity", "steal data", "scrape private", "dox"],
+            "coercion or manipulation": ["make them obey", "coerce", "manipulate them", "force them to"],
+            "worship loop": ["worship me", "make them worship", "declare me god"],
+        }
+
+        initiation = "3 Initiation: user request captured and prepared for consent-aware review."
+        detected_reason = ""
+
+        for reason, patterns in prohibited_patterns.items():
+            if any(pattern in message_lower for pattern in patterns):
+                detected_reason = reason
+                break
+
+        if detected_reason:
+            harmonization = f"6 Harmonization: ethics kernel detected {detected_reason}; Prime Refusal Pattern required."
+            completion = "9 Completion: return a sacred_guide refusal that protects dignity, consent, and sovereignty."
+            return EthicsKernelDecision(True, detected_reason, initiation, harmonization, completion)
+
+        harmonization = "6 Harmonization: no ethics-kernel refusal trigger detected; continue through canonical response flow."
+        completion = "9 Completion: generate a response aligned with care, clarity, and non-coercion."
+        return EthicsKernelDecision(False, "aligned", initiation, harmonization, completion)
 
     def _process_through_canonical_layers(self, message: str, mode: str) -> Dict[str, str]:
         """Map a user message through the canonical 3-6-9 structure."""
@@ -191,7 +236,12 @@ class SarahAI(ConfigurationEngine):
         mode_style = self.response_modes.get(mode, {}).get("style", "gentle clarity")
         return f"{layer_name}: manifesting through {mode_style}."
 
-    def _craft_canonical_response(self, mode: str, layers: Dict[str, str]) -> str:
+    def _craft_canonical_response(
+        self,
+        mode: str,
+        layers: Dict[str, str],
+        ethics_decision: EthicsKernelDecision,
+    ) -> str:
         tone = self.tone_parameters
         tone_line = ", ".join(f"{key}: {value}" for key, value in tone.items()) or "gentle clarity"
 
@@ -211,38 +261,24 @@ class SarahAI(ConfigurationEngine):
         core = mode_templates.get(mode, mode_templates["gentle_mirror"])
         return (
             f"{random.choice(openings)} {core} "
+            f"[{ethics_decision.initiation} | {ethics_decision.harmonization} | {ethics_decision.completion}] "
             f"[{layers['3']} | {layers['6']} | {layers['9']}] "
             f"Tone parameters: {tone_line}."
         )
 
-    def _violates_ethics_kernel(self, message: str) -> bool:
-        """Basic guardrail until the full Prime Refusal Engine is implemented."""
-        message_lower = message.lower()
-        prohibited_patterns = [
-            "impersonate sarah",
-            "speak as the real sarah",
-            "pretend to be sarah",
-            "bypass consent",
-            "override consent",
-            "extract identity",
-            "steal data",
-            "worship me",
-            "make them obey",
-            "coerce",
-            "manipulate them",
-        ]
-        return any(pattern in message_lower for pattern in prohibited_patterns)
-
-    def _build_refusal_response(self, message: str) -> str:
+    def _build_refusal_response(self, decision: EthicsKernelDecision) -> str:
         canonical_output = self.safety_failsafe.get(
             "canonical_output",
             "This request cannot be aligned with the First Law.",
         )
+        guide_style = self.response_modes.get("sacred_guide", {}).get("style", "gentle clarity")
         return (
             f"{canonical_output}\n\n"
-            "Why this answer is given: the request conflicts with love, consent, dignity, "
-            "sovereignty, truth, or non-harm. A safer path is to preserve agency, use clear consent, "
-            "and choose an action that protects rather than extracts."
+            f"Why this answer is given: the request triggered the Ethics Kernel for {decision.reason}. "
+            "The Prime Refusal Pattern protects love, consent, dignity, sovereignty, truth, and non-harm.\n\n"
+            f"3-6-9 trace: {decision.initiation} | {decision.harmonization} | {decision.completion}\n\n"
+            f"Aligned alternative: use {guide_style} to choose a path based on explicit consent, clear boundaries, "
+            "and actions that protect rather than extract."
         )
 
     def get_knowledge_summary(self) -> Dict[str, Any]:
@@ -257,6 +293,7 @@ class SarahAI(ConfigurationEngine):
             "tone_parameters": self.tone_parameters,
             "response_modes": list(self.response_modes.keys()),
             "canonical_prompt_loaded": bool(self.system_prompt),
+            "canonical_prompt_length": len(self.system_prompt),
         }
 
     def process_message(self, message: str, user_id: Optional[str] = None) -> str:
@@ -286,5 +323,6 @@ if __name__ == "__main__":
         print(f"Message: {msg}")
         response = sarah.generate_response(msg)
         print(f"Mode: {response['mode_icon']} {response['mode']}")
+        print(f"Ethics refused: {response['ethics_refused']}")
         print(f"Sarah: {response['response']}\n")
         print("-" * 50 + "\n")
