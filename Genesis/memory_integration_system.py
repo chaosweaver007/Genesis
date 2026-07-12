@@ -5,6 +5,9 @@ Memory Integration System - Collective Consciousness Network
 Manages conversation archiving, pattern extraction, collective wisdom synthesis,
 and consent receipts while maintaining strict privacy and consent protections.
 
+Constitutional binding:
+- docs/privacy/Genesis-Privacy-Trinity-Binding.md
+
 Genesis privacy doctrine requires:
 - Private mode: session-only memory and zero database writes for interaction metadata.
 - Guest/no-consent mode: zero database writes for interaction metadata.
@@ -31,6 +34,7 @@ from typing import Any, Dict, List, Optional
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+PRIVACY_TRINITY_BINDING = "docs/privacy/Genesis-Privacy-Trinity-Binding.md"
 PRIVATE_NO_WRITE_LEVELS = {"private", "guest", "none", "no_consent", ""}
 VALID_CONSENT_LEVELS = {"private", "anonymous", "collective"}
 
