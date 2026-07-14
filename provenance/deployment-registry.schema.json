@@ -1,0 +1,850 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synthsara.org/schemas/deployment-registry.schema.json",
+  "title": "Genesis Provenance and Deployment Registry",
+  "description": "Machine-readable provenance records for source snapshots, builds, patches, deployments, tests, and promotion decisions in the Genesis/Synthsara ecosystem.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "registry_id",
+    "project",
+    "records"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "registry_id": {
+      "type": "string",
+      "pattern": "^registry_[a-z0-9][a-z0-9._-]*$"
+    },
+    "project": {
+      "$ref": "#/$defs/project"
+    },
+    "registry_metadata": {
+      "$ref": "#/$defs/registryMetadata"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "gitSha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "ecosystem",
+        "creator",
+        "repository"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "const": "Genesis"
+        },
+        "ecosystem": {
+          "type": "string",
+          "const": "Synthsara"
+        },
+        "creator": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "role"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "const": "Steven Pritchard"
+            },
+            "role": {
+              "type": "string",
+              "const": "Creator and Lead Architect"
+            }
+          }
+        },
+        "repository": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "host",
+            "full_name",
+            "default_branch"
+          ],
+          "properties": {
+            "host": {
+              "type": "string",
+              "const": "github.com"
+            },
+            "full_name": {
+              "type": "string",
+              "const": "chaosweaver007/Genesis"
+            },
+            "default_branch": {
+              "type": "string",
+              "const": "main"
+            }
+          }
+        }
+      }
+    },
+    "registryMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "maintainer": {
+          "type": "string"
+        },
+        "canonicalization": {
+          "type": "string",
+          "const": "RFC8785-JCS"
+        },
+        "registry_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "record_type",
+        "state",
+        "captured_at",
+        "source",
+        "provenance",
+        "verification"
+      ],
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "pattern": "^prov_[a-z0-9][a-z0-9._-]*$"
+        },
+        "record_type": {
+          "type": "string",
+          "enum": [
+            "source_snapshot",
+            "working_export",
+            "patch",
+            "build",
+            "deployment",
+            "test_run",
+            "promotion",
+            "retirement"
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "pending_capture",
+            "captured",
+            "verified",
+            "rejected",
+            "superseded",
+            "retired"
+          ]
+        },
+        "captured_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "environment": {
+          "$ref": "#/$defs/environment"
+        },
+        "changes": {
+          "$ref": "#/$defs/changes"
+        },
+        "build": {
+          "$ref": "#/$defs/build"
+        },
+        "deployment": {
+          "$ref": "#/$defs/deployment"
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/testResult"
+          }
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        },
+        "uds_assessment": {
+          "$ref": "#/$defs/udsAssessment"
+        },
+        "verification": {
+          "$ref": "#/$defs/verification"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin_kind"
+      ],
+      "properties": {
+        "origin_kind": {
+          "type": "string",
+          "enum": [
+            "git",
+            "archive",
+            "hosted_workspace",
+            "local_worktree",
+            "generated_artifact"
+          ]
+        },
+        "repository_full_name": {
+          "type": "string"
+        },
+        "branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "commit_sha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/gitSha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tree_sha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/gitSha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "archive_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "archive_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "dirty_worktree": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "executor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "operating_system": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "architecture": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "python_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dependency_manifest_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dependency_manifest_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "container_image": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "container_digest": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "environment_capture_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "secret_values_recorded": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "changes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "parent_record_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^prov_[a-z0-9][a-z0-9._-]*$"
+          }
+        },
+        "summary": {
+          "type": "string"
+        },
+        "files_changed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "patch_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "patch_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "uncommitted_changes_present": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_run",
+            "passed",
+            "failed",
+            "partial"
+          ]
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "command_manifest_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "log_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "log_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "artifact_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deployment_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "lifecycle": {
+          "type": "string",
+          "enum": [
+            "ephemeral",
+            "staging",
+            "production",
+            "retired",
+            "unknown"
+          ]
+        },
+        "deployed_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "health_status": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "healthy",
+            "degraded",
+            "offline"
+          ]
+        }
+      }
+    },
+    "testResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "test_id",
+        "category",
+        "status"
+      ],
+      "properties": {
+        "test_id": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "route_smoke",
+            "chat_smoke",
+            "unit",
+            "integration",
+            "consent",
+            "privacy",
+            "security",
+            "governance",
+            "worth",
+            "performance"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "passed",
+            "failed",
+            "partial",
+            "not_run"
+          ]
+        },
+        "executed_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "created_by",
+        "development_method",
+        "evidence"
+      ],
+      "properties": {
+        "created_by": {
+          "type": "string",
+          "const": "Steven Pritchard"
+        },
+        "development_method": {
+          "type": "string",
+          "const": "Human-directed collaboration with AI systems"
+        },
+        "ai_vessels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "role"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              },
+              "provider": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "model_or_agent": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "captured_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "location"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "git_commit",
+                  "archive",
+                  "diff",
+                  "build_log",
+                  "test_log",
+                  "deployment_report",
+                  "attestation",
+                  "screenshot",
+                  "other"
+                ]
+              },
+              "location": {
+                "type": "string"
+              },
+              "sha256": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/sha256"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "udsAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_assessed",
+            "pass",
+            "conditional",
+            "fail"
+          ]
+        },
+        "principles": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sovereignty": {
+              "$ref": "#/$defs/principleAssessment"
+            },
+            "transparency": {
+              "$ref": "#/$defs/principleAssessment"
+            },
+            "fairness_reciprocity": {
+              "$ref": "#/$defs/principleAssessment"
+            },
+            "consent": {
+              "$ref": "#/$defs/principleAssessment"
+            },
+            "non_harm": {
+              "$ref": "#/$defs/principleAssessment"
+            },
+            "accountability_auditability": {
+              "$ref": "#/$defs/principleAssessment"
+            },
+            "accessibility_equity": {
+              "$ref": "#/$defs/principleAssessment"
+            },
+            "dignity": {
+              "$ref": "#/$defs/principleAssessment"
+            }
+          }
+        }
+      }
+    },
+    "principleAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_assessed",
+            "pass",
+            "conditional",
+            "fail"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "record_sha256"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "unverified",
+            "verified",
+            "verification_failed"
+          ]
+        },
+        "canonicalization": {
+          "type": "string",
+          "const": "RFC8785-JCS"
+        },
+        "record_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "signature_type": {
+          "type": "string",
+          "enum": [
+            "none",
+            "git_commit_signature",
+            "minisign",
+            "cosign",
+            "gpg",
+            "other"
+          ]
+        },
+        "signature_location": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verified_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verified_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}
