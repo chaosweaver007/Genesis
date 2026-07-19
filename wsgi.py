@@ -1,4 +1,4 @@
-"""WSGI entrypoint for Vercel deployment."""
+"""WSGI entrypoint for the secured Genesis O-Series deployment."""
 
 import sys
 from pathlib import Path
@@ -16,6 +16,6 @@ def _add_project_to_path() -> None:
 
 _add_project_to_path()
 
-from collective_consciousness_home import app  # noqa: E402
+from o_series_app import app  # noqa: E402
 
-# The 'app' object is now exposed for the WSGI server to use.
+# The secured Flask app, including Gate 0 shadow routes, is exposed to WSGI.
