@@ -5,10 +5,7 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Optional
-
-from sarah_ai_implementation import SarahAI
-from steven_ai_implementation import StevenAI
+from typing import Dict
 
 from .schemas import IngressEnvelope
 
@@ -66,6 +63,11 @@ class PersonaModelAdapter(ModelAdapter):
     """Adapter around the repository's existing Steven and Sarah persona engines."""
 
     def __init__(self) -> None:
+        # Lazy imports keep Gate 0 tests and non-persona adapters free of persona-engine
+        # initialization side effects.
+        from sarah_ai_implementation import SarahAI
+        from steven_ai_implementation import StevenAI
+
         self._personas = {"steven": StevenAI(), "sarah": SarahAI()}
 
     def generate(self, *, system_context: str, envelope: IngressEnvelope) -> ModelResult:
