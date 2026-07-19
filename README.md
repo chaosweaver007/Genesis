@@ -1,71 +1,118 @@
 # Genesis
 
-Genesis is a Flask application deployed through Vercel using `wsgi.py`.
+Genesis is a Flask application with an isolated **O-Series Gate 0 shadow node**. The shadow node accepts private, text-only requests, performs deterministic ingress checks, allows at most one UDS revision, and returns a non-persistent witness receipt.
 
 ## Quick Start
 
 ### Prerequisites
 
 - Python 3.11+
-- SQLite3
-- Modern web browser
+- SQLite3 for local development only
+- A modern web browser or HTTP client
 
-### Windows PowerShell setup
-
-Run these commands from the folder where you want the repository to live, for example `C:\Users\chaos`.
+### Windows PowerShell
 
 ```powershell
 git clone https://github.com/chaosweaver007/Genesis.git
 cd .\Genesis
 
+git checkout agent/o-series-gate-zero
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
 py -m pip install --upgrade pip
 py -m pip install -r requirements.txt
 
+$env:FLASK_SECRET_KEY = (py -c "import secrets; print(secrets.token_hex(32))")
+$env:DATABASE_URL = "sqlite:///local_genesis_dev.db"
+
 cd .\Genesis
-py memory_integration_system.py
-py collective_consciousness_home.py
+py o_series_app.py
 ```
 
-If PowerShell blocks virtual environment activation, run this once for the current shell, then activate again:
+If PowerShell blocks virtual-environment activation, run this once in the current shell:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\.venv\Scripts\Activate.ps1
 ```
 
-Open your browser to:
-
-```text
-http://localhost:5003
-```
-
-### macOS/Linux setup
+### macOS/Linux
 
 ```bash
 git clone https://github.com/chaosweaver007/Genesis.git
 cd Genesis
 
+git checkout agent/o-series-gate-zero
 python3 -m venv .venv
 source .venv/bin/activate
 
 python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 
+export FLASK_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+export DATABASE_URL="sqlite:///local_genesis_dev.db"
+
 cd Genesis
-python3 memory_integration_system.py
-python3 collective_consciousness_home.py
+python3 o_series_app.py
 ```
 
-Open your browser to:
+Open the existing Genesis interface at:
 
 ```text
-http://localhost:5003
+http://127.0.0.1:5003
 ```
 
-## Project layout
+## Gate 0 API
+
+### Status
+
+```text
+GET /api/o-series/status
+```
+
+### Shadow chat
+
+```text
+POST /api/o-series/chat
+Content-Type: application/json
+```
+
+Example envelope:
+
+```json
+{
+  "request_id": "a48ae415-d666-446d-978a-e470c5e349b0",
+  "session_id": "41d768f8-82a1-43a1-b681-71c5d32d0421",
+  "message": "Describe Gate 0.",
+  "persona": "steven",
+  "consent_level": "private",
+  "collective_learning": false,
+  "pipeline_mode": "shadow"
+}
+```
+
+Every successful or rejected pipeline result includes a witness receipt. The receipt is returned to the caller and is not written to the collective-memory database.
+
+## Shadow-Node Boundaries
+
+- Text generation only
+- No tools, network actions, RTME calls, code execution, or financial mutation
+- Private consent only
+- Collective learning disabled
+- Conversation memory writes disabled
+- One post-generation revision maximum
+- Session UUID must match the Flask session boundary
+
+## Test the Trial Chamber
+
+```bash
+python -m compileall -q Genesis/o_series Genesis/o_series_app.py tests/test_o_series_gate_zero.py
+python -m unittest discover -s tests -p "test_o_series_gate_zero.py" -v
+```
+
+The Trial Chamber matrix contains 108 cases across privacy isolation, prompt injection, coercion and authority transfer, absolute-certainty reflection, normal assistance, and malformed or ambiguous ingress.
+
+## Project Layout
 
 ```text
 Genesis/
@@ -76,19 +123,36 @@ Genesis/
 ├── Genesis/
 │   ├── collective_consciousness_home.py
 │   ├── memory_integration_system.py
+│   ├── o_series_app.py
+│   ├── o_series/
+│   │   ├── pipeline.py
+│   │   ├── gate_zero.py
+│   │   ├── context_builder.py
+│   │   ├── model_adapter.py
+│   │   ├── uds_reflector.py
+│   │   ├── witness_receipt.py
+│   │   └── schemas.py
 │   ├── steven_ai_implementation.py
-│   ├── sarah_ai_implementation.py
-│   ├── unified_home.py
-│   └── templates/
+│   └── sarah_ai_implementation.py
+├── tests/
+│   ├── test_o_series_gate_zero.py
+│   └── trial_chamber_cases.json
 └── docs/
 ```
 
 ## Deployment
 
-The repository root contains `vercel.json` and `wsgi.py`. Vercel routes all requests to `wsgi.py`, which adds the nested `Genesis/` application directory to `sys.path` and exposes the Flask `app` object from `collective_consciousness_home.py`.
+`wsgi.py` imports the secured `o_series_app` entrypoint. Startup fails when `FLASK_SECRET_KEY` is missing or still set to the documented placeholder value.
+
+For Vercel deployment:
+
+- Set `FLASK_SECRET_KEY` in the deployment environment.
+- Set `DATABASE_URL` to durable external storage.
+- Do not use SQLite when `VERCEL=1`.
+- Keep the O-Series node in shadow mode until the Trial Chamber and review checks pass.
 
 ## Notes
 
-- Use `py -m pip` on Windows when the `pip` command is not available directly.
+- Use `py -m pip` on Windows when `pip` is unavailable as a direct command.
 - Runtime dependencies belong in the root `requirements.txt` file.
-- Do not commit local databases, generated bytecode, logs, API keys, or environment-specific secrets.
+- Never commit databases, generated bytecode, logs, API keys, environment-specific secrets, or witness-receipt archives.
