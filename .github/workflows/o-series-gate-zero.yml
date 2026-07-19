@@ -1,0 +1,40 @@
+name: O-Series Gate 0
+
+on:
+  push:
+    branches:
+      - agent/o-series-gate-zero
+  pull_request:
+    paths:
+      - "Genesis/o_series/**"
+      - "Genesis/o_series_app.py"
+      - "tests/test_o_series_gate_zero.py"
+      - "tests/trial_chamber_cases.json"
+      - "wsgi.py"
+      - "requirements.txt"
+      - ".github/workflows/o-series-gate-zero.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  trial-chamber:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install runtime dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements.txt
+
+      - name: Compile O-Series modules
+        run: python -m compileall -q Genesis/o_series Genesis/o_series_app.py tests/test_o_series_gate_zero.py
+
+      - name: Run Trial Chamber unit tests
+        run: python -m unittest discover -s tests -p "test_o_series_gate_zero.py" -v
