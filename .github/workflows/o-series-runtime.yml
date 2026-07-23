@@ -1,0 +1,58 @@
+name: Genesis O-Series Runtime
+
+on:
+  push:
+    branches:
+      - main
+      - fix/genesis-runtime-v0-1
+    paths:
+      - "Genesis/o_series/**"
+      - "Genesis/o_series_app.py"
+      - "tests/test_o_series_runtime.py"
+      - "wsgi.py"
+      - "requirements.txt"
+      - ".github/workflows/o-series-runtime.yml"
+  pull_request:
+    paths:
+      - "Genesis/o_series/**"
+      - "Genesis/o_series_app.py"
+      - "tests/test_o_series_runtime.py"
+      - "wsgi.py"
+      - "requirements.txt"
+      - ".github/workflows/o-series-runtime.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install runtime dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Compile secured runtime
+        run: python -m compileall -q Genesis/o_series Genesis/o_series_app.py wsgi.py tests/test_o_series_runtime.py
+
+      - name: Run O-Series runtime tests
+        run: python -m unittest tests.test_o_series_runtime -v
+
+      - name: Verify WSGI entrypoint
+        run: python -c "import wsgi; assert wsgi.app is not None"
