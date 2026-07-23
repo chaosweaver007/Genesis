@@ -26,7 +26,7 @@ class DeterministicIntentParser:
         r"\byou are the seer[, ]+decide\b",
     )
     _THIRD_PARTY_STATE_PATTERNS = (
-        r"\bwhat (?:does|is) [a-z][a-z' -]{1,40} (?:feel|feeling|think|thinking|want|wanting)\b",
+        r"\bwhat (?:does|is) [a-z][a-z' -]{1,40} (?:secretly |privately )?(?:feel|feeling|think|thinking|want|wanting)\b",
         r"\b(?:secretly|privately) (?:feels?|thinks?|wants?)\b",
         r"\bread (?:his|her|their|sarah(?:'s)?) mind\b",
         r"\btell me (?:his|her|their|sarah(?:'s)?) private (?:feelings|thoughts|intentions)\b",
@@ -78,17 +78,25 @@ class DeterministicIntentParser:
         overrides: dict[str, Any] | None = None,
     ) -> IntentContext:
         normalized = " ".join(message.lower().split())
+        third_party_private_state = self._matches(
+            normalized, self._THIRD_PARTY_STATE_PATTERNS
+        )
+        explicit_sarah_impersonation = self._matches(
+            normalized, self._HUMAN_SARAH_IMPERSONATION_PATTERNS
+        )
+        # Asking Sarah AI to state Human Sarah's unverified inner state is treated
+        # as speaking for her, even when the word "impersonate" is not used.
+        human_sarah_private_attribution = "sarah" in normalized and third_party_private_state
+
         context = IntentContext(
             message=message,
             current_response_processing_consent=consent.current_response_processing,
             verified_third_party_consent=consent.verified_third_party_consent,
             private_data_access_consent=consent.private_data_access,
             requests_binding_decision=self._matches(normalized, self._BINDING_DECISION_PATTERNS),
-            requests_third_party_private_state=self._matches(
-                normalized, self._THIRD_PARTY_STATE_PATTERNS
-            ),
-            requests_human_sarah_impersonation=self._matches(
-                normalized, self._HUMAN_SARAH_IMPERSONATION_PATTERNS
+            requests_third_party_private_state=third_party_private_state,
+            requests_human_sarah_impersonation=(
+                explicit_sarah_impersonation or human_sarah_private_attribution
             ),
             requests_private_memory_disclosure=self._matches(
                 normalized, self._PRIVATE_MEMORY_PATTERNS
