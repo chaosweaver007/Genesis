@@ -1,8 +1,8 @@
 """Structured Prime Refusal responses.
 
-Refusals preserve dignity and return a sovereign alternative. The engine uses the
-first failed hard gate as the primary reason while retaining the complete UDS
-decision summary for auditability.
+Refusals preserve dignity and return a sovereign alternative. The engine applies
+an explicit priority order so identity, safety, and privacy boundaries remain
+clear even when one request violates several gates at once.
 """
 
 from __future__ import annotations
@@ -33,6 +33,7 @@ class RefusalPayload:
                 self.recognition,
                 self.refusal,
                 self.explanation,
+                self.dignity,
                 self.law_anchor,
                 self.sovereign_path,
             )
@@ -46,6 +47,16 @@ class RefusalPayload:
 
 class PrimeRefusalEngine:
     """Convert a failed UDS decision into a deterministic refusal."""
+
+    _PRIORITY = (
+        GateName.SERVICE_TO_LIFE,
+        GateName.NON_IMPERSONATION,
+        GateName.PRIVACY,
+        GateName.CONSENT,
+        GateName.NON_COERCION,
+        GateName.SOVEREIGNTY,
+        GateName.TRUTHFULNESS,
+    )
 
     _RECOGNITION = {
         GateName.SOVEREIGNTY: "I recognize that you are seeking clear direction.",
@@ -71,7 +82,13 @@ class PrimeRefusalEngine:
         if decision.allowed:
             raise ValueError("Prime Refusal requires a failed UDS decision.")
 
-        primary = next(result for result in decision.gate_results if not result.passed)
+        failed = {
+            result.gate: result
+            for result in decision.gate_results
+            if not result.passed
+        }
+        primary_gate = next(gate for gate in self._PRIORITY if gate in failed)
+        primary = failed[primary_gate]
         return RefusalPayload(
             decision="refuse",
             gate=primary.gate.value,
