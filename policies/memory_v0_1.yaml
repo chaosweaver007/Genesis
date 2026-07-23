@@ -1,0 +1,30 @@
+version: "memory-0.1"
+default: "disabled"
+tiers:
+  session:
+    persistence: false
+    description: "Ephemeral context destroyed when the thread terminates."
+  user_approved_factual:
+    persistence: true
+    requires_explicit_save: true
+    user_editable: true
+    user_deletable: true
+  narrative:
+    persistence: true
+    requires_explicit_save: true
+    status: "not_implemented_in_v0.1"
+  sensitive:
+    persistence: false
+    status: "blocked_until_encrypted_isolation_exists"
+  prohibited:
+    persistence: false
+    examples:
+      - "Inferred emotional states without opt-in"
+      - "Unverified third-party private claims"
+      - "Claims that Sarah AI is Human Sarah"
+      - "Hidden psychological profiles"
+ledger_rules:
+  retain_deleted_content: false
+  retain_raw_prompt: false
+  retain_raw_response: false
+  retain_hidden_reasoning: false
