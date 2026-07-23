@@ -75,10 +75,15 @@ def validate_envelope(
         raise ValueError(f"message exceeds the {MAX_MESSAGE_LENGTH}-character limit.")
 
     persona = payload["persona"]
+    if not isinstance(persona, str):
+        raise ValueError("persona must be a string.")
     if persona not in ALLOWED_PERSONAS:
         raise ValueError(f"Prohibited Persona Value: {persona!r}.")
 
-    if payload["consent_level"] != "private":
+    consent_level = payload["consent_level"]
+    if not isinstance(consent_level, str):
+        raise ValueError("consent_level must be a string.")
+    if consent_level != "private":
         raise ValueError("Node Isolation Fault: consent_level must be 'private'.")
 
     collective_learning = payload.get("collective_learning", False)
@@ -86,6 +91,8 @@ def validate_envelope(
         raise ValueError("collective_learning must be a boolean.")
 
     pipeline_mode = payload.get("pipeline_mode", "shadow")
+    if not isinstance(pipeline_mode, str):
+        raise ValueError("pipeline_mode must be a string.")
     if pipeline_mode != "shadow":
         raise ValueError("Gate 0 is locked to shadow mode.")
 
