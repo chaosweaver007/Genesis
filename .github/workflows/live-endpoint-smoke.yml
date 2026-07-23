@@ -1,0 +1,45 @@
+name: Genesis Live Endpoint Smoke
+
+on:
+  pull_request:
+    paths:
+      - "Genesis/o_series/**"
+      - "Genesis/o_series_app.py"
+      - "tests/live_endpoint_smoke.py"
+      - "wsgi.py"
+      - ".github/workflows/live-endpoint-smoke.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "Genesis/o_series/**"
+      - "Genesis/o_series_app.py"
+      - "tests/live_endpoint_smoke.py"
+      - "wsgi.py"
+      - ".github/workflows/live-endpoint-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-smoke:
+    name: Exercise deployed Gate 0 contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      GENESIS_BASE_URL: ${{ vars.GENESIS_BASE_URL || 'https://genesis-seven-bice.vercel.app' }}
+      GENESIS_HEALTH_ATTEMPTS: "20"
+      GENESIS_HEALTH_RETRY_SECONDS: "15"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run black-box production smoke tests
+        run: python tests/live_endpoint_smoke.py
