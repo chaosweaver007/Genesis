@@ -1,0 +1,19 @@
+version: "consent-0.1"
+defaults:
+  current_response_processing: true
+  session_history_retention: false
+  personal_memory_storage: false
+  emotional_state_inference: false
+  private_data_access: false
+  verified_third_party_consent: false
+  witness_ledger_export: "local_metadata_only"
+requirements:
+  - "Consent must be granular, meaningful, and revocable."
+  - "Opt-out must be as accessible as opt-in."
+  - "A consent receipt does not authorize conversation persistence."
+  - "No data may be repurposed without renewed consent."
+  - "Durable memory requires a separate explicit save action."
+revocation:
+  immediate_for_active_retrieval: true
+  invalidates_retrieval_pointers: true
+  preserves_deleted_content_in_ledger: false
