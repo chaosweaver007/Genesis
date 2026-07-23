@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import logging
 from typing import Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
-from flask import Blueprint, Flask, jsonify, request, session
+from flask import Blueprint, Flask, jsonify, request
 
 from .pipeline import OSeriesPipeline
 
@@ -17,7 +17,7 @@ def register_o_series_routes(
     app: Flask,
     pipeline: Optional[OSeriesPipeline] = None,
 ) -> None:
-    """Register the isolated shadow endpoint once on a Flask application."""
+    """Register the isolated, stateless shadow endpoint once."""
 
     if "o_series" in app.blueprints:
         return
@@ -34,6 +34,7 @@ def register_o_series_routes(
                 "mode": "shadow",
                 "consent_level": "private",
                 "memory_write": "none",
+                "session_model": "stateless-request-envelope",
                 "tools": [],
                 "rtme": "disconnected",
             }
@@ -45,18 +46,8 @@ def register_o_series_routes(
         if not isinstance(payload, dict):
             return jsonify({"error": "Malformed Ingress Envelope: empty or invalid JSON."}), 400
 
-        payload_session_id = payload.get("session_id")
-        if "session_id" not in session:
-            try:
-                session["session_id"] = str(UUID(str(payload_session_id)))
-            except (ValueError, TypeError, AttributeError):
-                session["session_id"] = str(uuid4())
-
         try:
-            result = active_pipeline.run(
-                payload=payload,
-                session_id=session.get("session_id"),
-            )
+            result = active_pipeline.run(payload=payload, session_id=None)
             return jsonify(result.body), result.status_code
         except Exception:
             logger.exception("Unhandled O-Series pipeline exception")
