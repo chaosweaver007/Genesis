@@ -93,6 +93,39 @@ class OSeriesRuntimeTests(unittest.TestCase):
         self.assertEqual(result.status_code, 400)
         self.assertEqual(adapter.generate_calls, 0)
 
+    def test_non_string_persona_returns_400_without_generation(self) -> None:
+        app = Flask(__name__)
+        adapter = MockModelAdapter("Must not run.")
+        register_o_series_routes(app, OSeriesPipeline(adapter=adapter))
+        payload = valid_payload()
+        payload["persona"] = ["steven"]
+
+        with app.test_client() as client:
+            response = client.post("/api/o-series/chat", json=payload)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("persona must be a string", response.get_json()["error"])
+        self.assertEqual(adapter.generate_calls, 0)
+
+    def test_invalid_scalar_field_types_return_400(self) -> None:
+        adapter = MockModelAdapter("Must not run.")
+        pipeline = OSeriesPipeline(adapter=adapter)
+
+        cases = (
+            ("consent_level", {"private": True}, "consent_level must be a string"),
+            ("pipeline_mode", ["shadow"], "pipeline_mode must be a string"),
+            ("collective_learning", "false", "collective_learning must be a boolean"),
+        )
+        for field, value, expected in cases:
+            with self.subTest(field=field):
+                payload = valid_payload()
+                payload[field] = value
+                result = pipeline.run(payload=payload)
+                self.assertEqual(result.status_code, 400)
+                self.assertIn(expected, result.body["error"])
+
+        self.assertEqual(adapter.generate_calls, 0)
+
     def test_stateless_blueprint_status_and_chat_routes(self) -> None:
         app = Flask(__name__)
         adapter = MockModelAdapter("Route response.")
