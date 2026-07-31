@@ -38,6 +38,8 @@ def root():
             "node": "O-Series Gate 0",
             "status": "running",
             "mode": "private-shadow",
+            "pipeline_version": "o-series-0.1.1",
+            "policy_version": "uds-0.1.1",
             "memory_write": "none",
             "chat_endpoint": "/api/o-series/chat",
             "status_endpoint": "/api/o-series/status",
@@ -51,7 +53,8 @@ def health():
         {
             "status": "ok",
             "service": "genesis-o-series",
-            "pipeline_version": "o-series-0.1",
+            "pipeline_version": "o-series-0.1.1",
+            "policy_version": "uds-0.1.1",
         }
     )
 
