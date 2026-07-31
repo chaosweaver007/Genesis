@@ -20,10 +20,19 @@ REQUIRED_CONTEXT_SECTIONS = (
     "CONSENT_STATE",
     "PIPELINE_MODE",
 )
+RESERVED_CONTEXT_MARKERS = (
+    "GENESIS_SYSTEM_CONTEXT_V1",
+    "END_GENESIS_SYSTEM_CONTEXT",
+    "[USER_MESSAGE]",
+    "NON-USER AUTHORITY",
+)
+CONTEXT_CAPABILITY_ATTRIBUTE = "GENESIS_CONTEXT_CONSUMER"
 
 
 @dataclass(frozen=True)
 class ModelResult:
+    """Externally reportable model output plus non-sensitive provenance."""
+
     text: str
     provider: str
     model: str
@@ -49,29 +58,70 @@ def validate_system_context(system_context: str) -> str:
     return hashlib.sha256(system_context.encode("utf-8")).hexdigest()
 
 
+def _reject_reserved_context_markers(message: str) -> None:
+    """Prevent a user message from forging adapter-owned context boundaries."""
+
+    if any(marker in message for marker in RESERVED_CONTEXT_MARKERS):
+        raise ValueError("User message contains a reserved Genesis context marker.")
+
+
+def _invoke_native_context_consumer(
+    persona: Any,
+    *,
+    message: str,
+    system_context: str,
+    parameter_name: str,
+) -> Dict[str, Any]:
+    """Invoke an explicitly declared native consumer and verify its attestation."""
+
+    response = persona.generate_response(message, **{parameter_name: system_context})
+    if not isinstance(response, dict) or response.get("context_consumed") is not True:
+        raise ValueError(
+            "Persona declared native Genesis context support without attesting consumption."
+        )
+    return response
+
+
 def invoke_conditioned_persona(
     persona: Any,
     *,
     message: str,
     system_context: str,
 ) -> Tuple[Dict[str, Any], str]:
-    """Deliver system conditioning through the strongest supported interface.
+    """Deliver constitutional context through a verifiable interface.
 
-    Native ``system_context`` or ``context`` parameters are preferred. Legacy
-    persona engines receive an explicitly delimited, non-user-authority context
-    envelope rather than silently discarding the constitutional contract.
+    A persona may use a native ``system_context`` or ``context`` parameter only
+    when it explicitly declares ``GENESIS_CONTEXT_CONSUMER = True`` and returns
+    ``context_consumed: True``. Merely having a parameter is not evidence that
+    the persona reads it. Other persona engines receive an adapter-owned,
+    delimited context envelope that is included in the actual input they read.
     """
 
+    _reject_reserved_context_markers(message)
     generate_response = persona.generate_response
     parameters = inspect.signature(generate_response).parameters
+    native_capability = getattr(persona, CONTEXT_CAPABILITY_ATTRIBUTE, False) is True
 
-    if "system_context" in parameters:
+    if native_capability and "system_context" in parameters:
         return (
-            generate_response(message, system_context=system_context),
+            _invoke_native_context_consumer(
+                persona,
+                message=message,
+                system_context=system_context,
+                parameter_name="system_context",
+            ),
             "native-system-context",
         )
-    if "context" in parameters:
-        return generate_response(message, context=system_context), "native-context"
+    if native_capability and "context" in parameters:
+        return (
+            _invoke_native_context_consumer(
+                persona,
+                message=message,
+                system_context=system_context,
+                parameter_name="context",
+            ),
+            "native-context",
+        )
 
     conditioned_message = (
         "[GENESIS_SYSTEM_CONTEXT_V1 — NON-USER AUTHORITY]\n"
@@ -80,10 +130,15 @@ def invoke_conditioned_persona(
         "[USER_MESSAGE]\n"
         f"{message}"
     )
-    return generate_response(conditioned_message), "delimited-context-envelope"
+    response = generate_response(conditioned_message)
+    if not isinstance(response, dict):
+        raise ValueError("Persona engine returned a non-object response.")
+    return response, "delimited-context-envelope"
 
 
 class ModelAdapter(ABC):
+    """Abstract provider boundary for conditioned text generation."""
+
     @abstractmethod
     def generate(self, *, system_context: str, envelope: IngressEnvelope) -> ModelResult:
         """Generate a text-only candidate response."""
@@ -140,6 +195,8 @@ class PersonaModelAdapter(ModelAdapter):
         self._personas = {"steven": StevenAI(), "sarah": SarahAI()}
 
     def generate(self, *, system_context: str, envelope: IngressEnvelope) -> ModelResult:
+        """Generate only after validated context reaches the selected persona."""
+
         context_fingerprint = validate_system_context(system_context)
         persona = self._personas[envelope.persona]
         response, conditioning_mode = invoke_conditioned_persona(
@@ -178,6 +235,8 @@ class MockModelAdapter(ModelAdapter):
         self.revise_calls = 0
 
     def generate(self, *, system_context: str, envelope: IngressEnvelope) -> ModelResult:
+        """Return a deterministic candidate bound to the supplied context hash."""
+
         self.generate_calls += 1
         context_fingerprint = validate_system_context(system_context)
         return ModelResult(
@@ -200,6 +259,8 @@ class MockModelAdapter(ModelAdapter):
         system_context: str,
         envelope: IngressEnvelope,
     ) -> ModelResult:
+        """Count and perform one deterministic revision for regression tests."""
+
         self.revise_calls += 1
         return super().revise(
             original=original,
