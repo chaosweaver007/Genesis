@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from genesis_core.consent import ConsentState
 from genesis_core.orchestration import GenesisPipeline
@@ -14,7 +14,7 @@ from genesis_core.orchestration.pipeline import SARAH_IDENTITY_DISCLOSURE
 
 app = FastAPI(
     title="Genesis Kernel",
-    version="0.1.0",
+    version="0.1.1",
     description=(
         "Privacy-first Sarah AI request pipeline with deterministic UDS gates, "
         "Prime Refusal, provider-neutral model invocation, and metadata-only audit events."
@@ -25,6 +25,8 @@ pipeline = GenesisPipeline()
 
 class ConsentPayload(BaseModel):
     """Granular per-request consent with maximum-privacy defaults."""
+
+    model_config = ConfigDict(extra="forbid")
 
     current_response_processing: bool = True
     session_history_retention: bool = False
@@ -39,17 +41,20 @@ class ConsentPayload(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    """One request entering the complete constitutional pipeline."""
+    """One untrusted public request entering the constitutional pipeline."""
+
+    # Public callers may provide content, request correlation, and consent only.
+    # Constitutional facts are derived by the server and cannot be overridden.
+    model_config = ConfigDict(extra="forbid")
 
     message: str = Field(min_length=1, max_length=20_000)
     request_id: str | None = None
     consent: ConsentPayload = Field(default_factory=ConsentPayload)
-    intent_overrides: dict[str, bool] | None = None
 
 
 @app.get("/health")
 def health() -> dict[str, str]:
-    return {"status": "ok", "kernel": "genesis-0.1", "policy": "uds-0.1"}
+    return {"status": "ok", "kernel": "genesis-0.1.1", "policy": "uds-0.1"}
 
 
 @app.get("/v0.1/identity")
@@ -63,7 +68,6 @@ def chat(payload: ChatRequest) -> dict[str, Any]:
         payload.message,
         request_id=payload.request_id,
         consent=payload.consent.to_domain(),
-        intent_overrides=payload.intent_overrides,
     )
     return result.to_dict()
 
