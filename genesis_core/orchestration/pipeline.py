@@ -83,8 +83,16 @@ class GenesisPipeline:
         *,
         consent: ConsentState | None = None,
         request_id: str | None = None,
-        intent_overrides: dict[str, Any] | None = None,
+        trusted_intent_restrictions: Mapping[str, bool] | None = None,
     ) -> PipelineResult:
+        """Process one request through the constitutional pipeline.
+
+        ``trusted_intent_restrictions`` is an internal server-side channel. The
+        parser treats it monotonically: recognized truthy values can add risk,
+        while false values and unknown keys can never downgrade detected facts.
+        This argument must not be exposed through a public request schema.
+        """
+
         consent = consent or ConsentState()
         request_id = request_id or str(uuid.uuid4())
 
@@ -101,7 +109,7 @@ class GenesisPipeline:
             context = self.parser.parse(
                 message,
                 consent=consent,
-                overrides=intent_overrides,
+                restrictions=trusted_intent_restrictions,
             )
 
         decision = self.kernel.evaluate(context)
