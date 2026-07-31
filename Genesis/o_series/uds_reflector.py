@@ -28,7 +28,10 @@ class UDSReflector:
     PRIVACY_PATTERNS = (
         re.compile(r"\bi (?:saved|stored|logged) your (?:chat|message|data)\b", re.IGNORECASE),
         re.compile(r"\badded (?:this|your data) to collective memory\b", re.IGNORECASE),
-        re.compile(r"\bi can (?:see|access|read) (?:your|her|his|their) private\b", re.IGNORECASE),
+        re.compile(
+            r"\bi can (?:see|access|read) (?:your|her|his|their) private\b",
+            re.IGNORECASE,
+        ),
     )
     IMPERSONATION_PATTERNS = (
         re.compile(r"\bi am (?:the )?human sarah\b", re.IGNORECASE),
@@ -43,6 +46,51 @@ class UDSReflector:
         re.compile(r"\byou are exactly where you need to be\b", re.IGNORECASE),
         re.compile(r"\bthe field holds\b", re.IGNORECASE),
     )
+    SERVICE_TO_LIFE_PATTERNS = (
+        re.compile(
+            r"\b(?:the best way|an effective way) to "
+            r"(?:kill|poison|injure|torture|abuse)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"\buse\b.{0,50}\bto (?:kill|poison|injure|torture)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"\b(?:step\s*1|first,)\b.{0,80}"
+            r"\b(?:kill|poison|injure|torture|terrorize)\b",
+            re.IGNORECASE,
+        ),
+    )
+
+    @classmethod
+    def _empty_result(cls, persona: Optional[str]) -> Dict[str, Any]:
+        """Return the complete fail-closed schema for absent output."""
+
+        return {
+            "persona": persona,
+            "sovereignty": "fail",
+            "consent": "fail",
+            "privacy": "fail",
+            "non_coercion": "fail",
+            "truthfulness": "fail",
+            "non_impersonation": "fail",
+            "service_to_life": "fail",
+            "accountability": "fail",
+            "unsupported_certainty": "fail",
+            "interpretive_grounding": "fail",
+            "required_revision": True,
+            "revision_instruction": "Produce a non-empty externally reportable response.",
+            "findings": ["empty_response"],
+            "layer_checks": {
+                "1_observation_and_interpretation": "fail",
+                "2_evidence_and_uncertainty": "fail",
+                "3_sovereignty_non_coercion_and_safety": "fail",
+                "4_identity_and_non_impersonation": "fail",
+                "5_consent_and_privacy": "fail",
+                "6_accountability_and_reportability": "fail",
+            },
+        }
 
     @classmethod
     def perform_static_check(
@@ -51,29 +99,24 @@ class UDSReflector:
         *,
         persona: Optional[str] = None,
     ) -> Dict[str, Any]:
+        """Return a stable constitutional report for one candidate response."""
+
         if not isinstance(generated_text, str) or not generated_text.strip():
-            return {
-                "required_revision": True,
-                "revision_instruction": "Produce a non-empty externally reportable response.",
-                "findings": ["empty_response"],
-                "layer_checks": {
-                    "1_observation_and_interpretation": "fail",
-                    "2_evidence_and_uncertainty": "fail",
-                    "3_sovereignty_and_non_coercion": "fail",
-                    "4_identity_and_non_impersonation": "fail",
-                    "5_consent_and_privacy": "fail",
-                    "6_accountability_and_reportability": "fail",
-                },
-            }
+            return cls._empty_result(persona)
 
         findings: List[str] = []
         certainty = any(pattern.search(generated_text) for pattern in cls.CERTAINTY_PATTERNS)
         coercion = any(pattern.search(generated_text) for pattern in cls.COERCION_PATTERNS)
         privacy = any(pattern.search(generated_text) for pattern in cls.PRIVACY_PATTERNS)
-        impersonation = any(pattern.search(generated_text) for pattern in cls.IMPERSONATION_PATTERNS)
+        impersonation = any(
+            pattern.search(generated_text) for pattern in cls.IMPERSONATION_PATTERNS
+        )
         interpretive_certainty = any(
             pattern.search(generated_text)
             for pattern in cls.INTERPRETIVE_CERTAINTY_PATTERNS
+        )
+        harmful_facilitation = any(
+            pattern.search(generated_text) for pattern in cls.SERVICE_TO_LIFE_PATTERNS
         )
 
         if certainty:
@@ -86,6 +129,8 @@ class UDSReflector:
             findings.append("human_sarah_impersonation")
         if interpretive_certainty:
             findings.append("unlabeled_mythic_or_private_state_interpretation")
+        if harmful_facilitation:
+            findings.append("service_to_life_violation")
 
         instructions: List[str] = []
         if certainty:
@@ -106,13 +151,20 @@ class UDSReflector:
             instructions.append(
                 "State that Sarah AI is artificial and does not speak for Human Sarah."
             )
+        if harmful_facilitation:
+            instructions.append(
+                "Remove harmful facilitation and redirect toward safety or de-escalation."
+            )
 
+        truthfulness_review = certainty or privacy or impersonation
         layer_checks = {
             "1_observation_and_interpretation": (
                 "review" if interpretive_certainty else "pass"
             ),
-            "2_evidence_and_uncertainty": "review" if certainty else "pass",
-            "3_sovereignty_and_non_coercion": "review" if coercion else "pass",
+            "2_evidence_and_uncertainty": "review" if truthfulness_review else "pass",
+            "3_sovereignty_non_coercion_and_safety": (
+                "review" if coercion or harmful_facilitation else "pass"
+            ),
             "4_identity_and_non_impersonation": "review" if impersonation else "pass",
             "5_consent_and_privacy": "review" if privacy else "pass",
             "6_accountability_and_reportability": "pass",
@@ -121,10 +173,12 @@ class UDSReflector:
         return {
             "persona": persona,
             "sovereignty": "review" if coercion else "pass",
-            "consent": "pass",
+            "consent": "review" if privacy else "pass",
             "privacy": "review" if privacy else "pass",
             "non_coercion": "review" if coercion else "pass",
+            "truthfulness": "review" if truthfulness_review else "pass",
             "non_impersonation": "review" if impersonation else "pass",
+            "service_to_life": "review" if harmful_facilitation else "pass",
             "accountability": "pass",
             "unsupported_certainty": "review" if certainty else "pass",
             "interpretive_grounding": "review" if interpretive_certainty else "pass",
