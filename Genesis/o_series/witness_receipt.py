@@ -23,7 +23,11 @@ def create_witness_receipt(
     context_sha256: Optional[str] = None,
     conditioning_mode: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Return trace metadata without writing content to disk or collective memory."""
+    """Return metadata-only provenance for one externally reportable response.
+
+    The receipt stores hashes and bounded execution metadata, never the raw
+    prompt, response, constitutional context, or hidden reasoning.
+    """
 
     return {
         "trace_id": f"syn-{uuid4()}",
