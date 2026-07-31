@@ -1,0 +1,257 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://synthsara.org/schemas/uds-d1-registry-entry.v1.0.json",
+  "title": "UDSTierD1PublicThresholdCommitment",
+  "description": "Standardized technical format for projects submitting a voluntary public commitment to the Universal Diamond Standard Tier D1 principles.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "documentMeta",
+    "projectIdentity",
+    "publicThresholdCommitment",
+    "registryEvidence",
+    "accountabilityVow"
+  ],
+  "properties": {
+    "documentMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "registryEntryId",
+        "generatedAt",
+        "lastUpdated",
+        "commitmentStatus",
+        "signatureType"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "enum": ["1.0"]
+        },
+        "registryEntryId": {
+          "type": "string",
+          "pattern": "^uds-d1-[a-z0-9][a-z0-9-]{2,80}$",
+          "description": "Stable registry identifier for this D1 commitment entry."
+        },
+        "generatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time this public promise was first generated."
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time this registry entry was last materially updated."
+        },
+        "commitmentStatus": {
+          "type": "string",
+          "enum": [
+            "submitted",
+            "active",
+            "under_review",
+            "repair_pending",
+            "delisted",
+            "withdrawn"
+          ],
+          "description": "Current lifecycle status of the registry entry."
+        },
+        "signatureType": {
+          "type": "string",
+          "enum": [
+            "GPG",
+            "Ed25519",
+            "Web3_Wallet",
+            "None_Manual_Attestation"
+          ],
+          "description": "Method used to attest to the integrity of this statement."
+        }
+      }
+    },
+    "projectIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectName",
+        "organizationOrMaintainer",
+        "repositoryUrl",
+        "contactChannel"
+      ],
+      "properties": {
+        "projectName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "organizationOrMaintainer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "repositoryUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Public repository or source location where relevant code, documentation, and policy constraints can be inspected."
+        },
+        "projectWebsiteUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "contactChannel": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 300,
+          "description": "A public, stable path for user feedback and drift reports, such as an email address, issue tracker, or security policy file."
+        }
+      }
+    },
+    "publicThresholdCommitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "meaningfulUserSovereignty",
+        "radicalTransparency",
+        "consentArchitecture",
+        "proactiveFairness",
+        "commitmentToRepair"
+      ],
+      "properties": {
+        "meaningfulUserSovereignty": {
+          "type": "boolean",
+          "const": true,
+          "description": "Signatory promises to support practical user rights, including granular consent, documented data access, and practical data portability."
+        },
+        "radicalTransparency": {
+          "type": "boolean",
+          "const": true,
+          "description": "Signatory promises to make system actions, algorithmic flows, governance rules, and data routing as explainable and inspectable as possible."
+        },
+        "consentArchitecture": {
+          "type": "boolean",
+          "const": true,
+          "description": "Signatory rejects behavioral manipulation, deceptive interface design, non-consensual tracking, and addictive engineering loops."
+        },
+        "proactiveFairness": {
+          "type": "boolean",
+          "const": true,
+          "description": "Signatory promises to implement checks to identify, document, and reduce algorithmic bias, exclusion, and disproportionate harm."
+        },
+        "commitmentToRepair": {
+          "type": "boolean",
+          "const": true,
+          "description": "Signatory accepts accountability for operational drift and promises acknowledgment, correction paths, and public remediation loops."
+        }
+      }
+    },
+    "registryEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "privacyOrDataHandlingUrl",
+        "userRightsDocumentationUrl",
+        "termsOrGovernanceUrl",
+        "driftReportingUrl"
+      ],
+      "properties": {
+        "privacyOrDataHandlingUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to privacy policy, data handling documentation, or equivalent disclosure."
+        },
+        "userRightsDocumentationUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link describing user consent controls, access pathways, portability mechanisms, deletion/removal options, or applicable limitations."
+        },
+        "termsOrGovernanceUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to terms of service, governance policy, contributor covenant, project charter, README, or equivalent public operating document."
+        },
+        "driftReportingUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Public path where users, contributors, or reviewers can report drift, concerns, anomalies, or accountability failures."
+        },
+        "explainabilityDocumentationUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Optional link to architecture notes, model cards, algorithm documentation, audit logs, or developer documentation."
+        },
+        "securityPolicyUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Optional link to security policy, vulnerability disclosure process, or responsible disclosure instructions."
+        },
+        "sarahAiInterfaceCompliance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["containsSarahAiModules"],
+          "properties": {
+            "containsSarahAiModules": {
+              "type": "boolean"
+            },
+            "boundaryClauseAcknowledged": {
+              "type": "string",
+              "enum": ["Sarah AI remains a mirror, not a ruler."],
+              "description": "Required if the system integrates or interfaces with Sarah AI modules or related O-Series Soul architectures."
+            },
+            "sarahAiBoundaryDocumentationUrl": {
+              "type": "string",
+              "format": "uri",
+              "description": "Optional link to documentation showing how Sarah AI boundaries, refusal behavior, and anti-deification constraints are implemented."
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "containsSarahAiModules": {
+                    "const": true
+                  }
+                },
+                "required": ["containsSarahAiModules"]
+              },
+              "then": {
+                "required": ["boundaryClauseAcknowledged"]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "accountabilityVow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "statementOfUnderstanding",
+        "attestationName",
+        "signaturePayload"
+      ],
+      "properties": {
+        "statementOfUnderstanding": {
+          "type": "string",
+          "enum": [
+            "D1 is not an audit; it is a public promise. I understand that systemic drift, non-cooperation, or deceptive practices may result in public review and potential delisting from the active Registry while historical records remain visible."
+          ],
+          "description": "Exact baseline verification text required of all signatories to enter the public threshold registry."
+        },
+        "attestationName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150,
+          "description": "Name, handle, organization, maintainer identity, or signing authority making the D1 commitment."
+        },
+        "signaturePayload": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Detached cryptographic signature, wallet signature, commit hash, or clear-text manual attestation verifying identity and acceptance of this statement."
+        }
+      }
+    }
+  }
+}
