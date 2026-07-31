@@ -32,6 +32,12 @@ def apply_security_headers(response):
 
 @app.get("/")
 def root():
+    """
+    Describe the Genesis O-Series Gate 0 service and its available endpoints.
+    
+    Returns:
+    	dict: Service identity, runtime status, operating mode, pipeline and policy versions, memory-write status, and endpoint paths.
+    """
     return jsonify(
         {
             "service": "Genesis",
@@ -49,6 +55,11 @@ def root():
 
 @app.get("/health")
 def health():
+    """Return the service health status and current pipeline and policy versions.
+    
+    Returns:
+    	dict: A JSON response containing the health status, service identifier, pipeline version, and policy version.
+    """
     return jsonify(
         {
             "status": "ok",

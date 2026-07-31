@@ -31,10 +31,17 @@ class ModelResult:
 
 
 def validate_system_context(system_context: str) -> str:
-    """Fail closed when required constitutional context is absent.
-
-    Returns a stable fingerprint so Witness metadata can prove which context
-    entered the adapter without storing the context itself.
+    """
+    Validate that the Genesis system context contains all required sections.
+    
+    Parameters:
+        system_context (str): Constitutional context supplied for generation.
+    
+    Returns:
+        str: SHA-256 fingerprint of the validated context.
+    
+    Raises:
+        ValueError: If the context is missing, empty, or incomplete.
     """
 
     if not isinstance(system_context, str) or not system_context.strip():
@@ -55,11 +62,15 @@ def invoke_conditioned_persona(
     message: str,
     system_context: str,
 ) -> Tuple[Dict[str, Any], str]:
-    """Deliver system conditioning through the strongest supported interface.
-
-    Native ``system_context`` or ``context`` parameters are preferred. Legacy
-    persona engines receive an explicitly delimited, non-user-authority context
-    envelope rather than silently discarding the constitutional contract.
+    """
+    Deliver system conditioning through the strongest interface supported by a persona engine.
+    
+    Parameters:
+        message (str): The user message to provide to the persona.
+        system_context (str): The constitutional context used to condition the response.
+    
+    Returns:
+        Tuple[Dict[str, Any], str]: The persona response and the conditioning mode used.
     """
 
     generate_response = persona.generate_response
@@ -86,7 +97,19 @@ def invoke_conditioned_persona(
 class ModelAdapter(ABC):
     @abstractmethod
     def generate(self, *, system_context: str, envelope: IngressEnvelope) -> ModelResult:
-        """Generate a text-only candidate response."""
+        """
+        Generate a candidate response using the selected persona and system context.
+        
+        Parameters:
+            system_context (str): Validated constitutional context used to condition generation.
+            envelope (IngressEnvelope): Ingress request containing the persona selection and message.
+        
+        Returns:
+            ModelResult: Generated response with provider, model, conditioning, and context metadata.
+        
+        Raises:
+            ValueError: If the system context or persona response is invalid.
+        """
 
     def revise(
         self,
@@ -96,7 +119,16 @@ class ModelAdapter(ABC):
         system_context: str,
         envelope: IngressEnvelope,
     ) -> ModelResult:
-        """Apply one bounded, deterministic revision cycle."""
+        """
+        Apply a deterministic revision to the response text using bounded wording changes.
+        
+        Parameters:
+            original (ModelResult): The response to revise.
+            revision_instruction (str): The instruction recorded with the revision metadata.
+        
+        Returns:
+            ModelResult: A revised result preserving the original provider, model, and metadata.
+        """
 
         replacements = {
             r"\bunquestionable fact\b": "explicit metaphysical claim",
@@ -140,6 +172,19 @@ class PersonaModelAdapter(ModelAdapter):
         self._personas = {"steven": StevenAI(), "sarah": SarahAI()}
 
     def generate(self, *, system_context: str, envelope: IngressEnvelope) -> ModelResult:
+        """
+        Generate a persona response conditioned by the validated system context.
+        
+        Parameters:
+            system_context (str): Required constitutional context used to condition generation.
+            envelope (IngressEnvelope): Request containing the selected persona and message.
+        
+        Returns:
+            ModelResult: The generated response with persona and context-consumption metadata.
+        
+        Raises:
+            ValueError: If the system context is invalid or the persona engine returns an invalid response.
+        """
         context_fingerprint = validate_system_context(system_context)
         persona = self._personas[envelope.persona]
         response, conditioning_mode = invoke_conditioned_persona(
@@ -178,6 +223,16 @@ class MockModelAdapter(ModelAdapter):
         self.revise_calls = 0
 
     def generate(self, *, system_context: str, envelope: IngressEnvelope) -> ModelResult:
+        """
+        Generate a deterministic mock model result after validating the system context.
+        
+        Parameters:
+            system_context (str): Constitutional context required for generation.
+            envelope (IngressEnvelope): Request envelope associated with the generation.
+        
+        Returns:
+            ModelResult: The configured response with mock provider metadata and context fingerprint.
+        """
         self.generate_calls += 1
         context_fingerprint = validate_system_context(system_context)
         return ModelResult(

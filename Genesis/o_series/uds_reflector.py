@@ -51,6 +51,18 @@ class UDSReflector:
         *,
         persona: Optional[str] = None,
     ) -> Dict[str, Any]:
+        """
+        Perform deterministic constitutional checks on externally reportable text.
+        
+        Parameters:
+        	generated_text (str): Text to evaluate for certainty, coercion, privacy,
+        		impersonation, and interpretive-grounding concerns.
+        	persona (Optional[str]): Optional persona identifier included in the result.
+        
+        Returns:
+        	Dict[str, Any]: Check results containing findings, revision requirements,
+        	status fields, and the six constitutional layer checks.
+        """
         if not isinstance(generated_text, str) or not generated_text.strip():
             return {
                 "required_revision": True,

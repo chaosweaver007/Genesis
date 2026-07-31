@@ -23,7 +23,24 @@ def create_witness_receipt(
     context_sha256: Optional[str] = None,
     conditioning_mode: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Return trace metadata without writing content to disk or collective memory."""
+    """
+    Create trace metadata for a response without persisting content.
+    
+    Parameters:
+        response_text (str): Response text used to compute its SHA-256 hash.
+        gate_zero (str): Gate value recorded in the receipt.
+        reflection (str): Reflection value recorded in the receipt.
+        consent_level (str): Consent level associated with the response.
+        tools_used (Optional[Iterable[str]]): Tools used during response generation.
+        model_provider (Optional[str]): Model provider associated with the response.
+        model_name (Optional[str]): Model name associated with the response.
+        context_sha256 (Optional[str]): SHA-256 hash of the response context.
+        conditioning_mode (Optional[str]): Conditioning mode used for the response.
+    
+    Returns:
+        Dict[str, Any]: Trace receipt containing identifiers, timestamps, version metadata,
+        response metadata, and the response SHA-256 hash.
+    """
 
     return {
         "trace_id": f"syn-{uuid4()}",

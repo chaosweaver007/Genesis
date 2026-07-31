@@ -25,10 +25,16 @@ class OSeriesPipeline:
         session_id: Optional[str] = None,
         trusted_restrictions: Optional[Mapping[str, Any]] = None,
     ) -> PipelineResult:
-        """Execute one stateless request.
-
-        ``trusted_restrictions`` is an internal server-side channel. The public
-        Flask route never accepts or forwards it. Gate Zero treats it as add-only.
+        """
+        Process a stateless request through validation, Gate 0 evaluation, model generation, reflection, and bounded revision.
+        
+        Parameters:
+            payload (Mapping[str, Any]): Request data to validate and process.
+            session_id (Optional[str]): Server-provided session identifier used during envelope validation.
+            trusted_restrictions (Optional[Mapping[str, Any]]): Internal server-side restrictions added during Gate 0 evaluation.
+        
+        Returns:
+            PipelineResult: The response body and HTTP status for the validation, policy, generation, or reflection outcome.
         """
 
         try:

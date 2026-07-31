@@ -54,7 +54,23 @@ def validate_envelope(
     payload: Mapping[str, Any],
     server_session_id: Optional[str] = None,
 ) -> IngressEnvelope:
-    """Validate and freeze an ingress request without silently rewriting it."""
+    """
+    Validate and construct an immutable ingress envelope.
+    
+    Parameters:
+        payload (Mapping[str, Any]): Ingress data containing the required and
+            supported fields.
+        server_session_id (Optional[str]): Expected session UUID when requests
+            must belong to a specific server session.
+    
+    Returns:
+        IngressEnvelope: The validated ingress request with normalized message
+            content and UTC timestamp.
+    
+    Raises:
+        ValueError: If the payload is malformed, contains unsupported or missing
+            fields, fails validation, or does not match the server session.
+    """
 
     if not isinstance(payload, Mapping):
         raise ValueError("Malformed Ingress Envelope: expected a JSON object.")

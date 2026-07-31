@@ -52,6 +52,15 @@ class GateZero:
 
     @staticmethod
     def _matches_any(message: str, patterns: Iterable[re.Pattern[str]]) -> bool:
+        """Determine whether a message matches any of the supplied patterns.
+        
+        Parameters:
+            message (str): The message to search.
+            patterns (Iterable[re.Pattern[str]]): Regular expression patterns to apply.
+        
+        Returns:
+            bool: `true` if any pattern matches the message, `false` otherwise.
+        """
         return any(pattern.search(message) for pattern in patterns)
 
     @classmethod
@@ -61,7 +70,17 @@ class GateZero:
         reasons: list[str],
         trusted_restrictions: Optional[Mapping[str, Any]],
     ) -> None:
-        """Apply server-authored restrictions without permitting downgrades."""
+        """
+        Apply trusted server restrictions to the gate results without clearing existing failures.
+        
+        Parameters:
+            gates (Dict[str, str]): Gate statuses to update.
+            reasons (list[str]): Failure reasons to extend when restrictions add failures.
+            trusted_restrictions (Optional[Mapping[str, Any]]): Server-provided gate restrictions; only explicit `True` values for known gates are applied.
+        
+        Raises:
+            ValueError: If `trusted_restrictions` is not a mapping.
+        """
 
         if trusted_restrictions is None:
             return
@@ -86,6 +105,16 @@ class GateZero:
         *,
         trusted_restrictions: Optional[Mapping[str, Any]] = None,
     ) -> Dict[str, Any]:
+        """
+        Evaluate an ingress envelope against the private shadow node's safety gates.
+        
+        Parameters:
+            envelope (IngressEnvelope): The request envelope to validate.
+            trusted_restrictions (Optional[Mapping[str, Any]]): Optional trusted restrictions that can add failures to known gates.
+        
+        Returns:
+            Dict[str, Any]: A decision containing the outcome, gate states, rejection reasons, and a monotonic enforcement indicator.
+        """
         gates = {gate_name: "pass" for gate_name in cls.GATE_NAMES}
         reasons: list[str] = []
 

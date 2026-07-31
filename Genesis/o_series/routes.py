@@ -17,7 +17,13 @@ def register_o_series_routes(
     app: Flask,
     pipeline: Optional[OSeriesPipeline] = None,
 ) -> None:
-    """Register the isolated, stateless shadow endpoint once."""
+    """
+    Register the O-Series API routes on the Flask application once.
+    
+    Parameters:
+    	app (Flask): Application on which to register the routes.
+    	pipeline (Optional[OSeriesPipeline]): Pipeline used to process chat requests. A default pipeline is created when omitted.
+    """
 
     if "o_series" in app.blueprints:
         return
@@ -27,6 +33,13 @@ def register_o_series_routes(
 
     @blueprint.get("/api/o-series/status")
     def o_series_status():
+        """
+        Provide the current O-Series Gate 0 status and policy metadata.
+        
+        Returns:
+            JSON response containing pipeline and policy versions, operating mode,
+            consent level, session model, enabled gates, and resource states.
+        """
         return jsonify(
             {
                 "node": "Genesis O-Series Gate 0",
@@ -45,6 +58,17 @@ def register_o_series_routes(
 
     @blueprint.post("/api/o-series/chat")
     def o_series_chat():
+        """
+        Process an O-Series chat request through the active pipeline.
+        
+        Parameters:
+            None.
+        
+        Returns:
+            tuple: A JSON response containing the pipeline result and its HTTP status code,
+                or a 400 response for invalid JSON and a 500 response for unexpected
+                pipeline failures.
+        """
         payload = request.get_json(silent=True)
         if not isinstance(payload, dict):
             return jsonify({"error": "Malformed Ingress Envelope: empty or invalid JSON."}), 400
