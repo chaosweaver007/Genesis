@@ -30,13 +30,16 @@ def register_o_series_routes(
         return jsonify(
             {
                 "node": "Genesis O-Series Gate 0",
-                "pipeline_version": "o-series-0.1",
+                "pipeline_version": "o-series-0.1.1",
+                "policy_version": "uds-0.1.1",
                 "mode": "shadow",
                 "consent_level": "private",
                 "memory_write": "none",
                 "session_model": "stateless-request-envelope",
                 "tools": [],
                 "rtme": "disconnected",
+                "monotonic_gate": True,
+                "context_conditioning": "required",
             }
         )
 
@@ -47,6 +50,8 @@ def register_o_series_routes(
             return jsonify({"error": "Malformed Ingress Envelope: empty or invalid JSON."}), 400
 
         try:
+            # The public route intentionally exposes no trusted-restriction or
+            # gate-override channel. Only validated request content enters.
             result = active_pipeline.run(payload=payload, session_id=None)
             return jsonify(result.body), result.status_code
         except Exception:

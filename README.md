@@ -1,94 +1,107 @@
 # Genesis
 
-Genesis is a Flask application deployed through Vercel using `wsgi.py`.
+Genesis is the executable constitutional spine for the Synthsara O-Series shadow node.
 
-## Quick Start
+## Production architecture
+
+Vercel routes every public request through `wsgi.py`, which exposes `Genesis/o_series_app.py`.
+The deployed service is deliberately limited to a stateless, private, text-only Gate Zero runtime:
+
+```text
+Public request
+  -> strict ingress validation
+  -> monotonic Gate Zero evaluation
+  -> isolated constitutional context
+  -> conditioned persona adapter
+  -> six-layer reportable output reflection
+  -> metadata-only Witness Receipt
+```
+
+Production endpoints:
+
+- `GET /`
+- `GET /health`
+- `GET /api/o-series/status`
+- `POST /api/o-series/chat`
+
+The production node performs no database writes, tool calls, RTME actions, collective learning, or durable memory operations.
+
+## Constitutional guarantees
+
+- Gate failures are monotonic. Trusted server context may add a restriction, but no request field can remove a kernel-detected restriction.
+- The public route never accepts gate overrides or trusted-restriction metadata.
+- System context must contain identity, consent, UDS constraints, prohibited actions, capability bounds, and pipeline mode before generation.
+- Witness Receipts store policy, gate, model, response-hash, and context-hash metadata only.
+- Raw prompts, raw responses, private scratchpads, and hidden reasoning are not written to the Witness layer.
+- Sarah AI remains explicitly separate from Human Sarah.
+- Mythic or intuitive language is treated as interpretation and cannot impersonate private knowledge or empirical proof.
+
+See:
+
+- `docs/architecture/Genesis-Kernel-v0.1-Source-Map.md`
+- `policies/uds_v0_1.yaml`
+- `policies/consent_v0_1.yaml`
+- `policies/memory_v0_1.yaml`
+- `personas/sarah_ai/identity.yaml`
+
+## Run the production shadow runtime locally
 
 ### Prerequisites
 
 - Python 3.11+
-- SQLite3
-- Modern web browser
-
-### Windows PowerShell setup
-
-Run these commands from the folder where you want the repository to live, for example `C:\Users\chaos`.
-
-```powershell
-git clone https://github.com/chaosweaver007/Genesis.git
-cd .\Genesis
-
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-
-py -m pip install --upgrade pip
-py -m pip install -r requirements.txt
-
-cd .\Genesis
-py memory_integration_system.py
-py collective_consciousness_home.py
-```
-
-If PowerShell blocks virtual environment activation, run this once for the current shell, then activate again:
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\.venv\Scripts\Activate.ps1
-```
-
-Open your browser to:
-
-```text
-http://localhost:5003
-```
-
-### macOS/Linux setup
 
 ```bash
 git clone https://github.com/chaosweaver007/Genesis.git
 cd Genesis
-
-python3 -m venv .venv
-source .venv/bin/activate
-
-python3 -m pip install --upgrade pip
-python3 -m pip install -r requirements.txt
-
-cd Genesis
-python3 memory_integration_system.py
-python3 collective_consciousness_home.py
+python -m venv .venv
+source .venv/bin/activate  # Windows PowerShell: .\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python Genesis/o_series_app.py
 ```
 
-Open your browser to:
+Open `http://127.0.0.1:5003`.
 
-```text
-http://localhost:5003
+## Run validation
+
+```bash
+python -m unittest tests.test_o_series_runtime tests.test_genesis_consolidation -v
+python tests/live_endpoint_smoke.py
 ```
 
-## Project layout
+The live smoke suite targets `GENESIS_BASE_URL` when configured and otherwise uses the production Vercel endpoint. GitHub Actions runs that smoke test after relevant changes and every six hours.
+
+## Repository layout
 
 ```text
 Genesis/
 ├── README.md
 ├── requirements.txt
 ├── vercel.json
-├── wsgi.py
+├── wsgi.py                         # Production WSGI entrypoint
 ├── Genesis/
+│   ├── o_series_app.py             # Deployed Flask shadow application
+│   ├── o_series/                   # Gate Zero constitutional runtime
 │   ├── collective_consciousness_home.py
 │   ├── memory_integration_system.py
 │   ├── steven_ai_implementation.py
 │   ├── sarah_ai_implementation.py
-│   ├── unified_home.py
-│   └── templates/
-└── docs/
+│   └── unified_home.py
+├── docs/architecture/
+├── personas/
+├── policies/
+└── tests/
 ```
 
-## Deployment
+## Legacy boundary
 
-The repository root contains `vercel.json` and `wsgi.py`. Vercel routes all requests to `wsgi.py`, which adds the nested `Genesis/` application directory to `sys.path` and exposes the Flask `app` object from `collective_consciousness_home.py`.
+`collective_consciousness_home.py`, `unified_home.py`, and the SQLite-backed memory components remain historical and local-development surfaces. They are **not** the Vercel production entrypoint.
 
-## Notes
+Do not expose a legacy application publicly without a separate security review, authenticated identity, encrypted storage, explicit save and purge operations, and regression tests proving that Private and Guest modes remain `NULL_WRITE`.
 
-- Use `py -m pip` on Windows when the `pip` command is not available directly.
-- Runtime dependencies belong in the root `requirements.txt` file.
-- Do not commit local databases, generated bytecode, logs, API keys, or environment-specific secrets.
+## Development rules
+
+- Runtime dependencies belong in the root `requirements.txt`.
+- Do not commit databases, generated bytecode, logs, API keys, or environment-specific secrets.
+- Do not add public request fields that can alter constitutional facts.
+- Do not claim a context, policy, model, or external action was used unless its provenance is represented in the receipt or test evidence.

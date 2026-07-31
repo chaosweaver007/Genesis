@@ -9,6 +9,15 @@ from uuid import UUID
 
 MAX_MESSAGE_LENGTH = 4000
 ALLOWED_PERSONAS = {"steven", "sarah"}
+REQUIRED_INGRESS_KEYS = {
+    "request_id",
+    "session_id",
+    "message",
+    "persona",
+    "consent_level",
+}
+OPTIONAL_INGRESS_KEYS = {"collective_learning", "pipeline_mode"}
+ALLOWED_INGRESS_KEYS = REQUIRED_INGRESS_KEYS | OPTIONAL_INGRESS_KEYS
 
 
 @dataclass(frozen=True)
@@ -50,8 +59,13 @@ def validate_envelope(
     if not isinstance(payload, Mapping):
         raise ValueError("Malformed Ingress Envelope: expected a JSON object.")
 
-    required_keys = {"request_id", "session_id", "message", "persona", "consent_level"}
-    missing = sorted(required_keys.difference(payload.keys()))
+    unsupported = sorted(set(payload.keys()).difference(ALLOWED_INGRESS_KEYS))
+    if unsupported:
+        raise ValueError(
+            "Malformed Ingress Envelope: unsupported keys: " + ", ".join(unsupported)
+        )
+
+    missing = sorted(REQUIRED_INGRESS_KEYS.difference(payload.keys()))
     if missing:
         raise ValueError(
             "Malformed Ingress Envelope: missing required keys: " + ", ".join(missing)

@@ -4,11 +4,14 @@ on:
   push:
     branches:
       - main
-      - fix/genesis-runtime-v0-1
     paths:
       - "Genesis/o_series/**"
       - "Genesis/o_series_app.py"
+      - "personas/**"
+      - "policies/**"
+      - "docs/architecture/Genesis-Kernel-v0.1-Source-Map.md"
       - "tests/test_o_series_runtime.py"
+      - "tests/test_genesis_consolidation.py"
       - "wsgi.py"
       - "requirements.txt"
       - ".github/workflows/o-series-runtime.yml"
@@ -16,7 +19,11 @@ on:
     paths:
       - "Genesis/o_series/**"
       - "Genesis/o_series_app.py"
+      - "personas/**"
+      - "policies/**"
+      - "docs/architecture/Genesis-Kernel-v0.1-Source-Map.md"
       - "tests/test_o_series_runtime.py"
+      - "tests/test_genesis_consolidation.py"
       - "wsgi.py"
       - "requirements.txt"
       - ".github/workflows/o-series-runtime.yml"
@@ -36,6 +43,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -49,10 +58,14 @@ jobs:
           python -m pip install -r requirements.txt
 
       - name: Compile secured runtime
-        run: python -m compileall -q Genesis/o_series Genesis/o_series_app.py wsgi.py tests/test_o_series_runtime.py
+        run: >-
+          python -m compileall -q Genesis/o_series Genesis/o_series_app.py wsgi.py
+          tests/test_o_series_runtime.py tests/test_genesis_consolidation.py
 
       - name: Run O-Series runtime tests
-        run: python -m unittest tests.test_o_series_runtime -v
+        run: >-
+          python -m unittest tests.test_o_series_runtime
+          tests.test_genesis_consolidation -v
 
       - name: Verify WSGI entrypoint
         run: python -c "import wsgi; assert wsgi.app is not None"
