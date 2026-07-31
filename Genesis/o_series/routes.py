@@ -17,7 +17,7 @@ def register_o_series_routes(
     app: Flask,
     pipeline: Optional[OSeriesPipeline] = None,
 ) -> None:
-    """Register the isolated, stateless shadow endpoint once."""
+    """Register the isolated, stateless O-Series endpoints exactly once."""
 
     if "o_series" in app.blueprints:
         return
@@ -27,6 +27,8 @@ def register_o_series_routes(
 
     @blueprint.get("/api/o-series/status")
     def o_series_status():
+        """Return the public runtime, policy, privacy, and capability status."""
+
         return jsonify(
             {
                 "node": "Genesis O-Series Gate 0",
@@ -45,6 +47,8 @@ def register_o_series_routes(
 
     @blueprint.post("/api/o-series/chat")
     def o_series_chat():
+        """Validate and execute one public stateless chat request."""
+
         payload = request.get_json(silent=True)
         if not isinstance(payload, dict):
             return jsonify({"error": "Malformed Ingress Envelope: empty or invalid JSON."}), 400

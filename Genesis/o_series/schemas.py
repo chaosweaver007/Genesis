@@ -22,6 +22,8 @@ ALLOWED_INGRESS_KEYS = REQUIRED_INGRESS_KEYS | OPTIONAL_INGRESS_KEYS
 
 @dataclass(frozen=True)
 class IngressEnvelope:
+    """Validated, immutable request data accepted by the O-Series pipeline."""
+
     request_id: str
     session_id: str
     message: str
@@ -32,16 +34,22 @@ class IngressEnvelope:
     timestamp: str
 
     def to_dict(self) -> Dict[str, Any]:
+        """Return a serializable copy of the immutable envelope."""
+
         return asdict(self)
 
 
 @dataclass(frozen=True)
 class PipelineResult:
+    """HTTP-ready response body and status produced by the pipeline."""
+
     body: Dict[str, Any]
     status_code: int
 
 
 def _validated_uuid(value: Any, field_name: str) -> str:
+    """Return a canonical UUID string or raise a field-specific error."""
+
     if not isinstance(value, str):
         raise ValueError(f"{field_name} must be a UUID string.")
     try:
@@ -54,7 +62,13 @@ def validate_envelope(
     payload: Mapping[str, Any],
     server_session_id: Optional[str] = None,
 ) -> IngressEnvelope:
-    """Validate and freeze an ingress request without silently rewriting it."""
+    """Validate and freeze an ingress request without silently rewriting it.
+
+    Unknown fields fail closed, required fields remain mandatory, identifiers are
+    canonicalized as UUIDs, and the public runtime stays locked to private
+    consent and shadow mode. A supplied server session identifier must match the
+    validated request session exactly.
+    """
 
     if not isinstance(payload, Mapping):
         raise ValueError("Malformed Ingress Envelope: expected a JSON object.")

@@ -20,6 +20,8 @@ app.config.update(
 
 @app.after_request
 def apply_security_headers(response):
+    """Attach no-store and browser hardening headers to every response."""
+
     response.headers.setdefault("Cache-Control", "no-store")
     response.headers.setdefault("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; base-uri 'none'")
     response.headers.setdefault("Cross-Origin-Resource-Policy", "same-origin")
@@ -32,6 +34,8 @@ def apply_security_headers(response):
 
 @app.get("/")
 def root():
+    """Describe the deployed O-Series node and its public endpoints."""
+
     return jsonify(
         {
             "service": "Genesis",
@@ -49,6 +53,8 @@ def root():
 
 @app.get("/health")
 def health():
+    """Return the minimal liveness and deployed-version contract."""
+
     return jsonify(
         {
             "status": "ok",

@@ -16,6 +16,8 @@ class OSeriesPipeline:
     """Run validation, Gate 0, conditioned generation, reflection, and receipt."""
 
     def __init__(self, adapter: Optional[ModelAdapter] = None) -> None:
+        """Create a pipeline with the production adapter or an injected test double."""
+
         self.adapter = adapter or PersonaModelAdapter()
 
     def run(
@@ -25,10 +27,16 @@ class OSeriesPipeline:
         session_id: Optional[str] = None,
         trusted_restrictions: Optional[Mapping[str, Any]] = None,
     ) -> PipelineResult:
-        """Execute one stateless request.
+        """Execute one stateless request through the constitutional pipeline.
+
+        The sequence implements the externally reportable O-Series contract:
+        strict ingress validation, monotonic pre-generation gates, verified
+        constitutional conditioning, six-layer output reflection, at most one
+        bounded revision, and a metadata-only Witness Receipt.
 
         ``trusted_restrictions`` is an internal server-side channel. The public
-        Flask route never accepts or forwards it. Gate Zero treats it as add-only.
+        Flask route never accepts or forwards it, and Gate Zero treats it as
+        add-only.
         """
 
         try:
