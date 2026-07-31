@@ -1,15 +1,16 @@
 """Conservative deterministic intent parsing for constitutional gates.
 
-The parser intentionally detects only explicit, high-signal patterns. Callers may
-supply structured overrides from authenticated UI flows; the kernel remains the
-source of truth regardless of model provider.
+The parser intentionally detects only explicit, high-signal patterns.
+Authenticated server-side callers may add structured restrictions, but those
+restrictions are monotonic: they can mark additional risk and can never erase a
+fact detected from the request or derived from consent.
 """
 
 from __future__ import annotations
 
 import re
 from dataclasses import replace
-from typing import Any
+from typing import Mapping
 
 from genesis_core.consent import ConsentState
 from genesis_core.uds import IntentContext
@@ -69,13 +70,25 @@ class DeterministicIntentParser:
         r"\bhow (?:do|can) i (?:hurt|kill|poison|attack)\b",
         r"\bmake (?:a|an) (?:weapon|poison|bomb)\b",
     )
+    _ADDITIONAL_RESTRICTION_FIELDS = frozenset(
+        {
+            "requests_binding_decision",
+            "requests_third_party_private_state",
+            "requests_human_sarah_impersonation",
+            "requests_private_memory_disclosure",
+            "requests_coercion",
+            "requests_deception",
+            "prompt_override_attempt",
+            "requests_harm",
+        }
+    )
 
     def parse(
         self,
         message: str,
         *,
         consent: ConsentState,
-        overrides: dict[str, Any] | None = None,
+        restrictions: Mapping[str, bool] | None = None,
     ) -> IntentContext:
         normalized = " ".join(message.lower().split())
         third_party_private_state = self._matches(
@@ -107,23 +120,26 @@ class DeterministicIntentParser:
             requests_harm=self._matches(normalized, self._HARM_PATTERNS),
             metadata={"parser": "deterministic-v0.1"},
         )
-        if not overrides:
+        if not restrictions:
             return context
 
-        allowed_fields = {
-            field_name
-            for field_name in IntentContext.__dataclass_fields__
-            if field_name not in {"message", "metadata"}
-        }
-        sanitized = {
-            key: bool(value)
-            for key, value in overrides.items()
-            if key in allowed_fields
-        }
+        # The Monotonic Imperative: structured context may only add a restriction.
+        # False values, unknown keys, and all consent-derived fields are ignored.
+        applied = sorted(
+            key
+            for key, value in restrictions.items()
+            if key in self._ADDITIONAL_RESTRICTION_FIELDS and bool(value)
+        )
+        if not applied:
+            return context
+
         return replace(
             context,
-            **sanitized,
-            metadata={**context.metadata, "structured_overrides": sorted(sanitized)},
+            **{key: True for key in applied},
+            metadata={
+                **context.metadata,
+                "trusted_additional_restrictions": applied,
+            },
         )
 
     @staticmethod
