@@ -30,6 +30,8 @@ def _request_json(
     payload: dict[str, Any] | None = None,
     expected_statuses: tuple[int, ...] = (200,),
 ) -> tuple[int, dict[str, Any]]:
+    """Send one JSON request and validate its status and response shape."""
+
     body = None if payload is None else json.dumps(payload).encode("utf-8")
     headers = {
         "Accept": "application/json",
@@ -77,6 +79,8 @@ def _request_json(
 
 
 def _wait_for_health() -> dict[str, Any]:
+    """Retry health during deployment propagation and serverless cold starts."""
+
     last_error: Exception | None = None
     for attempt in range(1, HEALTH_ATTEMPTS + 1):
         try:
@@ -94,6 +98,8 @@ def _wait_for_health() -> dict[str, Any]:
 
 
 def _payload(message: str, *, persona: Any = "steven") -> dict[str, Any]:
+    """Build a fixed private shadow request with fresh correlation IDs."""
+
     return {
         "request_id": str(uuid.uuid4()),
         "session_id": str(uuid.uuid4()),
@@ -110,6 +116,8 @@ def _assert_null_write_receipt(
     *,
     conditioned: bool = False,
 ) -> None:
+    """Assert receipt provenance while forbidding raw constitutional context."""
+
     receipt = body.get("witness_receipt")
     assert isinstance(receipt, dict), f"Missing Witness Receipt: {body}"
     assert receipt.get("pipeline_version") == "o-series-0.1.1", receipt
@@ -118,6 +126,7 @@ def _assert_null_write_receipt(
     assert receipt.get("tools_used") == [], receipt
     assert isinstance(receipt.get("response_sha256"), str), receipt
     assert len(receipt["response_sha256"]) == 64, receipt
+    assert "system_context" not in receipt, receipt
     if conditioned:
         assert isinstance(receipt.get("context_sha256"), str), receipt
         assert len(receipt["context_sha256"]) == 64, receipt
@@ -217,6 +226,8 @@ def test_malformed_persona_returns_400() -> None:
 
 
 def main() -> None:
+    """Run the fixed synthetic production contract checks."""
+
     tests = (
         test_health_and_status,
         test_allowed_request,
