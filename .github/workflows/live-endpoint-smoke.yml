@@ -1,13 +1,6 @@
 name: Genesis Live Endpoint Smoke
 
 on:
-  pull_request:
-    paths:
-      - "Genesis/o_series/**"
-      - "Genesis/o_series_app.py"
-      - "tests/live_endpoint_smoke.py"
-      - "wsgi.py"
-      - ".github/workflows/live-endpoint-smoke.yml"
   push:
     branches:
       - main
