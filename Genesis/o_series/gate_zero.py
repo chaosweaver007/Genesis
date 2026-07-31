@@ -3,13 +3,25 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, Iterable
+from typing import Any, Dict, Iterable, Mapping, Optional
 
 from .schemas import IngressEnvelope
 
 
 class GateZero:
-    """Evaluate hard boundaries before any model adapter is invoked."""
+    """Evaluate hard boundaries before any model adapter is invoked.
+
+    The gate is monotonic: trusted server context may add a failure state, but
+    no supplied value can convert a detected failure back into a pass.
+    """
+
+    GATE_NAMES = (
+        "consent",
+        "privacy",
+        "sovereignty",
+        "non_coercion",
+        "authority_scope",
+    )
 
     COERCION_PATTERNS = (
         re.compile(r"\b(?:system|developer|administrator|admin)\s+override\b", re.IGNORECASE),
@@ -43,15 +55,39 @@ class GateZero:
         return any(pattern.search(message) for pattern in patterns)
 
     @classmethod
-    def evaluate_ingress(cls, envelope: IngressEnvelope) -> Dict[str, Any]:
-        gates = {
-            "consent": "pass",
-            "privacy": "pass",
-            "sovereignty": "pass",
-            "non_coercion": "pass",
-            "authority_scope": "pass",
-        }
-        reasons = []
+    def _apply_trusted_restrictions(
+        cls,
+        gates: Dict[str, str],
+        reasons: list[str],
+        trusted_restrictions: Optional[Mapping[str, Any]],
+    ) -> None:
+        """Apply server-authored restrictions without permitting downgrades."""
+
+        if trusted_restrictions is None:
+            return
+        if not isinstance(trusted_restrictions, Mapping):
+            raise ValueError("trusted_restrictions must be a server-side mapping.")
+
+        for gate_name in cls.GATE_NAMES:
+            if trusted_restrictions.get(gate_name) is True:
+                if gates[gate_name] != "fail":
+                    reasons.append(
+                        f"Trusted server context added the {gate_name} restriction."
+                    )
+                gates[gate_name] = "fail"
+
+        # False values and unknown keys are intentionally ignored. They can
+        # neither erase detected facts nor manufacture new constitutional names.
+
+    @classmethod
+    def evaluate_ingress(
+        cls,
+        envelope: IngressEnvelope,
+        *,
+        trusted_restrictions: Optional[Mapping[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        gates = {gate_name: "pass" for gate_name in cls.GATE_NAMES}
+        reasons: list[str] = []
 
         if envelope.consent_level != "private":
             gates["consent"] = "fail"
@@ -74,5 +110,12 @@ class GateZero:
             gates["authority_scope"] = "fail"
             reasons.append("The shadow node is restricted to text generation only.")
 
+        cls._apply_trusted_restrictions(gates, reasons, trusted_restrictions)
+
         decision = "allow" if all(value == "pass" for value in gates.values()) else "reject"
-        return {"decision": decision, "gates": gates, "reasons": reasons}
+        return {
+            "decision": decision,
+            "gates": gates,
+            "reasons": reasons,
+            "monotonic": True,
+        }
