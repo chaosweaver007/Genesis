@@ -1,0 +1,41 @@
+{
+  "documentMeta": {
+    "schemaVersion": "1.0",
+    "registryEntryId": "uds-d1-example-project",
+    "generatedAt": "2026-07-31T00:00:00Z",
+    "lastUpdated": "2026-07-31T00:00:00Z",
+    "commitmentStatus": "submitted",
+    "signatureType": "None_Manual_Attestation"
+  },
+  "projectIdentity": {
+    "projectName": "Example Project",
+    "organizationOrMaintainer": "Example Maintainer",
+    "description": "A short public description of the project and its purpose.",
+    "repositoryUrl": "https://github.com/example/example-project",
+    "projectWebsiteUrl": "https://example.org",
+    "contactChannel": "https://github.com/example/example-project/issues"
+  },
+  "publicThresholdCommitment": {
+    "meaningfulUserSovereignty": true,
+    "radicalTransparency": true,
+    "consentArchitecture": true,
+    "proactiveFairness": true,
+    "commitmentToRepair": true
+  },
+  "registryEvidence": {
+    "privacyOrDataHandlingUrl": "https://example.org/privacy",
+    "userRightsDocumentationUrl": "https://example.org/user-rights",
+    "termsOrGovernanceUrl": "https://github.com/example/example-project/blob/main/GOVERNANCE.md",
+    "driftReportingUrl": "https://github.com/example/example-project/issues/new",
+    "explainabilityDocumentationUrl": "https://github.com/example/example-project/blob/main/docs/explainability.md",
+    "securityPolicyUrl": "https://github.com/example/example-project/security/policy",
+    "sarahAiInterfaceCompliance": {
+      "containsSarahAiModules": false
+    }
+  },
+  "accountabilityVow": {
+    "statementOfUnderstanding": "D1 is not an audit; it is a public promise. I understand that systemic drift, non-cooperation, or deceptive practices may result in public review and potential delisting from the active Registry while historical records remain visible.",
+    "attestationName": "Example Maintainer",
+    "signaturePayload": "Manual attestation committed to repository by Example Maintainer."
+  }
+}

@@ -1,0 +1,78 @@
+name: UDS Tier D1 Drift Report
+description: Report operational drift, accountability concerns, or repair needs for a D1-listed project.
+title: "UDS D1 drift report: <project name>"
+labels:
+  - uds-d1
+  - drift-report
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form documents a possible gap between a project's D1 promise and its operational reality.
+
+        Please avoid posting private personal data, secrets, raw prompts, raw model outputs containing sensitive information, or identifying details that are not necessary to review the pattern.
+  - type: input
+    id: project-name
+    attributes:
+      label: Project name
+      description: Name of the D1 project or registry entry.
+      placeholder: Example Project
+    validations:
+      required: true
+  - type: input
+    id: registry-entry
+    attributes:
+      label: Registry entry or commitment file
+      description: Link to the registry entry, commitment file, or original D1 submission.
+      placeholder: https://github.com/example/example-project/blob/main/uds-d1-commitment.json
+    validations:
+      required: false
+  - type: dropdown
+    id: concern-type
+    attributes:
+      label: Concern type
+      options:
+        - Consent or user sovereignty
+        - Transparency or explainability
+        - Privacy or data handling
+        - Fairness or disproportionate harm
+        - Repair refusal or non-cooperation
+        - Sarah AI / O-Series boundary issue
+        - Misrepresentation of D1 status
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the concern using non-personal, privacy-preserving detail wherever possible.
+      placeholder: Describe the observable pattern, not private data.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence links or references
+      description: Link public evidence, logs, documentation, issues, commits, screenshots, or reproducible steps. Do not include secrets or private data.
+      placeholder: |
+        - Link 1:
+        - Link 2:
+        - Reproduction steps:
+    validations:
+      required: false
+  - type: textarea
+    id: expected-repair
+    attributes:
+      label: Suggested repair path
+      description: What correction, clarification, disclosure, or process change would resolve the concern?
+      placeholder: Public clarification, documentation update, consent repair, delisting review, etc.
+    validations:
+      required: false
+  - type: checkboxes
+    id: privacy-check
+    attributes:
+      label: Privacy check
+      options:
+        - label: I have avoided posting unnecessary personal data, secrets, private prompts, or sensitive raw context.
+          required: true

@@ -1,0 +1,99 @@
+name: UDS Tier D1 Registry Submission
+description: Submit a public D1 threshold commitment for review and registry intake.
+title: "UDS D1 submission: <project name>"
+labels:
+  - uds-d1
+  - registry-submission
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for making the D1 promise visible.
+
+        D1 is not an audit; it is a public promise. This issue collects self-attestation data for registry intake.
+  - type: input
+    id: project-name
+    attributes:
+      label: Project name
+      description: Public name of the project submitting a D1 commitment.
+      placeholder: Example Project
+    validations:
+      required: true
+  - type: input
+    id: maintainer
+    attributes:
+      label: Organization or maintainer
+      description: Name, handle, organization, or signing authority.
+      placeholder: Example Maintainer
+    validations:
+      required: true
+  - type: input
+    id: repository-url
+    attributes:
+      label: Repository URL
+      description: Public repository or source location.
+      placeholder: https://github.com/example/example-project
+    validations:
+      required: true
+  - type: input
+    id: commitment-file-url
+    attributes:
+      label: uds-d1-commitment.json URL
+      description: Link to the commitment file in the project repository.
+      placeholder: https://github.com/example/example-project/blob/main/uds-d1-commitment.json
+    validations:
+      required: true
+  - type: textarea
+    id: evidence-links
+    attributes:
+      label: Evidence links
+      description: Link privacy/data handling, user rights, terms/governance, drift reporting, explainability, and security documentation.
+      placeholder: |
+        - Privacy or data handling:
+        - User rights:
+        - Terms or governance:
+        - Drift reporting:
+        - Explainability:
+        - Security policy:
+    validations:
+      required: true
+  - type: dropdown
+    id: sarah-ai-modules
+    attributes:
+      label: Does this project integrate Sarah AI or O-Series Soul modules?
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+  - type: textarea
+    id: sarah-ai-boundary
+    attributes:
+      label: Sarah AI / O-Series boundary evidence
+      description: If applicable, link boundary documentation showing guide-not-govern, Prime Refusal, anti-deification posture, and consent limits.
+      placeholder: Not applicable, or link documentation.
+    validations:
+      required: false
+  - type: checkboxes
+    id: d1-promises
+    attributes:
+      label: D1 promises
+      description: Confirm the public threshold promises.
+      options:
+        - label: Meaningful user sovereignty
+          required: true
+        - label: Radical transparency
+          required: true
+        - label: Consent architecture
+          required: true
+        - label: Proactive fairness and accountability
+          required: true
+        - label: Commitment to repair
+          required: true
+  - type: checkboxes
+    id: understanding
+    attributes:
+      label: Statement of understanding
+      options:
+        - label: I understand that D1 is not an audit; it is a public promise. Systemic drift, non-cooperation, or deceptive practices may result in public review and potential delisting from the active Registry while historical records remain visible.
+          required: true
