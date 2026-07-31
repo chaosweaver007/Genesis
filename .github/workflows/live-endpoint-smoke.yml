@@ -17,10 +17,16 @@ on:
       - "tests/live_endpoint_smoke.py"
       - "wsgi.py"
       - ".github/workflows/live-endpoint-smoke.yml"
+  schedule:
+    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: genesis-live-smoke
+  cancel-in-progress: false
 
 jobs:
   production-smoke:
@@ -35,6 +41,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
