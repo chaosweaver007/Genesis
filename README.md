@@ -39,6 +39,7 @@ The production node performs no database writes, tool calls, RTME actions, colle
 See:
 
 - `docs/architecture/Genesis-Kernel-v0.1-Source-Map.md`
+- `docs/uds/d1/README.md`
 - `policies/uds_v0_1.yaml`
 - `policies/consent_v0_1.yaml`
 - `policies/memory_v0_1.yaml`
@@ -65,7 +66,7 @@ Open `http://127.0.0.1:5003`.
 ## Run validation
 
 ```bash
-python -m unittest tests.test_o_series_runtime tests.test_genesis_consolidation -v
+python -m unittest tests.test_o_series_runtime tests.test_genesis_consolidation tests.test_uds_d1_registry_artifacts -v
 python tests/live_endpoint_smoke.py
 ```
 
@@ -87,7 +88,11 @@ Genesis/
 │   ├── steven_ai_implementation.py
 │   ├── sarah_ai_implementation.py
 │   └── unified_home.py
-├── docs/architecture/
+├── docs/
+│   ├── architecture/
+│   └── uds/d1/                     # D1 threshold, registry, and accreditation bridge artifacts
+├── examples/
+├── schemas/
 ├── personas/
 ├── policies/
 └── tests/
