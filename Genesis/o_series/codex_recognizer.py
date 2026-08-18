@@ -73,20 +73,14 @@ class CodexRecognizer:
             themes: Sequence[str] = recognition["themes"]
             reason_codes: Sequence[str] = recognition["reason_codes"]
 
-            matched_indexes = [
-                index
-                for index, theme in enumerate(themes)
+            matched_themes = [
+                theme
+                for theme in themes
                 if self._theme_matches(theme, text_lower, text_tokens)
             ]
-            if not matched_indexes:
+            if not matched_themes:
                 continue
 
-            matched_themes = [themes[index] for index in matched_indexes]
-            matched_reason_codes = [
-                reason_codes[index]
-                for index in matched_indexes
-                if index < len(reason_codes)
-            ]
             confidence = min(1.0, (len(matched_themes) / len(themes)) * 1.5)
 
             candidates.append(
@@ -97,7 +91,7 @@ class CodexRecognizer:
                     archetype=node["archetype"]["primary"],
                     confidence=round(confidence, 2),
                     matched_themes=matched_themes,
-                    reason_codes=matched_reason_codes,
+                    reason_codes=list(reason_codes),
                     epistemic_claims=list(node.get("claims", [])),
                     authority=node["uds_mapping"]["authority"],
                 )
