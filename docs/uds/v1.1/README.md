@@ -10,6 +10,14 @@
 
 This directory is the repository boundary for the hardened Universal Diamond Standard design. It does not declare the current Genesis deployment conformant.
 
+## Embodiment bridge
+
+The cross-layer path from Codex meaning to auditable execution is frozen in [`EMBODIMENT-BRIDGE.md`](EMBODIMENT-BRIDGE.md):
+
+`SOURCE → RECOGNITION → CONSENT → AUTHORITY → ACTION → WITNESS → RENEWAL`
+
+The bridge makes explicit that interpretation cannot become authorization, consent cannot manufacture authority, execution cannot expand a permit, witnessing cannot become surveillance, and no version inherits certification from an ancestor build.
+
 ## Root rule
 
 No language-model output constitutes execution authority. A model may propose an operation. Only the independently verifiable authorization path may issue an execution permit, and the downstream executor must verify the permit before any effectful transition.
