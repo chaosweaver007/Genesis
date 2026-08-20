@@ -9,6 +9,7 @@ from uuid import uuid4
 from flask import Blueprint, Flask, jsonify, request
 
 from .pipeline import OSeriesPipeline
+from .selector_correction import MAX_CORRECTION_LENGTH, run_selector_confirmation
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +84,25 @@ def register_o_series_routes(
 
         try:
             result = active_pipeline.propose_selector(payload=payload, session_id=None)
+            selector = result.body.get("selector")
+            if result.status_code == 200 and isinstance(selector, dict):
+                contract = selector.get("selection_contract")
+                if isinstance(contract, dict):
+                    contract.update(
+                        {
+                            "allow_free_text_correction": True,
+                            "correction_max_length": MAX_CORRECTION_LENGTH,
+                            "available_nodes": [
+                                {
+                                    "node_id": node_id,
+                                    "title": (active_pipeline.registry.get_node(node_id) or {}).get(
+                                        "title", node_id
+                                    ),
+                                }
+                                for node_id in active_pipeline.registry.list_nodes()
+                            ],
+                        }
+                    )
             return jsonify(result.body), result.status_code
         except Exception:
             logger.exception("Unhandled selector proposal exception")
@@ -102,7 +122,7 @@ def register_o_series_routes(
         if not isinstance(outer, dict):
             return jsonify({"error": "Malformed Selector Envelope: empty or invalid JSON."}), 400
 
-        allowed = {"request", "selected_node_id", "challenge_status"}
+        allowed = {"request", "selected_node_id", "challenge_status", "correction_text"}
         unsupported = sorted(set(outer).difference(allowed))
         if unsupported:
             return jsonify(
@@ -116,10 +136,12 @@ def register_o_series_routes(
             return jsonify({"error": "Malformed Selector Envelope: challenge_status is required."}), 400
 
         try:
-            result = active_pipeline.run_with_selection(
+            result = run_selector_confirmation(
+                active_pipeline,
                 payload=ingress,
                 selected_node_id=outer.get("selected_node_id"),
                 challenge_status=outer["challenge_status"],
+                correction_text=outer.get("correction_text"),
                 session_id=None,
             )
             return jsonify(result.body), result.status_code
