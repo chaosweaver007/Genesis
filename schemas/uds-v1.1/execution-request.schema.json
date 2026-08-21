@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:uds:schema:execution-request:1.1",
+  "title": "UDS Canonical Execution Request v1.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action", "audience", "effect_class", "parameters", "resource"],
+  "properties": {
+    "action": {"type": "string", "minLength": 1},
+    "audience": {"type": "string", "minLength": 1},
+    "effect_class": {"enum": ["E0", "E1", "E2", "E3"]},
+    "parameters": {"type": "object"},
+    "resource": {"type": "string", "minLength": 1}
+  }
+}

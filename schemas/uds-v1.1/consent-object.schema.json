@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:uds:schema:consent-object:1.1",
+  "title": "UDS Qualified Consent Object v1.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "consent_id", "subject_ref", "controller_ref", "authorized_actions",
+    "resource_scopes", "purpose_digest", "issued_at", "expires_at",
+    "consent_epoch", "revocation_state", "allow_sub_delegation",
+    "policy_version", "policy_digest"
+  ],
+  "properties": {
+    "consent_id": {"type": "string", "minLength": 1},
+    "subject_ref": {"type": "string", "minLength": 1},
+    "controller_ref": {"type": "string", "minLength": 1},
+    "authorized_actions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "resource_scopes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "purpose_digest": {"type": "string", "minLength": 1},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "consent_epoch": {"type": "integer", "minimum": 1},
+    "revocation_state": {"enum": ["ACTIVE", "REVOKED"]},
+    "allow_sub_delegation": {"type": "boolean"},
+    "policy_version": {"type": "string", "minLength": 1},
+    "policy_digest": {"type": "string", "minLength": 1}
+  }
+}

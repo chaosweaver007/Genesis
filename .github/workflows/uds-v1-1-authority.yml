@@ -1,0 +1,38 @@
+name: UDS v1.1 Authority Reference
+
+on:
+  pull_request:
+    paths:
+      - 'Genesis/uds_v1_1/**'
+      - 'tests/test_uds_v1_1_authority.py'
+      - 'policies/uds_v1_1_invariants.json'
+      - 'schemas/uds-v1.1/**'
+      - 'docs/uds/v1.1/**'
+      - '.github/workflows/uds-v1-1-authority.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'Genesis/uds_v1_1/**'
+      - 'tests/test_uds_v1_1_authority.py'
+      - 'policies/uds_v1_1_invariants.json'
+      - 'schemas/uds-v1.1/**'
+      - 'docs/uds/v1.1/**'
+
+permissions:
+  contents: read
+
+jobs:
+  authority-reference:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run UDS v1.1 authority C6 reference tests
+        run: python -m unittest tests.test_uds_v1_1_authority -v
