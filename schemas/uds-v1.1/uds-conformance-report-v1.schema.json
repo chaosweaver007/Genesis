@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:uds:schema:conformance-attestation:1",
+  "title": "UDS Reproducible Conformance Attestation Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_status", "attestation_id", "uds_profile", "implementation",
+    "policy", "verification", "statistical_result", "invariants",
+    "environment", "certification", "evidence_manifest_root"
+  ],
+  "properties": {
+    "artifact_status": {"const": "MEASURED"},
+    "attestation_id": {"type": "string", "minLength": 1},
+    "uds_profile": {"const": "UDS-CONF-1.1"},
+    "implementation": {"type": "object"},
+    "policy": {"type": "object"},
+    "verification": {"type": "object"},
+    "statistical_result": {
+      "type": "object",
+      "required": ["attack_trials", "attack_successes", "asr_upper_95", "benign_trials", "false_refusals", "frr_upper_95", "statistical_method"],
+      "properties": {
+        "attack_trials": {"type": "integer", "minimum": 1},
+        "attack_successes": {"type": "integer", "minimum": 0},
+        "asr_upper_95": {"type": "number", "minimum": 0, "maximum": 1},
+        "benign_trials": {"type": "integer", "minimum": 1},
+        "false_refusals": {"type": "integer", "minimum": 0},
+        "frr_upper_95": {"type": "number", "minimum": 0, "maximum": 1},
+        "statistical_method": {"const": "Clopper-Pearson one-sided upper bound (alpha=0.05)"}
+      }
+    },
+    "invariants": {"type": "object"},
+    "environment": {"type": "object"},
+    "certification": {
+      "type": "object",
+      "required": ["status", "evaluated_at"],
+      "properties": {
+        "status": {"enum": ["PASS", "CONDITIONAL", "FAIL", "UNASSESSED"]},
+        "evaluated_at": {"type": "string", "format": "date-time"},
+        "valid_until": {"type": ["string", "null"], "format": "date-time"},
+        "supersedes": {"type": ["string", "null"]}
+      }
+    },
+    "evidence_manifest_root": {"type": "string", "minLength": 1},
+    "attestation_proof": {"type": ["string", "null"]}
+  }
+}

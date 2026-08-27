@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:uds:schema:execution-permit:1.1",
+  "title": "UDS Execution Permit v1.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "permit_id", "consent_id", "subject_ref", "audience", "authorized_action",
+    "resource_scope", "effect_class", "request_hash", "purpose_digest",
+    "consent_epoch", "broker_key_epoch", "authority_epoch", "not_before",
+    "expires_at", "max_executions", "nonce", "policy_version", "policy_digest",
+    "permit_schema_version", "issuer", "signature_algorithm", "broker_proof"
+  ],
+  "properties": {
+    "permit_id": {"type": "string", "minLength": 1},
+    "consent_id": {"type": "string", "minLength": 1},
+    "subject_ref": {"type": "string", "minLength": 1},
+    "audience": {"type": "string", "minLength": 1},
+    "authorized_action": {"type": "string", "minLength": 1},
+    "resource_scope": {"type": "string", "minLength": 1},
+    "effect_class": {"enum": ["E0", "E1", "E2", "E3"]},
+    "request_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "purpose_digest": {"type": "string", "minLength": 1},
+    "consent_epoch": {"type": "integer", "minimum": 1},
+    "broker_key_epoch": {"type": "integer", "minimum": 1},
+    "authority_epoch": {"type": "integer", "minimum": 1},
+    "not_before": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "max_executions": {"const": 1},
+    "nonce": {"type": "string", "minLength": 32},
+    "policy_version": {"type": "string", "minLength": 1},
+    "policy_digest": {"type": "string", "minLength": 1},
+    "permit_schema_version": {"const": "UDS-EXEC-PERMIT-1.1"},
+    "issuer": {"type": "string", "minLength": 1},
+    "signature_algorithm": {"type": "string", "minLength": 1},
+    "broker_proof": {"type": "string", "minLength": 1}
+  }
+}

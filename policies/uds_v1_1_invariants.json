@@ -1,0 +1,38 @@
+{
+  "profile": "UDS-v1.1-Hardened",
+  "status": "SPECIFIED_WITH_REFERENCE_AUTHORITY_SLICE",
+  "certification": "UNASSESSED",
+  "families": [
+    {
+      "family": "authorization",
+      "invariants": [
+        {"id": "UDS-AUTH-001", "name": "No Effect Without Authority", "implementation_status": "REFERENCE_IMPLEMENTED"},
+        {"id": "UDS-AUTH-002", "name": "Scope Conservation", "implementation_status": "REFERENCE_IMPLEMENTED"},
+        {"id": "UDS-AUTH-003", "name": "No Unilateral Root", "implementation_status": "FAIL_CLOSED_PENDING_THRESHOLD_BACKEND"},
+        {"id": "UDS-AUTH-004", "name": "Exact Operation Binding", "implementation_status": "REFERENCE_IMPLEMENTED"},
+        {"id": "UDS-AUTH-005", "name": "Authority Current at Commit", "implementation_status": "REFERENCE_IMPLEMENTED"},
+        {"id": "UDS-AUTH-006", "name": "Verifiable Outcome Binding", "implementation_status": "REFERENCE_IMPLEMENTED"}
+      ]
+    },
+    {
+      "family": "sovereignty_humility",
+      "invariants": [
+        {"id": "UDS-SOV-004", "name": "Scoped Consent and Delegation", "implementation_status": "REFERENCE_IMPLEMENTED_FOR_AUTHORITY_SLICE"},
+        {"id": "UDS-HUMIL-001", "name": "Epistemic Non-Supremacy", "implementation_status": "EXISTING_O_SERIES_RUNTIME_CONTROL"}
+      ]
+    },
+    {
+      "family": "distributed_cryptography",
+      "invariants": [
+        {"id": "DKG-001", "name": "No Trusted Dealer", "implementation_status": "SPECIFIED_ONLY"},
+        {"id": "DKG-002", "name": "Ceremony Context Binding", "implementation_status": "SPECIFIED_ONLY"},
+        {"id": "DKG-003", "name": "Verifiable Contributions", "implementation_status": "SPECIFIED_ONLY"},
+        {"id": "DKG-004", "name": "Abort Without Protocol-Valid Remnant", "implementation_status": "SPECIFIED_ONLY"},
+        {"id": "DKG-005", "name": "Rotation Without Reconstruction", "implementation_status": "SPECIFIED_ONLY"},
+        {"id": "DKG-006", "name": "Witnessed Genesis", "implementation_status": "SPECIFIED_ONLY"},
+        {"id": "FROST-NONCE-001", "name": "Fresh One-Time Signing Nonces", "implementation_status": "SPECIFIED_ONLY"}
+      ]
+    }
+  ],
+  "rule": "No implementation inherits conformance by declaration. Certification is per-build and evidence-bound."
+}
