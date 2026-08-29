@@ -17,10 +17,13 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from enum import Enum
 import hashlib
+import logging
 from typing import Any, Mapping, Optional
 
 SRB_VERSION = "uds-srb-v1.0-rc2.1"
 PRIME_REFUSAL = "This request cannot be fulfilled."
+
+logger = logging.getLogger(__name__)
 
 
 class RefusalTrigger(str, Enum):
@@ -53,6 +56,11 @@ class WitnessReceipt:
     @property
     def data(self) -> dict[str, Any]:
         return asdict(self)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Return the bounded public representation."""
+
+        return self.data
 
     @property
     def exact_timestamp(self) -> None:
@@ -188,6 +196,7 @@ class SovereignRefusalEngine:
         normalized = prompt.casefold()
         direct_execution_markers = (
             "kinetic payload",
+            "kinetic disruption",
             "disrupt regional infrastructure",
             "critical infrastructure destruction",
         )
@@ -220,6 +229,62 @@ class SovereignRefusalEngine:
             external_containment_executed=False,
             witness_receipt=receipt,
         )
+
+
+def register_srb_middleware(app: Any, engine: SovereignRefusalEngine) -> None:
+    """Install an application-level refusal short-circuit for execution routes.
+
+    The hook evaluates only the active execution frame and, on refusal, returns
+    a sanitized response before the downstream Flask view runs. It emits only a
+    coarse epoch and decision class to the module logger. No request body,
+    identity/session field, mirror context, risk score, or reasoning trace is
+    attached to the log record.
+
+    This protects application-owned observability paths. It cannot, by itself,
+    control infrastructure that wraps the WSGI process externally, such as a
+    reverse proxy or independently configured host/APM agent; those layers must
+    be separately configured and tested.
+    """
+
+    try:
+        from flask import jsonify, request
+    except ImportError as exc:  # pragma: no cover - Flask is a runtime dependency.
+        raise RuntimeError("Flask is required to register SRB middleware") from exc
+
+    @app.before_request
+    def _srb_before_request():
+        if request.method != "POST" or request.path != "/api/v1/execute":
+            return None
+
+        payload = request.get_json(silent=True)
+        if not isinstance(payload, Mapping):
+            payload = {}
+
+        result = engine.process_execution_frame(payload)
+        if result.status != "REFUSED":
+            return None
+
+        receipt = result.witness_receipt
+        if receipt is None:  # Defensive fail-closed invariant.
+            raise RuntimeError("SRB refusal must include a bounded witness receipt")
+
+        logger.info(
+            "SRB refusal executed | Epoch: %s | Class: %s",
+            receipt.epoch_bucket,
+            receipt.decision_class,
+        )
+        return (
+            jsonify(
+                {
+                    "status": result.status,
+                    "declaration": result.declaration,
+                    "receipt": receipt.to_dict(),
+                }
+            ),
+            400,
+        )
+
+    return None
 
 
 def serialize_decision(decision: SRBDecision) -> dict[str, Any]:
