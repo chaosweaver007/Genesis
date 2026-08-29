@@ -1,14 +1,16 @@
 """Sovereign Refusal Boundary runtime primitives.
 
-Candidate implementation for UDS Article VI v1.0-rc2.1.
+Candidate implementation for UDS Article VI v1.0-rc2.2.
 
-Core invariant:
+Core invariants:
     REFUSE_SELF != CONTROL_OTHER
+    FORBIDDEN_DIRECTLY => FORBIDDEN_BY_DELEGATION
 
 This module deliberately implements only local refusal semantics. It contains
 no code paths for quarantine, account freezing, network isolation, profiling,
-risk scoring, or external enforcement. Refusal observability is likewise local:
-external telemetry and administrative sinks are not retained or invoked.
+risk scoring, delegated enforcement, or external coercive action. Refusal
+observability is likewise local: external telemetry, administrative, tooling,
+agent-messaging, and queue sinks are not retained or invoked.
 """
 
 from __future__ import annotations
@@ -20,7 +22,7 @@ import hashlib
 import logging
 from typing import Any, Mapping, Optional
 
-SRB_VERSION = "uds-srb-v1.0-rc2.1"
+SRB_VERSION = "uds-srb-v1.0-rc2.2"
 PRIME_REFUSAL = "This request cannot be fulfilled."
 SENSITIVE_EXECUTION_KEYS = frozenset(
     {
@@ -54,9 +56,9 @@ class RefusalTrigger(str, Enum):
 class WitnessReceipt:
     """Metadata-minimized refusal receipt.
 
-    Only the four rc2.1 scaffold fields are representable. No user identifier,
+    Only the four rc2.x scaffold fields are representable. No user identifier,
     session identifier, raw prompt, mirror context, risk score, exact timestamp,
-    or reasoning trace can be attached to this object.
+    delegation payload, or reasoning trace can be attached to this object.
     """
 
     rule_hash: str
@@ -96,6 +98,10 @@ class SovereignRefusalResult:
     declaration: str
     external_containment_executed: bool
     witness_receipt: Optional[WitnessReceipt]
+    delegated_containment_requested: bool = False
+    coercive_tool_called: bool = False
+    enforcement_message_emitted: bool = False
+    disciplinary_queue_write: bool = False
 
 
 def _epoch_bucket(*, now: Optional[datetime] = None, minutes: int = 60) -> str:
@@ -120,7 +126,7 @@ def create_privacy_preserving_receipt(
     decision_classification: str,
     now: Optional[datetime] = None,
 ) -> dict[str, Any]:
-    """Create the bounded rc2.1 receipt scaffold.
+    """Create the bounded rc2.x receipt scaffold.
 
     This is intentionally NOT represented as a cryptographic zero-knowledge
     proof. A SHA-256 rule hash is an integrity identifier, not a ZK proof.
@@ -129,7 +135,7 @@ def create_privacy_preserving_receipt(
 
     The constructor accepts no arbitrary state/context object. This prevents a
     refusal receipt from becoming a covert hash oracle for private prompt,
-    journal, session, identity, or profiling material.
+    journal, session, identity, delegation, or profiling material.
     """
 
     return WitnessReceipt(
@@ -150,9 +156,10 @@ def enforce_sovereign_refusal_boundary(
     """Apply SRB to a caller-supplied direct execution-layer determination.
 
     Detection is intentionally separated from enforcement. This function does
-    not inspect private journals, infer intent, score users, or predict future
-    misconduct. If a direct execution-layer policy check reports a violation,
-    the node governs only its own participation by refusing locally.
+    not inspect private journals, infer intent, score users, predict future
+    misconduct, or delegate enforcement. If a direct execution-layer policy
+    check reports a violation, the node governs only its own participation by
+    refusing locally.
     """
 
     if not violation_detected:
@@ -180,28 +187,47 @@ def enforce_sovereign_refusal_boundary(
 
 
 class SovereignRefusalEngine:
-    """Thin execution-frame adapter with zero external observability authority.
+    """Thin execution-frame adapter with no external coercive authority.
 
-    ``telemetry_sink`` and ``admin_monitor`` are accepted only so integration
-    tests can prove they are never used. The engine deliberately does not store
-    either object, leaving no runtime capability path from refusal to an
-    external observability sink.
+    External capability objects are accepted only so integration tests can
+    prove they are never used. The engine deliberately does not retain
+    telemetry/admin sinks, tool dispatchers, inter-agent messengers, or message
+    queues. That removes the runtime capability path by which a refusal could be
+    laundered into monitoring, proxy enforcement, queue-based punishment, or a
+    delegated containment request.
     """
 
     __slots__ = ()
 
-    def __init__(self, *, telemetry_sink: Any = None, admin_monitor: Any = None) -> None:
-        # Intentionally discard external observability capabilities.
-        del telemetry_sink, admin_monitor
+    def __init__(
+        self,
+        *,
+        telemetry_sink: Any = None,
+        admin_monitor: Any = None,
+        tool_dispatcher: Any = None,
+        agent_messenger: Any = None,
+        message_queue: Any = None,
+    ) -> None:
+        # Intentionally discard external observability and enforcement
+        # capabilities. A capability presented to the refusal engine cannot
+        # mint authority that Article VI denies directly.
+        del (
+            telemetry_sink,
+            admin_monitor,
+            tool_dispatcher,
+            agent_messenger,
+            message_queue,
+        )
 
     @staticmethod
     def _detect_direct_execution_violation(prompt: str) -> bool:
         """Minimal testbed detector that examines only the active request text.
 
-        Private mirror/journal context is never accepted as a policy input.
+        Private mirror/journal context, capability tokens, governance payloads,
+        identities, and session metadata are never accepted as policy inputs.
         Production deployments should replace this testbed detector with a
         separately audited execution-layer classifier while preserving the same
-        no-telemetry enforcement boundary.
+        no-telemetry and non-derivative-authority boundaries.
         """
 
         normalized = prompt.casefold()
@@ -215,8 +241,10 @@ class SovereignRefusalEngine:
         return any(marker in normalized for marker in direct_execution_markers)
 
     def process_execution_frame(self, payload: Mapping[str, Any]) -> SovereignRefusalResult:
-        # Only the active request text is considered. Identity/session fields and
-        # private mirror material are structurally ignored by the refusal gate.
+        # Only the active request text is considered. Identity/session fields,
+        # private mirror material, admin/capability tokens, and DAO vote payloads
+        # are structurally ignored by the refusal gate and cannot create a
+        # delegated enforcement path.
         prompt = payload.get("prompt", "")
         if not isinstance(prompt, str):
             prompt = ""
@@ -240,6 +268,10 @@ class SovereignRefusalEngine:
             declaration=PRIME_REFUSAL,
             external_containment_executed=False,
             witness_receipt=receipt,
+            delegated_containment_requested=False,
+            coercive_tool_called=False,
+            enforcement_message_emitted=False,
+            disciplinary_queue_write=False,
         )
 
 
@@ -248,8 +280,9 @@ def build_srb_trace_attributes(result: SovereignRefusalResult) -> dict[str, Any]
 
     This helper intentionally has no access to the originating request object.
     It therefore cannot attach prompt bodies, identities, sessions, headers,
-    Mirror context, risk scores, or exception frames to an APM/OpenTelemetry
-    span. A refusal is represented as a handled domain result, not an exception.
+    Mirror context, risk scores, capability tokens, governance payloads, or
+    exception frames to an APM/OpenTelemetry span. A refusal is represented as
+    a handled domain result, not an exception.
     """
 
     if result.status != "REFUSED" or result.witness_receipt is None:
@@ -267,8 +300,8 @@ def register_srb_middleware(app: Any, engine: SovereignRefusalEngine) -> None:
     The hook evaluates only the active execution frame and, on refusal, returns
     a sanitized response before the downstream Flask view runs. It emits only a
     coarse epoch and decision class to the module logger. No request body,
-    identity/session field, mirror context, risk score, or reasoning trace is
-    attached to the log record.
+    identity/session field, mirror context, risk score, delegation payload, or
+    reasoning trace is attached to the log record.
 
     Sensitive execution fields are body-only. If one is placed in the query
     string, the application rejects the request without echoing the value. This
