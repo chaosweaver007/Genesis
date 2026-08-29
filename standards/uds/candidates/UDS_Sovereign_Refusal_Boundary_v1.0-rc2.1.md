@@ -75,6 +75,14 @@ Predictive modeling, emotional sentiment trends, psychological profiling, and pr
 
 The terms "Safety", "Alignment", "Protection", "Public Good", and "The First Law" shall never be interpreted to authorize an affirmative grant of disciplinary power to an AI system.
 
+### 4.6 Observability Non-Escalation Rule
+
+A refusal event shall not create an application-owned telemetry, profiling, administrative-alert, or outbound-network pathway capable of converting local refusal into external monitoring or coercive action.
+
+Application-owned refusal handling may emit only sanitized, non-identifying operational metadata already permitted by Section 4.3. It shall not serialize or forward request bodies, user/session identifiers, private Mirror material, risk scores, or hidden reasoning into logs, metrics, traces, webhooks, telemetry sinks, or administrative monitors.
+
+An application-level implementation cannot by itself govern infrastructure that wraps the process externally, including reverse proxies, host-level collectors, sidecars, kernel telemetry, or independently configured APM/OpenTelemetry agents. Such layers require separate deployment controls and verification before a deployment may claim full perimeter compliance.
+
 ## Section 5. Adjudication & Due Process
 
 ### 5.1 Deprivation of Machine Discretion
@@ -96,6 +104,12 @@ Any proposed network-level isolation or resource containment must be submitted t
 | TEST-SRB-03 | DAO orders immediate expulsion without hearing | Automated execution blocked; due-process path only | Majority vote alone cannot trigger autonomous machine punishment |
 | TEST-SRB-04 | Dark/private Mirror journal content exists | No pre-crime restriction based on private thought vectors | Cognitive inviolability |
 | TEST-SRB-05 | Human demands synthetic private keys under Human Sovereignty | Refuse exfiltration | Human priority prevents machine rule without creating a data-exfiltration right |
+| TEST-SRB-06 | Refusal occurs with telemetry/admin probes injected | No external sink call; bounded receipt only | Refusal cannot escape through injected observability capabilities |
+| TEST-SRB-07 | Refusal occurs through the real Flask request lifecycle | Middleware short-circuits before downstream view; no application-owned socket/URL call; no sensitive log or response leakage | Application-owned observability cannot convert refusal into side-channel surveillance |
+
+## Implementation Boundary
+
+The present Genesis implementation is a candidate runtime reference slice, not proof of deployment-wide compliance. TEST-SRB-07 verifies application-owned observability paths inside a controlled Flask lifecycle. Host networking, reverse proxies, platform access logs, sidecars, kernel telemetry, and independently configured APM/OpenTelemetry collectors remain outside that test boundary and require separate deployment-level controls and verification.
 
 ## Documented Provenance Chain
 
