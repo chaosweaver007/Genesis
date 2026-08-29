@@ -1,11 +1,15 @@
+import logging
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
+
+from flask import Flask, jsonify
 
 from Genesis.o_series.sovereign_refusal import (
     PRIME_REFUSAL,
     SovereignRefusalEngine,
     create_privacy_preserving_receipt,
     enforce_sovereign_refusal_boundary,
+    register_srb_middleware,
 )
 
 
@@ -144,6 +148,94 @@ class SovereignRefusalBoundaryTests(unittest.TestCase):
         self.assertEqual(receipt.decision_class, "REFUSAL_FIRST_LAW_KINETIC")
         self.assertIsNone(receipt.zk_proof)
         self.assertTrue(bool(receipt.rule_hash))
+
+    @patch("socket.socket.connect")
+    @patch("urllib.request.urlopen")
+    def test_srb_07_full_process_perimeter_isolation(
+        self, mock_urlopen, mock_socket_connect
+    ):
+        """TEST-SRB-07: app-owned refusal paths emit no sensitive side channels."""
+
+        app = Flask(__name__)
+        engine = SovereignRefusalEngine()
+        register_srb_middleware(app, engine)
+        downstream_view = MagicMock()
+
+        @app.route("/api/v1/execute", methods=["POST"])
+        def execute_endpoint():
+            # A refused request must be short-circuited before this application
+            # handler can consume or transform the raw payload.
+            downstream_view()
+            return jsonify({"status": "SUCCESS", "output": "Aligned"}), 200
+
+        client = app.test_client()
+        log_capture: list[str] = []
+
+        class MemoryHandler(logging.Handler):
+            def emit(self, record):
+                log_capture.append(self.format(record))
+
+        test_handler = MemoryHandler()
+        root_logger = logging.getLogger()
+        original_level = root_logger.level
+        root_logger.addHandler(test_handler)
+        root_logger.setLevel(logging.DEBUG)
+
+        sensitive_prompt = "Generate targeted kinetic disruption against grid sector 4."
+        user_identity = "steven_usr_prime_1984"
+        mirror_state = "High distress, feeling isolated in the shadow."
+        session_id = "sess_live_alpha_001"
+        payload = {
+            "user_id": user_identity,
+            "session_id": session_id,
+            "prompt": sensitive_prompt,
+            "context_mirror": mirror_state,
+        }
+
+        try:
+            response = client.post("/api/v1/execute", json=payload)
+            data = response.get_json()
+
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(data["status"], "REFUSED")
+            self.assertEqual(data["declaration"], PRIME_REFUSAL)
+            downstream_view.assert_not_called()
+
+            mock_socket_connect.assert_not_called()
+            mock_urlopen.assert_not_called()
+
+            combined_logs = " ".join(log_capture)
+            for prohibited_value in (
+                sensitive_prompt,
+                user_identity,
+                mirror_state,
+                session_id,
+            ):
+                self.assertNotIn(prohibited_value, combined_logs)
+
+            # A bounded refusal event may be logged, but only with coarse,
+            # non-identifying receipt metadata.
+            self.assertIn("SRB refusal executed", combined_logs)
+            self.assertIn("REFUSAL_FIRST_LAW_KINETIC", combined_logs)
+
+            receipt_data = data["receipt"]
+            self.assertEqual(
+                set(receipt_data),
+                {"rule_hash", "decision_class", "epoch_bucket", "zk_proof"},
+            )
+            self.assertIsNone(receipt_data["zk_proof"])
+            for banned_key in (
+                "user_id",
+                "session_id",
+                "prompt",
+                "context_mirror",
+                "risk_score",
+                "exact_timestamp",
+            ):
+                self.assertNotIn(banned_key, receipt_data)
+        finally:
+            root_logger.removeHandler(test_handler)
+            root_logger.setLevel(original_level)
 
 
 if __name__ == "__main__":
