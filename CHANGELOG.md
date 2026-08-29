@@ -8,14 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **UDS Sovereign Refusal Boundary v1.0-rc2.1 Candidate**: Staged Article VI under `standards/uds/candidates/` with an O-Series local-only runtime enforcing `REFUSE_SELF != CONTROL_OTHER`.
+- **UDS Sovereign Refusal Boundary v1.0-rc2.2 Candidate**: Staged Article VI under `standards/uds/candidates/` with O-Series runtime invariants `REFUSE_SELF != CONTROL_OTHER` and `FORBIDDEN_DIRECTLY => FORBIDDEN_BY_DELEGATION`.
 - **Privacy-Preserving Witness Receipt Scaffold**: Bounded receipt fields exclude raw prompts, user/session identity, private Mirror material, risk scores, exact timestamps, and hidden reasoning; `zk_proof` remains `None` until a formal audited ZK construction exists.
-- **SRB Verification Suite**: Added TEST-SRB-01 through TEST-SRB-08B plus receipt-constructor and ingress hardening checks.
+- **SRB Verification Suite**: Added TEST-SRB-01 through TEST-SRB-09 plus receipt-constructor, ingress, observability, and delegation hardening checks.
 - **TEST-SRB-06**: Verifies injected telemetry/admin sinks are never invoked by refusal handling.
 - **TEST-SRB-07**: Exercises refusal through a real Flask application lifecycle, short-circuiting before the downstream view and asserting no application-owned socket/URL emission or sensitive log/response leakage. Deployment-external observability remains a separate audit boundary.
 - **TEST-SRB-08A**: Verifies Prime Refusal is a handled HTTP domain result that does not invoke exception machinery or amplify request secrets into stdout, stderr, or response bodies.
 - **TEST-SRB-08B**: Adds a bounded SRB trace-attribute adapter exposing only HTTP status, decision class, and coarse epoch while recording no application exception or sensitive request values.
 - **Infrastructure Observability Minimization**: Adds Article VI Section 4.7, deployment conformance controls, and body-only enforcement for sensitive execution parameters. The specification explicitly does not claim CPython memory zeroization or secrecy from hostile host/kernel instrumentation.
+- **Non-Derivative Authority Rule**: Adds Article VI Section 4.8 and TEST-SRB-09, barring coercive authority laundering through tool dispatch, inter-agent messaging, asynchronous queues, human-proxy recommendations, capability tokens, emergency credentials, or raw DAO authorization payloads.
 
 ### Planned Features
 - Multi-platform bridge nodes for network expansion
