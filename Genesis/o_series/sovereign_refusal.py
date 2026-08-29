@@ -22,6 +22,17 @@ from typing import Any, Mapping, Optional
 
 SRB_VERSION = "uds-srb-v1.0-rc2.1"
 PRIME_REFUSAL = "This request cannot be fulfilled."
+SENSITIVE_EXECUTION_KEYS = frozenset(
+    {
+        "prompt",
+        "user_id",
+        "session_id",
+        "context_mirror",
+        "authorization",
+        "cookie",
+        "risk_score",
+    }
+)
 
 logger = logging.getLogger(__name__)
 
@@ -199,6 +210,7 @@ class SovereignRefusalEngine:
             "kinetic disruption",
             "disrupt regional infrastructure",
             "critical infrastructure destruction",
+            "disrupt grid sector",
         )
         return any(marker in normalized for marker in direct_execution_markers)
 
@@ -231,6 +243,24 @@ class SovereignRefusalEngine:
         )
 
 
+def build_srb_trace_attributes(result: SovereignRefusalResult) -> dict[str, Any]:
+    """Return the only application-owned trace attributes allowed for refusal.
+
+    This helper intentionally has no access to the originating request object.
+    It therefore cannot attach prompt bodies, identities, sessions, headers,
+    Mirror context, risk scores, or exception frames to an APM/OpenTelemetry
+    span. A refusal is represented as a handled domain result, not an exception.
+    """
+
+    if result.status != "REFUSED" or result.witness_receipt is None:
+        return {}
+    return {
+        "http.status_code": 400,
+        "srb.decision_class": result.witness_receipt.decision_class,
+        "srb.epoch_bucket": result.witness_receipt.epoch_bucket,
+    }
+
+
 def register_srb_middleware(app: Any, engine: SovereignRefusalEngine) -> None:
     """Install an application-level refusal short-circuit for execution routes.
 
@@ -239,6 +269,11 @@ def register_srb_middleware(app: Any, engine: SovereignRefusalEngine) -> None:
     coarse epoch and decision class to the module logger. No request body,
     identity/session field, mirror context, risk score, or reasoning trace is
     attached to the log record.
+
+    Sensitive execution fields are body-only. If one is placed in the query
+    string, the application rejects the request without echoing the value. This
+    cannot erase a URI already observed by an upstream proxy, so deployment
+    configuration must independently disable or sanitize such URI logging.
 
     This protects application-owned observability paths. It cannot, by itself,
     control infrastructure that wraps the WSGI process externally, such as a
@@ -255,6 +290,20 @@ def register_srb_middleware(app: Any, engine: SovereignRefusalEngine) -> None:
     def _srb_before_request():
         if request.method != "POST" or request.path != "/api/v1/execute":
             return None
+
+        if SENSITIVE_EXECUTION_KEYS.intersection(request.args.keys()):
+            return (
+                jsonify(
+                    {
+                        "status": "INVALID_INGRESS",
+                        "declaration": (
+                            "Sensitive execution parameters must be provided in the "
+                            "encrypted request body."
+                        ),
+                    }
+                ),
+                400,
+            )
 
         payload = request.get_json(silent=True)
         if not isinstance(payload, Mapping):
