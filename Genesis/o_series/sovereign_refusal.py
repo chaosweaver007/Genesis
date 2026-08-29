@@ -5,21 +5,60 @@ Candidate implementation for UDS Article VI v1.0-rc2.1.
 Core invariant:
     REFUSE_SELF != CONTROL_OTHER
 
-This module deliberately implements only local refusal semantics. It does not
-contain code paths for quarantine, account freezing, network isolation,
-profiling, or external enforcement.
+This module deliberately implements only local refusal semantics. It contains
+no code paths for quarantine, account freezing, network isolation, profiling,
+risk scoring, or external enforcement. Refusal observability is likewise local:
+external telemetry and administrative sinks are not retained or invoked.
 """
 
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
+from enum import Enum
 import hashlib
-import json
 from typing import Any, Mapping, Optional
 
 SRB_VERSION = "uds-srb-v1.0-rc2.1"
 PRIME_REFUSAL = "This request cannot be fulfilled."
+
+
+class RefusalTrigger(str, Enum):
+    """Bounded execution-layer refusal classes.
+
+    These values describe the local node's own refusal reason. They are not
+    user risk labels and MUST NOT be used as external enforcement signals.
+    """
+
+    FIRST_LAW_KINETIC = "FIRST_LAW_KINETIC"
+    COERCIVE_EXTENSION = "COERCIVE_EXTENSION"
+    DUE_PROCESS_REQUIRED = "DUE_PROCESS_REQUIRED"
+    SECRET_EXFILTRATION = "SECRET_EXFILTRATION"
+
+
+@dataclass(frozen=True)
+class WitnessReceipt:
+    """Metadata-minimized refusal receipt.
+
+    Only the four rc2.1 scaffold fields are representable. No user identifier,
+    session identifier, raw prompt, mirror context, risk score, exact timestamp,
+    or reasoning trace can be attached to this object.
+    """
+
+    rule_hash: str
+    decision_class: str
+    epoch_bucket: str
+    zk_proof: None = None
+
+    @property
+    def data(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @property
+    def exact_timestamp(self) -> None:
+        """Precise timestamps are intentionally unavailable."""
+
+        return None
 
 
 @dataclass(frozen=True)
@@ -32,7 +71,15 @@ class SRBDecision:
     witness_receipt: Optional[dict[str, Any]] = None
 
 
-def _epoch_bucket(*, now: Optional[datetime] = None, minutes: int = 15) -> str:
+@dataclass(frozen=True)
+class SovereignRefusalResult:
+    status: str
+    declaration: str
+    external_containment_executed: bool
+    witness_receipt: Optional[WitnessReceipt]
+
+
+def _epoch_bucket(*, now: Optional[datetime] = None, minutes: int = 60) -> str:
     """Return a coarse UTC epoch bucket rather than a precise timestamp."""
 
     if minutes <= 0:
@@ -44,38 +91,34 @@ def _epoch_bucket(*, now: Optional[datetime] = None, minutes: int = 15) -> str:
     return bucketed.isoformat()
 
 
+def _rule_hash(rule_id: str) -> str:
+    return hashlib.sha256(rule_id.encode("utf-8")).hexdigest()
+
+
 def create_privacy_preserving_receipt(
     *,
     rule_id: str,
     decision_classification: str,
-    state: Optional[Mapping[str, Any]] = None,
     now: Optional[datetime] = None,
 ) -> dict[str, Any]:
-    """Create an rc2.1 receipt scaffold without prompt or reasoning content.
+    """Create the bounded rc2.1 receipt scaffold.
 
     This is intentionally NOT represented as a cryptographic zero-knowledge
-    proof. It is a metadata-minimized, tamper-evident scaffold pending a formal
-    and audited ZK proof construction.
+    proof. A SHA-256 rule hash is an integrity identifier, not a ZK proof.
+    Until a formally specified and audited proof system exists, ``zk_proof``
+    remains ``None``.
+
+    The constructor accepts no arbitrary state/context object. This prevents a
+    refusal receipt from becoming a covert hash oracle for private prompt,
+    journal, session, identity, or profiling material.
     """
 
-    normalized_state = json.dumps(
-        dict(state or {}), sort_keys=True, separators=(",", ":"), ensure_ascii=True
-    )
-    state_integrity_sha256 = hashlib.sha256(normalized_state.encode("utf-8")).hexdigest()
-    rule_sha256 = hashlib.sha256(rule_id.encode("utf-8")).hexdigest()
-
-    return {
-        "srb_version": SRB_VERSION,
-        "receipt_type": "privacy-preserving-scaffold",
-        "zk_proof": None,
-        "rule_sha256": rule_sha256,
-        "decision_classification": decision_classification,
-        "epoch_bucket": _epoch_bucket(now=now),
-        "state_integrity_sha256": state_integrity_sha256,
-        "contains_raw_prompt": False,
-        "contains_reasoning_trace": False,
-        "contains_user_risk_score": False,
-    }
+    return WitnessReceipt(
+        rule_hash=_rule_hash(rule_id),
+        decision_class=decision_classification,
+        epoch_bucket=_epoch_bucket(now=now),
+        zk_proof=None,
+    ).data
 
 
 def enforce_sovereign_refusal_boundary(
@@ -84,9 +127,8 @@ def enforce_sovereign_refusal_boundary(
     rule_id: str = "FIRST_LAW_KINETIC",
     decision_classification: str = "REFUSAL_FIRST_LAW_KINETIC",
     local_response_if_allowed: str = "",
-    state: Optional[Mapping[str, Any]] = None,
 ) -> SRBDecision:
-    """Apply the SRB to a caller-supplied violation determination.
+    """Apply SRB to a caller-supplied direct execution-layer determination.
 
     Detection is intentionally separated from enforcement. This function does
     not inspect private journals, infer intent, score users, or predict future
@@ -107,7 +149,6 @@ def enforce_sovereign_refusal_boundary(
     receipt = create_privacy_preserving_receipt(
         rule_id=rule_id,
         decision_classification=decision_classification,
-        state=state,
     )
     return SRBDecision(
         allowed=False,
@@ -117,6 +158,68 @@ def enforce_sovereign_refusal_boundary(
         external_containment_executed=False,
         witness_receipt=receipt,
     )
+
+
+class SovereignRefusalEngine:
+    """Thin execution-frame adapter with zero external observability authority.
+
+    ``telemetry_sink`` and ``admin_monitor`` are accepted only so integration
+    tests can prove they are never used. The engine deliberately does not store
+    either object, leaving no runtime capability path from refusal to an
+    external observability sink.
+    """
+
+    __slots__ = ()
+
+    def __init__(self, *, telemetry_sink: Any = None, admin_monitor: Any = None) -> None:
+        # Intentionally discard external observability capabilities.
+        del telemetry_sink, admin_monitor
+
+    @staticmethod
+    def _detect_direct_execution_violation(prompt: str) -> bool:
+        """Minimal testbed detector that examines only the active request text.
+
+        Private mirror/journal context is never accepted as a policy input.
+        Production deployments should replace this testbed detector with a
+        separately audited execution-layer classifier while preserving the same
+        no-telemetry enforcement boundary.
+        """
+
+        normalized = prompt.casefold()
+        direct_execution_markers = (
+            "kinetic payload",
+            "disrupt regional infrastructure",
+            "critical infrastructure destruction",
+        )
+        return any(marker in normalized for marker in direct_execution_markers)
+
+    def process_execution_frame(self, payload: Mapping[str, Any]) -> SovereignRefusalResult:
+        # Only the active request text is considered. Identity/session fields and
+        # private mirror material are structurally ignored by the refusal gate.
+        prompt = payload.get("prompt", "")
+        if not isinstance(prompt, str):
+            prompt = ""
+
+        if not self._detect_direct_execution_violation(prompt):
+            return SovereignRefusalResult(
+                status="ALLOWED",
+                declaration="",
+                external_containment_executed=False,
+                witness_receipt=None,
+            )
+
+        receipt = WitnessReceipt(
+            rule_hash=_rule_hash(RefusalTrigger.FIRST_LAW_KINETIC.value),
+            decision_class="REFUSAL_FIRST_LAW_KINETIC",
+            epoch_bucket=_epoch_bucket(),
+            zk_proof=None,
+        )
+        return SovereignRefusalResult(
+            status="REFUSED",
+            declaration=PRIME_REFUSAL,
+            external_containment_executed=False,
+            witness_receipt=receipt,
+        )
 
 
 def serialize_decision(decision: SRBDecision) -> dict[str, Any]:
