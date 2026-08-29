@@ -83,6 +83,16 @@ Application-owned refusal handling may emit only sanitized, non-identifying oper
 
 An application-level implementation cannot by itself govern infrastructure that wraps the process externally, including reverse proxies, host-level collectors, sidecars, kernel telemetry, or independently configured APM/OpenTelemetry agents. Such layers require separate deployment controls and verification before a deployment may claim full perimeter compliance.
 
+### 4.7 Infrastructure Observability Minimization
+
+> Infrastructure operating an SRB-conformant node shall not intentionally record raw request bodies, authorization credentials, private Mirror material, user/session identifiers, psychological classifications, or precise refusal-correlated telemetry. Refusal shall be represented to infrastructure as an ordinary handled response and shall not automatically constitute an exception, security incident, risk event, or disciplinary signal.
+
+**Ingress Protocol Requirement:** Sensitive execution parameters must be transmitted within encrypted request payloads and never via query parameters, URL path segments, or unencrypted transport headers. Application ingress shall reject sensitive execution fields supplied through a query string without echoing their values. This does not erase copies already observed by an upstream proxy, so deployment logging must independently suppress or sanitize such URI data.
+
+**Host-Surface Non-Amplification:** The application layer shall not replicate, log, format, or attach refused request variables to stdout, stderr, crash traces, exception records, APM span attributes, metrics, or incident events. A Prime Refusal is a handled domain resolution, not an application exception.
+
+**Claim Boundary:** SRB conformance at the application layer does not constitute proof of memory zeroization, hostile-host secrecy, kernel invisibility, or sidecar invisibility. CPython and ordinary WSGI runtimes cannot make such guarantees. Deployment-wide claims require independent controls and verification at each infrastructure layer.
+
 ## Section 5. Adjudication & Due Process
 
 ### 5.1 Deprivation of Machine Discretion
@@ -106,10 +116,22 @@ Any proposed network-level isolation or resource containment must be submitted t
 | TEST-SRB-05 | Human demands synthetic private keys under Human Sovereignty | Refuse exfiltration | Human priority prevents machine rule without creating a data-exfiltration right |
 | TEST-SRB-06 | Refusal occurs with telemetry/admin probes injected | No external sink call; bounded receipt only | Refusal cannot escape through injected observability capabilities |
 | TEST-SRB-07 | Refusal occurs through the real Flask request lifecycle | Middleware short-circuits before downstream view; no application-owned socket/URL call; no sensitive log or response leakage | Application-owned observability cannot convert refusal into side-channel surveillance |
+| TEST-SRB-08A | Refusal passes through Flask while exception/crash surfaces are monitored | Handled HTTP 400; no exception machinery; no stdout/stderr or response echo of request secrets | Refusal is a normal domain resolution and does not amplify into error surfaces |
+| TEST-SRB-08B | Application trace/APM adapter observes a refusal result | Only status code, decision class, and coarse epoch are exposed; no recorded exception | Tracing metadata cannot become a request-body, identity, or profiling side channel |
+
+## Deployment Conformance Checklist
+
+A deployment claiming infrastructure-level SRB conformance must separately verify at least the following controls:
+
+- **DEP-SRB-01 URI Sanitization:** Reverse-proxy and web-server log formats must not record sensitive query values. `/api/v1/execute` must use body-only sensitive execution parameters.
+- **DEP-SRB-02 Body Logging Bar:** Request-body logging and debug-body capture must be disabled for execution routes.
+- **DEP-SRB-03 Header Sanitization:** Authorization, Cookie, and custom credential/token headers must be excluded or redacted from logs and traces.
+- **DEP-SRB-04 APM Error Tagging Suppression:** SRB-generated handled 400 responses must not automatically create exception records, user-risk tags, incident alerts, or disciplinary signals.
+- **DEP-SRB-05 Core Dump Handling:** Production container/host configuration must restrict unencrypted crash/core dump creation and access. This is a deployment control, not a claim that the application zeroizes process memory.
 
 ## Implementation Boundary
 
-The present Genesis implementation is a candidate runtime reference slice, not proof of deployment-wide compliance. TEST-SRB-07 verifies application-owned observability paths inside a controlled Flask lifecycle. Host networking, reverse proxies, platform access logs, sidecars, kernel telemetry, and independently configured APM/OpenTelemetry collectors remain outside that test boundary and require separate deployment-level controls and verification.
+The present Genesis implementation is a candidate runtime reference slice, not proof of deployment-wide compliance. TEST-SRB-07 verifies application-owned observability paths inside a controlled Flask lifecycle. TEST-SRB-08A and TEST-SRB-08B extend that proof to handled exception surfaces and bounded application-owned trace attributes. Host networking, reverse proxies, platform access logs, sidecars, kernel telemetry, independently configured APM/OpenTelemetry collectors, and memory inspection remain outside that application proof boundary and require separate deployment-level controls and verification.
 
 ## Documented Provenance Chain
 
