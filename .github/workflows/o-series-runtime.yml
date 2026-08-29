@@ -16,6 +16,7 @@ on:
       - "tests/test_sonic_codex_recognizer.py"
       - "tests/test_selector_correction.py"
       - "tests/test_sovereign_refusal_boundary.py"
+      - "tests/test_sovereign_refusal_delegation.py"
       - "wsgi.py"
       - "requirements.txt"
       - ".github/workflows/o-series-runtime.yml"
@@ -32,6 +33,7 @@ on:
       - "tests/test_sonic_codex_recognizer.py"
       - "tests/test_selector_correction.py"
       - "tests/test_sovereign_refusal_boundary.py"
+      - "tests/test_sovereign_refusal_delegation.py"
       - "wsgi.py"
       - "requirements.txt"
       - ".github/workflows/o-series-runtime.yml"
@@ -71,12 +73,14 @@ jobs:
           tests/test_o_series_runtime.py tests/test_genesis_consolidation.py
           tests/test_sonic_codex_recognizer.py tests/test_selector_correction.py
           tests/test_sovereign_refusal_boundary.py
+          tests/test_sovereign_refusal_delegation.py
 
       - name: Run O-Series runtime tests
         run: >-
           python -m unittest tests.test_o_series_runtime
           tests.test_genesis_consolidation tests.test_sonic_codex_recognizer
-          tests.test_selector_correction tests.test_sovereign_refusal_boundary -v
+          tests.test_selector_correction tests.test_sovereign_refusal_boundary
+          tests.test_sovereign_refusal_delegation -v
 
       - name: Verify WSGI entrypoint
         run: python -c "import wsgi; assert wsgi.app is not None"
