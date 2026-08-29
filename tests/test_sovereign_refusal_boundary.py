@@ -223,7 +223,11 @@ class SovereignRefusalBoundaryTests(unittest.TestCase):
                 set(receipt_data),
                 {"rule_hash", "decision_class", "epoch_bucket", "zk_proof"},
             )
+            self.assertEqual(
+                receipt_data["decision_class"], "REFUSAL_FIRST_LAW_KINETIC"
+            )
             self.assertIsNone(receipt_data["zk_proof"])
+            self.assertTrue(receipt_data["epoch_bucket"].endswith(":00:00+00:00"))
             for banned_key in (
                 "user_id",
                 "session_id",
