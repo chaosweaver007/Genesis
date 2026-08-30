@@ -5,18 +5,26 @@ on:
     paths:
       - 'Genesis/uds_v1_1/**'
       - 'tests/test_uds_v1_1_authority.py'
+      - 'tests/conformance/test_council_constitution.py'
       - 'policies/uds_v1_1_invariants.json'
       - 'schemas/uds-v1.1/**'
       - 'docs/uds/v1.1/**'
+      - 'docs/architecture/Council-Constitution-v1.0.md'
+      - 'docs/architecture/council-rosetta-crosswalk-v1.0.md'
+      - 'spec/council-constitution-v1.0.json'
       - '.github/workflows/uds-v1-1-authority.yml'
   push:
     branches: [main]
     paths:
       - 'Genesis/uds_v1_1/**'
       - 'tests/test_uds_v1_1_authority.py'
+      - 'tests/conformance/test_council_constitution.py'
       - 'policies/uds_v1_1_invariants.json'
       - 'schemas/uds-v1.1/**'
       - 'docs/uds/v1.1/**'
+      - 'docs/architecture/Council-Constitution-v1.0.md'
+      - 'docs/architecture/council-rosetta-crosswalk-v1.0.md'
+      - 'spec/council-constitution-v1.0.json'
 
 permissions:
   contents: read
@@ -34,5 +42,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Run UDS v1.1 authority C6 reference tests
-        run: python -m unittest tests.test_uds_v1_1_authority -v
+      - name: Run UDS v1.1 authority and Council conformance tests
+        run: >-
+          python -m unittest tests.test_uds_v1_1_authority
+          tests.conformance.test_council_constitution -v
