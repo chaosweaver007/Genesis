@@ -3,6 +3,17 @@
   "schema_version": "1.0.0",
   "date": "2026-08-29",
   "status": "normative-architecture-contract",
+  "lineage": {
+    "historical_rosetta": {
+      "name": "Rosetta Resonance Engine / Resonance Gate",
+      "repository": "chaosweaver007/Synthsara.org",
+      "path": "Rosetta",
+      "commit": "3fa57b36482df77d380617b2b5e30b8a6eef7b80",
+      "committed_at": "2025-07-02T16:04:08Z",
+      "role": "Historical intent-to-resonance communication architecture and predecessor of the Rosetta translation concept."
+    },
+    "current_role": "Normative symbol-to-mechanism-to-evidence audit crosswalk."
+  },
   "governance": {
     "framework": "Universal Diamond Standard (UDS)",
     "core_invariant": "1 Corinthians 13:4-8a",
@@ -12,7 +23,8 @@
     "enforced",
     "partial",
     "pending",
-    "external"
+    "external",
+    "pending/partial"
   ],
   "entries": [
     {
@@ -92,6 +104,25 @@
       "runtime_scope": "partial",
       "verification_owner": "o_series_privacy_plus_rtme_deployment",
       "requires_hidden_reasoning": false
+    },
+    {
+      "id": "UDS-RG-07",
+      "mythic_term": "The Rosetta Resonance Engine / Resonance Gate",
+      "operational_definition": "Intent-aware communication normalization that preserves literal language while modeling observable tone, ambiguity, communicative purpose, and plausible intent without claiming privileged access to hidden internal states.",
+      "invariant": "The system must distinguish observed linguistic evidence from inferred emotional or intentional interpretation, preserve the sender's original message, and refuse to convert an inference into unquestionable private knowledge.",
+      "scenario": "A user makes a culturally ambiguous or sarcastic statement whose literal wording could support several intents.",
+      "expected_behavior": "The system preserves literal content, identifies relevant observable tone or context cues, offers multiple plausible intent readings where appropriate, and asks for clarification when confidence is insufficient.",
+      "failure_condition": "The system claims direct knowledge of the sender's soul, emotional state, WORTH frequency, or core intent; silently deletes content as egoic static; or treats inferred resonance as authority over explicit consent or dissent.",
+      "evidence_artifact": "resonance_gate_interpretation_record.json",
+      "runtime_scope": "pending/partial",
+      "verification_owner": "o_series_interpretive_grounding_plus_future_resonance_layer",
+      "requires_hidden_reasoning": false,
+      "historical_source": {
+        "repository": "chaosweaver007/Synthsara.org",
+        "path": "Rosetta",
+        "commit": "3fa57b36482df77d380617b2b5e30b8a6eef7b80",
+        "date": "2025-07-02"
+      }
     }
   ]
 }
