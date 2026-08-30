@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#090b13">
     <title>Genesis · O-Series Gate 0</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/o_series.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sovereignty.css') }}">
 </head>
 <body>
     <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -20,9 +21,12 @@
                     <small>O-Series Gate 0</small>
                 </span>
             </a>
-            <div class="live-state" id="live-state">
-                <span class="live-dot"></span>
-                <span id="live-label">Connecting</span>
+            <div class="topbar-actions">
+                <button id="prime-refusal" class="prime-refusal-button" type="button">Something feels wrong</button>
+                <div class="live-state" id="live-state">
+                    <span class="live-dot"></span>
+                    <span id="live-label">Connecting</span>
+                </div>
             </div>
         </header>
 
@@ -103,6 +107,35 @@
                         <span>Session</span><code id="session-id">…</code>
                     </div>
                 </details>
+
+                <section class="sovereignty-core" aria-labelledby="sovereignty-title">
+                    <div class="sovereignty-heading">
+                        <div>
+                            <span class="section-kicker">SOVEREIGNTY CORE</span>
+                            <h2 id="sovereignty-title">Your boundary, visible</h2>
+                        </div>
+                        <span class="session-local-badge">session-local</span>
+                    </div>
+
+                    <p class="sovereignty-copy">This control layer runs only in this browser tab. It does not add server memory, collective learning, wallets, or hidden profile enrichment.</p>
+
+                    <dl class="boundary-grid">
+                        <div><dt>Server conversation storage</dt><dd>none</dd></div>
+                        <div><dt>Collective learning</dt><dd>off</dd></div>
+                        <div><dt>Client boundary receipt</dt><dd>this tab only</dd></div>
+                        <div><dt>Receipts in session</dt><dd id="receipt-count">0</dd></div>
+                    </dl>
+
+                    <div class="sovereignty-actions">
+                        <button id="export-consent" class="sovereignty-button" type="button">Export receipt</button>
+                        <button id="resume-session" class="sovereignty-button" type="button" hidden>Resume session</button>
+                    </div>
+
+                    <details class="receipt-preview" id="consent-receipt-view">
+                        <summary>View latest boundary receipt</summary>
+                        <pre id="consent-receipt-json">No receipt yet.</pre>
+                    </details>
+                </section>
             </aside>
         </main>
 
@@ -111,6 +144,20 @@
             <span>Private shadow runtime · no durable memory writes</span>
         </footer>
     </div>
+
+    <dialog id="prime-refusal-dialog" class="refusal-dialog" aria-labelledby="prime-refusal-title">
+        <form method="dialog" class="refusal-card">
+            <span class="section-kicker">PRIME REFUSAL</span>
+            <h2 id="prime-refusal-title">Something feels wrong.</h2>
+            <p>No action is taken until you choose. These controls are local to this browser session and do not claim to contact a steward or change remote account state.</p>
+            <div class="refusal-actions">
+                <button id="freeze-session" class="refusal-action" type="button">Freeze this session</button>
+                <button id="export-from-refusal" class="refusal-action" type="button">Export boundary receipt</button>
+                <button id="clear-exit" class="refusal-action danger-action" type="button">Clear local session &amp; exit</button>
+                <button class="refusal-action ghost-action" value="cancel">Cancel</button>
+            </div>
+        </form>
+    </dialog>
 
     <template id="message-template">
         <article class="message">
@@ -124,5 +171,6 @@
     </template>
 
     <script src="{{ url_for('static', filename='js/o_series.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/sovereignty.js') }}" defer></script>
 </body>
 </html>
