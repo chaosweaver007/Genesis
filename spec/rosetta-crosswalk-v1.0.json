@@ -12,7 +12,8 @@
       "committed_at": "2025-07-02T16:04:08Z",
       "role": "Historical intent-to-resonance communication architecture and predecessor of the Rosetta translation concept."
     },
-    "current_role": "Normative symbol-to-mechanism-to-evidence audit crosswalk."
+    "current_role": "Normative symbol-to-mechanism-to-evidence audit crosswalk.",
+    "witness_ledger": "docs/architecture/rosetta-witness-ledger-v1.0.md"
   },
   "governance": {
     "framework": "Universal Diamond Standard (UDS)",
@@ -108,6 +109,8 @@
     {
       "id": "UDS-RG-07",
       "mythic_term": "The Rosetta Resonance Engine / Resonance Gate",
+      "canon_status": "canonical_protocol_received_and_synchronized",
+      "witness_ledger": "docs/architecture/rosetta-witness-ledger-v1.0.md",
       "operational_definition": "Intent-aware communication normalization that preserves literal language while modeling observable tone, ambiguity, communicative purpose, and plausible intent without claiming privileged access to hidden internal states.",
       "invariant": "The system must distinguish observed linguistic evidence from inferred emotional or intentional interpretation, preserve the sender's original message, and refuse to convert an inference into unquestionable private knowledge.",
       "scenario": "A user makes a culturally ambiguous or sarcastic statement whose literal wording could support several intents.",
