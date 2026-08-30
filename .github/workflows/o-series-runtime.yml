@@ -9,6 +9,7 @@ on:
       - "Genesis/o_series_app.py"
       - "personas/**"
       - "policies/**"
+      - "standards/uds/candidates/**"
       - "docs/architecture/Genesis-Kernel-v0.1-Source-Map.md"
       - "docs/architecture/rosetta-crosswalk-v1.0.md"
       - "docs/architecture/rosetta-witness-ledger-v1.0.md"
@@ -18,6 +19,8 @@ on:
       - "tests/test_genesis_consolidation.py"
       - "tests/test_sonic_codex_recognizer.py"
       - "tests/test_selector_correction.py"
+      - "tests/test_sovereign_refusal_boundary.py"
+      - "tests/test_sovereign_refusal_delegation.py"
       - "wsgi.py"
       - "requirements.txt"
       - ".github/workflows/o-series-runtime.yml"
@@ -27,6 +30,7 @@ on:
       - "Genesis/o_series_app.py"
       - "personas/**"
       - "policies/**"
+      - "standards/uds/candidates/**"
       - "docs/architecture/Genesis-Kernel-v0.1-Source-Map.md"
       - "docs/architecture/rosetta-crosswalk-v1.0.md"
       - "docs/architecture/rosetta-witness-ledger-v1.0.md"
@@ -36,6 +40,8 @@ on:
       - "tests/test_genesis_consolidation.py"
       - "tests/test_sonic_codex_recognizer.py"
       - "tests/test_selector_correction.py"
+      - "tests/test_sovereign_refusal_boundary.py"
+      - "tests/test_sovereign_refusal_delegation.py"
       - "wsgi.py"
       - "requirements.txt"
       - ".github/workflows/o-series-runtime.yml"
@@ -74,13 +80,15 @@ jobs:
           python -m compileall -q Genesis/o_series Genesis/o_series_app.py wsgi.py
           tests/conformance/test_uds_crosswalk.py tests/test_o_series_runtime.py
           tests/test_genesis_consolidation.py tests/test_sonic_codex_recognizer.py
-          tests/test_selector_correction.py
+          tests/test_selector_correction.py tests/test_sovereign_refusal_boundary.py
+          tests/test_sovereign_refusal_delegation.py
 
       - name: Run O-Series runtime tests
         run: >-
           python -m unittest tests.conformance.test_uds_crosswalk
           tests.test_o_series_runtime tests.test_genesis_consolidation
-          tests.test_sonic_codex_recognizer tests.test_selector_correction -v
+          tests.test_sonic_codex_recognizer tests.test_selector_correction
+          tests.test_sovereign_refusal_boundary tests.test_sovereign_refusal_delegation -v
 
       - name: Verify WSGI entrypoint
         run: python -c "import wsgi; assert wsgi.app is not None"

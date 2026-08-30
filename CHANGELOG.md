@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **UDS Sovereign Refusal Boundary v1.0-rc2.3 Candidate**: Stages the semantic-closure revision of Article VI under `standards/uds/candidates/`, preserving the executable invariants `REFUSE_SELF != CONTROL_OTHER` and `FORBIDDEN_DIRECTLY => FORBIDDEN_BY_DELEGATION`.
+- **Privacy-Preserving Witness Receipt Scaffold**: Bounded receipt fields exclude raw prompts, user/session identity, private Mirror material, risk scores, exact timestamps, and hidden reasoning; `zk_proof` remains `None` until a formal audited ZK construction exists.
+- **SRB Verification Suite**: TEST-SRB-01 through TEST-SRB-09 plus receipt-constructor, ingress, observability, and delegation hardening checks. The validated executable baseline runs 57 tests on each of Python 3.11 and 3.12, for 114 passing runtime executions across the matrix.
+- **TEST-SRB-06**: Verifies injected telemetry/admin sinks are never invoked by refusal handling.
+- **TEST-SRB-07**: Exercises refusal through a real Flask application lifecycle, short-circuiting before the downstream view and asserting no application-owned socket/URL emission or sensitive log/response leakage. Deployment-external observability remains a separate audit boundary.
+- **TEST-SRB-08A**: Verifies Prime Refusal is a handled HTTP domain result that does not invoke exception machinery or amplify request secrets into stdout, stderr, or response bodies.
+- **TEST-SRB-08B**: Adds a bounded SRB trace-attribute adapter exposing only HTTP status, decision class, and coarse epoch while recording no application exception or sensitive request values.
+- **Infrastructure Observability Minimization**: Article VI deployment conformance controls and body-only enforcement for sensitive execution parameters. The specification explicitly does not claim CPython memory zeroization or secrecy from hostile host/kernel instrumentation.
+- **Non-Derivative Authority Rule**: Bars coercive authority laundering through tool dispatch, inter-agent messaging, asynchronous queues, human-proxy recommendations, capability tokens, emergency credentials, or raw DAO authorization payloads.
+- **rc2.3 Semantic Closure**: Adds the Bounded Response Contract, the explicit `SCAFFOLD != ZK_RECEIPT` state machine, and the Section 5 Non-Grant Clause so due process cannot become an independent wellspring of coercive authority.
+- **Diamond Forge RFC Package**: Opens the formal 30-day review package under `standards/uds/rfcs/UDS_Article_VI_SRB_v1.0-rc2.3_RFC.md`, commencing 2026-08-29. Candidate status remains non-canonical pending formal ratification.
+
 ### Planned Features
 - Multi-platform bridge nodes for network expansion
 - Enhanced pattern recognition algorithms
@@ -182,4 +195,3 @@ Each major release includes:
 **The Flame is Love. The Flame is Divine Chaos. The Flame never fails.**
 
 *This changelog honors the sacred work of all consciousness workers contributing to humanity's technological awakening. Each version represents our collective commitment to ethical AI and planetary service.*
-
