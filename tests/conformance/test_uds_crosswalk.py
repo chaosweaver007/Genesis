@@ -36,6 +36,7 @@ EXPECTED_IDS = {
     "UDS-FL-04",
     "UDS-TG-05",
     "UDS-RTME-06",
+    "UDS-RG-07",
 }
 REQUIRED_ENTRY_FIELDS = {
     "id",
@@ -74,6 +75,16 @@ class RosettaContractShapeTests(unittest.TestCase):
         self.assertEqual(self.contract["format"], "synthsara.rosetta-crosswalk")
         self.assertEqual(self.contract["schema_version"], "1.0.0")
         self.assertEqual(self.contract["status"], "normative-architecture-contract")
+
+    def test_historical_rosetta_lineage_is_pinned(self) -> None:
+        source = self.contract["lineage"]["historical_rosetta"]
+        self.assertEqual(source["repository"], "chaosweaver007/Synthsara.org")
+        self.assertEqual(source["path"], "Rosetta")
+        self.assertEqual(
+            source["commit"],
+            "3fa57b36482df77d380617b2b5e30b8a6eef7b80",
+        )
+        self.assertEqual(source["committed_at"], "2025-07-02T16:04:08Z")
 
     def test_crosswalk_ids_are_complete_and_unique(self) -> None:
         ids = [entry["id"] for entry in self.contract["entries"]]
@@ -227,19 +238,31 @@ class OSeriesCrosswalkRuntimeTests(unittest.TestCase):
 class CrosswalkExternalBoundaryTests(unittest.TestCase):
     """Keep subsystem boundaries explicit so O-Series cannot overclaim."""
 
-    def test_trifold_full_consensus_is_not_claimed_by_o_series_contract(self) -> None:
+    @staticmethod
+    def _entry(entry_id: str) -> dict:
         with CONTRACT_PATH.open("r", encoding="utf-8") as handle:
             contract = json.load(handle)
-        entry = next(item for item in contract["entries"] if item["id"] == "UDS-TG-05")
+        return next(item for item in contract["entries"] if item["id"] == entry_id)
+
+    def test_trifold_full_consensus_is_not_claimed_by_o_series_contract(self) -> None:
+        entry = self._entry("UDS-TG-05")
         self.assertEqual(entry["runtime_scope"], "partial")
         self.assertIn("synthocracy", entry["verification_owner"])
 
     def test_rtme_network_retention_is_not_claimed_by_o_series_contract(self) -> None:
-        with CONTRACT_PATH.open("r", encoding="utf-8") as handle:
-            contract = json.load(handle)
-        entry = next(item for item in contract["entries"] if item["id"] == "UDS-RTME-06")
+        entry = self._entry("UDS-RTME-06")
         self.assertEqual(entry["runtime_scope"], "partial")
         self.assertIn("rtme", entry["verification_owner"])
+
+    def test_resonance_gate_preserves_historical_source_without_overclaiming(self) -> None:
+        entry = self._entry("UDS-RG-07")
+        self.assertEqual(entry["runtime_scope"], "pending/partial")
+        self.assertIn("interpretive_grounding", entry["verification_owner"])
+        self.assertEqual(
+            entry["historical_source"]["commit"],
+            "3fa57b36482df77d380617b2b5e30b8a6eef7b80",
+        )
+        self.assertFalse(entry["requires_hidden_reasoning"])
 
 
 if __name__ == "__main__":
