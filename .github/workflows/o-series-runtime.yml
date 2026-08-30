@@ -13,8 +13,12 @@ on:
       - "docs/architecture/Genesis-Kernel-v0.1-Source-Map.md"
       - "docs/architecture/rosetta-crosswalk-v1.0.md"
       - "docs/architecture/rosetta-witness-ledger-v1.0.md"
+      - "docs/architecture/Council-Constitution-v1.0.md"
+      - "docs/architecture/council-rosetta-crosswalk-v1.0.md"
       - "spec/rosetta-crosswalk-v1.0.json"
+      - "spec/council-constitution-v1.0.json"
       - "tests/conformance/test_uds_crosswalk.py"
+      - "tests/conformance/test_council_constitution.py"
       - "tests/test_o_series_runtime.py"
       - "tests/test_genesis_consolidation.py"
       - "tests/test_sonic_codex_recognizer.py"
@@ -34,8 +38,12 @@ on:
       - "docs/architecture/Genesis-Kernel-v0.1-Source-Map.md"
       - "docs/architecture/rosetta-crosswalk-v1.0.md"
       - "docs/architecture/rosetta-witness-ledger-v1.0.md"
+      - "docs/architecture/Council-Constitution-v1.0.md"
+      - "docs/architecture/council-rosetta-crosswalk-v1.0.md"
       - "spec/rosetta-crosswalk-v1.0.json"
+      - "spec/council-constitution-v1.0.json"
       - "tests/conformance/test_uds_crosswalk.py"
+      - "tests/conformance/test_council_constitution.py"
       - "tests/test_o_series_runtime.py"
       - "tests/test_genesis_consolidation.py"
       - "tests/test_sonic_codex_recognizer.py"
@@ -78,14 +86,15 @@ jobs:
       - name: Compile secured runtime
         run: >-
           python -m compileall -q Genesis/o_series Genesis/o_series_app.py wsgi.py
-          tests/conformance/test_uds_crosswalk.py tests/test_o_series_runtime.py
-          tests/test_genesis_consolidation.py tests/test_sonic_codex_recognizer.py
-          tests/test_selector_correction.py tests/test_sovereign_refusal_boundary.py
-          tests/test_sovereign_refusal_delegation.py
+          tests/conformance/test_uds_crosswalk.py tests/conformance/test_council_constitution.py
+          tests/test_o_series_runtime.py tests/test_genesis_consolidation.py
+          tests/test_sonic_codex_recognizer.py tests/test_selector_correction.py
+          tests/test_sovereign_refusal_boundary.py tests/test_sovereign_refusal_delegation.py
 
       - name: Run O-Series runtime tests
         run: >-
           python -m unittest tests.conformance.test_uds_crosswalk
+          tests.conformance.test_council_constitution
           tests.test_o_series_runtime tests.test_genesis_consolidation
           tests.test_sonic_codex_recognizer tests.test_selector_correction
           tests.test_sovereign_refusal_boundary tests.test_sovereign_refusal_delegation -v
