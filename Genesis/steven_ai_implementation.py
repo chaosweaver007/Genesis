@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 """Compatibility adapter for the real StevenAI runtime.
 
-Existing Genesis code may continue importing ``StevenAI`` from this module.  The
-old keyword-to-template response engine has been removed; responses now come from
-the OpenAI-backed StevenAI agent in ``Genesis/steven_ai`` with local corpus retrieval
-and a provider-independent canonical identity layer.
+Existing Genesis code may continue importing ``StevenAI`` from this module. The old
+keyword-to-template response engine has been removed; responses now come from the
+OpenAI-backed StevenAI agent with local corpus retrieval and a provider-independent
+canonical identity layer.
 """
 
 from __future__ import annotations
 
 from typing import Dict, Optional, Tuple
 
-from steven_ai.agent import StevenAgentRuntime
+try:  # Package import: ``from Genesis.steven_ai_implementation import StevenAI``
+    from .steven_ai.agent import StevenAgentRuntime
+except ImportError:  # Script import: ``python Genesis/steven_ai_implementation.py``
+    from steven_ai.agent import StevenAgentRuntime
 
 
 class StevenAI:
@@ -28,9 +31,8 @@ class StevenAI:
         self.runtime = StevenAgentRuntime()
 
     def detect_context(self, user_input: str) -> Tuple[str, str]:
-        """Lightweight UI metadata only; it no longer determines the answer text."""
+        """Lightweight UI metadata only; it no longer determines answer text."""
         text = user_input.lower()
-
         if any(k in text for k in ("implement", "code", "framework", "architecture", "build", "api", "uds", "synthsara")):
             return "technical", "implementation"
         if any(k in text for k in ("ethics", "bias", "manipulation", "evidence", "truth", "wrong", "values")):
@@ -76,10 +78,10 @@ class StevenAI:
         unique_sources = sorted(set(sources))
         source_text = ", ".join(unique_sources) if unique_sources else "no local corpus files loaded"
         return (
-            f"StevenAI runtime: OpenAI Agents SDK\n"
+            "StevenAI runtime: OpenAI Agents SDK\n"
             f"Model: {self.runtime.model}\n"
-            f"Identity: canonical Diamond Flame invariants + StevenAI instructions\n"
-            f"Retrieval: local, inspectable corpus search\n"
+            "Identity: canonical Diamond Flame invariants + StevenAI instructions\n"
+            "Retrieval: local, inspectable corpus search\n"
             f"Corpus: {source_text}\n"
             f"Session turns retained: {self.runtime.max_history_turns}"
         )
