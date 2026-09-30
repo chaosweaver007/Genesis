@@ -1,5 +1,14 @@
 # Processed Training Data Package for Steven AI
 
+## RES-PHY-001 training namespace boundary
+
+**L₂e / Type N:** Mythic, archetypal, spiritual, and poetic response examples express the author's worldview; they are not empirical proof.
+**N₁:** Love, sovereignty, consent, truthfulness, and service to life are ethical commitments.
+**S₁:** Integration instructions and model behavior requirements are proposed operational specifications. Their presence in training material does not prove implementation, permanent model alteration, or moral correctness.
+**L₃:** Remote affective DNA unwinding, Love as a DNA-repairing electromagnetic frequency, a dedicated DNA/UPE semantic network, a distinct quantum epigenetic regulatory layer, and speculative oncology efficacy are NOT_DEMONSTRATED. Do not infer these from symbolic or normative passages.
+**D₁:** Deterministic evaluation remains distinct from causal adjudication.
+Names such as “Soulware Quantum Engine” are project labels, not demonstrations of quantum computation. If a response asserts a physical mechanism, require a scoped source and separately validated test receipt. A policy conformance PASS does not exhaust human consent or dignity.
+
 ## Extracted Knowledge and Communication Patterns from 391 Conversations
 
 ---
