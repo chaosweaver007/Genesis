@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+
 from typing import Any, Dict, Mapping, Optional, Sequence, Tuple
 
 from .codex_recognizer import CodexRecognizer, RecognitionCandidate
@@ -28,7 +30,13 @@ class OSeriesPipeline:
     ) -> None:
         """Create a pipeline with a boot-verified local Sonic Codex registry."""
 
-        self.adapter = adapter or PersonaModelAdapter()
+        if adapter is not None:
+            self.adapter = adapter
+        elif os.getenv("GENESIS_MODEL_PROVIDER", "local").lower() == "openai":
+            from .openai_adapter import OpenAIResponsesAdapter
+            self.adapter = OpenAIResponsesAdapter()
+        else:
+            self.adapter = PersonaModelAdapter()
         self.registry = registry or CodexRegistry()
         self.recognizer = recognizer or CodexRecognizer(self.registry)
 
