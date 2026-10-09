@@ -3,7 +3,7 @@ import json
 from unittest.mock import patch
 from uuid import uuid4
 
-import pytest
+import unittest
 
 from Genesis.o_series.openai_adapter import OpenAIResponsesAdapter
 from Genesis.o_series.schemas import IngressEnvelope
@@ -53,8 +53,8 @@ def test_openai_adapter_fails_closed_without_key():
         collective_learning=False, pipeline_mode="shadow", timestamp="now",
     )
     with patch.dict("os.environ", {}, clear=True):
-        with pytest.raises(ValueError, match="OPENAI_API_KEY"):
+        with unittest.TestCase().assertRaisesRegex(ValueError, "OPENAI_API_KEY"):
             OpenAIResponsesAdapter().generate(
-                system_context="\n".join(REQUIRED_CONTEXT_SECTIONS),
+                system_context="\\n".join(REQUIRED_CONTEXT_SECTIONS),
                 envelope=envelope,
             )
