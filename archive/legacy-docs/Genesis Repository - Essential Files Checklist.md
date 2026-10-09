@@ -1,3 +1,12 @@
+# HISTORICAL DOCUMENT — Superseded Repository Checklist
+
+**Status:** Archived for provenance  
+**Current architecture:** See `README.md` and `docs/architecture/REPOSITORY-TRUTH-MAP.md`.
+
+This checklist describes an earlier planned Genesis repository shape. It is retained to preserve development history. It does **not** define the current production entrypoint, current test suite, current dependency model, or current implementation status.
+
+---
+
 # Genesis Repository - Essential Files Checklist
 
 ## 📁 Root Directory Files
@@ -174,4 +183,3 @@
 ## 📋 Current Status Check
 
 Let me verify which files we currently have ready:
-

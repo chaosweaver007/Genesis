@@ -28,9 +28,12 @@ wheels/
 *.manifest
 *.spec
 
-# Installer logs
+# Installer and runtime logs
 pip-log.txt
 pip-delete-this-directory.txt
+*.log
+*.err
+*.out
 
 # Unit test / coverage reports
 htmlcov/

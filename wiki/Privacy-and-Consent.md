@@ -1,5 +1,15 @@
 # 🔒 Privacy and Consent
 
+> **Status: Historical privacy / consent feature generation**
+>
+> This page documents the earlier stateful Genesis privacy architecture, including Private / Anonymous / Collective participation modes, durable storage concepts, anonymization, collective pattern extraction, and user data controls. Those consent and memory features were real parts of the historical Collective Consciousness Network generation and later received privacy-hardening work in Git history.
+>
+> The detailed technical claims below are preserved for provenance and must be read in their original generation. They are **not** blanket attestations about current production. Current Gate 0 is stateless and zero-write. Claims below about PostgreSQL production storage, AES-256 field encryption, K-anonymity, differential privacy, regulatory compliance, or other privacy infrastructure require separate evidence before being repeated as present-tense capabilities.
+>
+> Current status: `../README.md`, `../docs/architecture/REPOSITORY-TRUTH-MAP.md`, `../docs/architecture/Synthsara-Whitepaper-Build-Map.md`, and `../provenance/conversations-archive-crosswalk.md`.
+
+---
+
 Understanding data privacy, consent management, and user sovereignty in Genesis.
 
 ## Core Principles
