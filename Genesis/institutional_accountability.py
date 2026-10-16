@@ -51,6 +51,7 @@ class _Case:
     appeal_reviewer_id: Optional[str] = None
     decision: Optional[str] = None
     appealed: bool = False
+    resolution_accepted: bool = False
 
 
 class AccountabilityKernel:
@@ -169,7 +170,7 @@ class AccountabilityKernel:
     ) -> dict:
         claimant_id = self._identity(claimant, "participant")
         case = self._require_case(case_id)
-        if case.claimant_id != claimant_id or case.state != "DECIDED" or case.appealed:
+        if case.claimant_id != claimant_id or case.state not in {"DECIDED", "REMEDY_VERIFIED"} or case.appealed:
             raise AccountabilityError("Appeal unavailable or unauthorized")
         digest = self._evidence(evidence_sha256)
         case.appealed = True
@@ -220,6 +221,16 @@ class AccountabilityKernel:
             details={"evidence_commitment": self._commitment(digest)},
         )
 
+    def accept_resolution(self, case_id: str, claimant: Principal) -> dict:
+        """The affected person confirms an independently verified remedy."""
+        claimant_id = self._identity(claimant, "participant")
+        case = self._require_case(case_id)
+        if case.claimant_id != claimant_id or case.state != "REMEDY_VERIFIED":
+            raise AccountabilityError("Only the claimant can accept a verified remedy")
+        case.resolution_accepted = True
+        case.state = "ACCEPTED"
+        return self._record(case_id, "RESOLUTION_ACCEPTED", case.state, details={})
+
     def close(self, case_id: str, auditor: Principal) -> dict:
         auditor_id = self._identity(auditor, "auditor")
         case = self._require_case(case_id)
@@ -231,10 +242,10 @@ class AccountabilityKernel:
         # Initial dismissals must stay appealable; no artificial appeal clock
         # exists in the reference engine.
         if not (
-            case.state == "REMEDY_VERIFIED"
+            (case.state == "ACCEPTED" and case.resolution_accepted)
             or (case.state == "DECIDED" and case.appealed and case.decision == "DISMISS")
         ):
-            raise AccountabilityError("Closure requires verified remedy or appealed dismissal")
+            raise AccountabilityError("Closure requires claimant acceptance or appealed dismissal")
         case.state = "CLOSED"
         return self._record(case_id, "CLOSED", case.state, details={})
 
