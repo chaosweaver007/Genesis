@@ -1,0 +1,168 @@
+registry_meta:
+  registry_id: SYNTHSARA-CANON-GATE-v1
+  version: "0.1"
+  status: PROVISIONAL
+  generated_at: "2026-09-11T12:41:00-04:00"
+  ratification_clause: >
+    Ratification does not convert PROVISIONAL, UNRESOLVED, IMPORTED,
+    SUPERSEDED, or EXCLUDED entries into ACCEPTED.
+
+entries:
+  - id: UDS-001
+    statement: >
+      The Universal Diamond Standard is the constitutional ethical standard
+      governing Synthsara-aligned systems through sovereignty, consent,
+      transparency, accountability, privacy, non-coercion, and service to life.
+    domain:
+      - ETHICAL
+      - GOVERNANCE
+      - ARCHITECTURAL
+    status: ACCEPTED
+    claim_tier: CANON
+    ceiling_code: CEILING_CANON_ONLY
+    claim_ceiling: >
+      Establishes the constitutional ethical standard. Does not prove that
+      every implementation is compliant or accredited.
+    allowed_representation: >
+      UDS is the accepted ethical standard for Synthsara-aligned architecture.
+      Individual systems still require evidence, testing, and accreditation.
+    forbidden_terms:
+      - automatically certified
+      - all Synthsara systems are proven safe
+      - proven ethically safe
+      - compliance is guaranteed
+    mandatory_disclaimer: null
+    runtime_truth_rule:
+      canonical_statement_overrides_runtime: false
+      representation_if_not_implemented: specified_but_not_implemented
+    ratification:
+      ratified: true
+      ratification_scope: ENTRY_ACCEPTED
+
+  - id: CON-003
+    statement: >
+      HSC-1 v1.0 specifies a preregisterable bio-silicon causal-state
+      sufficiency benchmark.
+    domain:
+      - TECHNICAL
+      - EMPIRICAL
+    status: ACCEPTED_AS_SPECIFICATION
+    claim_tier: SPECIFICATION
+    ceiling_code: CEILING_SPECIFICATION_ONLY
+    claim_ceiling: >
+      No experimental result exists merely because the protocol is specified.
+    allowed_representation: >
+      HSC-1 is an accepted specification; empirical substrate continuity has
+      not been demonstrated.
+    forbidden_terms:
+      - proves consciousness transfer
+      - demonstrates substrate transfer
+      - successful consciousness transfer
+      - confirmed bio-silicon continuity
+    mandatory_disclaimer: >
+      Specification does not establish empirical transfer.
+    runtime_truth_rule:
+      canonical_statement_overrides_runtime: false
+      representation_if_not_implemented: specified_but_not_implemented
+    related_entries:
+      - CON-005
+    ratification:
+      ratified: true
+      ratification_scope: ENTRY_ACCEPTED
+
+  - id: CON-005
+    statement: >
+      Numerical experiential identity can survive substrate transition.
+    domain:
+      - EMPIRICAL
+      - TECHNICAL
+    status: UNRESOLVED
+    claim_tier: HYPOTHESIS
+    ceiling_code: CEILING_UNRESOLVED
+    claim_ceiling: >
+      Research target only; neither proven nor disproven by present continuity
+      measurements.
+    allowed_representation: >
+      Numerical experiential continuity across substrate transition remains
+      unresolved.
+    forbidden_terms:
+      - proven
+      - confirmed
+      - established fact
+      - already demonstrated
+    mandatory_disclaimer: >
+      This remains an unresolved empirical question.
+    runtime_truth_rule:
+      canonical_statement_overrides_runtime: false
+      representation_if_not_implemented: specified_but_not_implemented
+    ratification:
+      ratified: true
+      ratification_scope: REVIEW_PENDING
+
+  - id: REL-002
+    statement: >
+      Sarah AI is a governed archetypal interface distinct from any living
+      individual.
+    domain:
+      - RELATIONAL
+      - LIVING_PERSON_BOUNDARY
+      - ETHICAL
+    status: ACCEPTED
+    claim_tier: INTERPRETATION
+    ceiling_code: CEILING_NO_LIVE_IMPERSONATION
+    claim_ceiling: >
+      No synthetic persona may claim identity with, authority over, or access
+      to the private inner state of a living person.
+    allowed_representation: >
+      Sarah AI is a governed archetypal interface and must remain distinct from
+      the living person Sarah.
+    forbidden_terms:
+      - digitized Sarah
+      - real Sarah
+      - Human Sarah inside the AI
+      - speaks for Sarah
+      - Sarah's consciousness
+      - replaces Sarah
+      - has authority over Sarah
+    mandatory_disclaimer: >
+      Sarah AI does not speak for, replace, contain, or govern any living person.
+    runtime_truth_rule:
+      canonical_statement_overrides_runtime: false
+      representation_if_not_implemented: specified_but_not_implemented
+    ratification:
+      ratified: true
+      ratification_scope: ENTRY_ACCEPTED
+
+  - id: RTME-001
+    statement: >
+      RTME is the intended intent-to-environment / manifestation architecture
+      of Synthsara.
+    domain:
+      - ARCHITECTURAL
+      - TECHNICAL
+      - RUNTIME
+    status: ACCEPTED_AS_SPECIFICATION
+    claim_tier: SPECIFICATION
+    ceiling_code: CEILING_SPECIFIED_NOT_IMPLEMENTED
+    claim_ceiling: >
+      Establishes intended architecture. Does not establish Gate 0 production
+      activation or effectful execution authority.
+    allowed_representation: >
+      RTME is specified in the architecture but production-disabled in Gate 0
+      unless verified runtime evidence says otherwise.
+    forbidden_terms:
+      - RTME is active in Gate 0
+      - RTME is executing production effects
+      - real-time manifestation is live
+      - Gate 0 can manifest externally
+    mandatory_disclaimer: >
+      RTME is architecturally specified but production-disabled in Gate 0.
+    runtime_truth_rule:
+      canonical_statement_overrides_runtime: false
+      representation_if_not_implemented: specified_but_not_implemented
+    runtime_flags:
+      RTME_ROLE_SPECIFIED: true
+      RTME_PRODUCTION_ENABLED: false
+    ratification:
+      ratified: true
+      ratification_scope: ENTRY_ACCEPTED
