@@ -121,8 +121,26 @@ class InstitutionalAccountabilityTests(unittest.TestCase):
                 case_id, actor(self.first.subject_id, "auditor"), fingerprint()
             )
         self.kernel.verify_remedy(case_id, self.auditor, fingerprint(b"completed"))
+        with self.assertRaises(AccountabilityError):
+            self.kernel.close(case_id, self.auditor)
+        self.kernel.accept_resolution(case_id, self.claimant)
         self.kernel.close(case_id, self.auditor)
         self.assertEqual(self.kernel.receipts(case_id)[-1]["state"], "CLOSED")
+
+    def test_appeal_remains_available_after_remedy_attestation(self):
+        case_id = self.adjudicate("RESTORE")
+        self.kernel.verify_remedy(case_id, self.auditor, fingerprint(b"insufficient"))
+        self.kernel.appeal(case_id, self.claimant, fingerprint(b"not-satisfied"))
+        self.kernel.resolve_appeal(case_id, self.appeals, "CORRECT")
+        self.assertEqual(self.kernel.receipts(case_id)[-1]["details"]["decision"], "CORRECT")
+
+    def test_only_claimant_can_accept_verified_remedy(self):
+        case_id = self.adjudicate("RESTORE")
+        self.kernel.verify_remedy(case_id, self.auditor, fingerprint(b"done"))
+        with self.assertRaises(AccountabilityError):
+            self.kernel.accept_resolution(case_id, actor(self.respondent, "participant"))
+        self.kernel.accept_resolution(case_id, self.claimant)
+        self.assertEqual(self.kernel.receipts(case_id)[-1]["state"], "ACCEPTED")
 
     def test_initial_dismissal_cannot_silently_close_appeal_right(self):
         case_id = self.adjudicate("DISMISS")
