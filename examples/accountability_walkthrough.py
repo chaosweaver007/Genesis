@@ -43,6 +43,7 @@ def run() -> dict:
     kernel.appeal(case_id, person, evidence("synthetic appeal"))
     kernel.resolve_appeal(case_id, second, "RESTORE")
     kernel.verify_remedy(case_id, auditor, evidence("synthetic remedy verification"))
+    kernel.accept_resolution(case_id, person)
     kernel.close(case_id, auditor)
 
     receipts = kernel.receipts(case_id)
