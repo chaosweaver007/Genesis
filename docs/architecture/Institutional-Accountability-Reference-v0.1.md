@@ -13,7 +13,7 @@ Oath: **Nobody Left Behind.**
 | Who is excluded? | Basic access to remedy cannot depend on money, WORTH, political status, or contribution history. | \`open_case\` accepts a server-authenticated participant and no financial/reputation input; tests enforce this. | No identity/accessibility or offline-intake deployment exists yet. |
 | Who decides? | Claims cannot be judged by the accused institution or complainant; appeals require a different independent reviewer. | Independent review and appeal role/state checks. | Real reviewer appointment, legitimacy, human qualifications, and conflict declarations need external verification. |
 | Who controls resources? | A complaint decision cannot itself move money, change identity, grant root, or bypass consent. | The kernel has no transfer/permission/tool capability. | Treasury authorization and independently operated budget controls remain separate, NOT DEMONSTRATED. |
-| What remedies exist? | Decisions are contestable; restoration must be independently verified before closure; dismissals remain appealable. | Hash-chained receipts for open → review → decision → appeal → appeal decision → verification → closure. | Human due process, real restitution, deadlines, and durable case management are not live. |
+| What remedies exist? | Decisions are contestable; restoration must be independently verified AND the claimant must accept it before closure; dismissals remain appealable. | Hash-chained receipts for open → review → decision → appeal → appeal decision → verification → claimant acceptance → closure. | Human due process, real restitution, deadlines, and durable case management are not live. |
 
 ## Run it
 
@@ -55,7 +55,9 @@ No public route has been added.
   cases, actors, events, and the HMAC key. Do not use for real complaints.
 * **Procedural justice:** An outcome marked \`REMEDY_VERIFIED\` denotes a trusted
   auditor's attestation of an evidence fingerprint, NOT independent proof that
-  a real person has been restored.
+  a real person has been restored. The claimant can still appeal after this
+  attestation. Closure after repair requires claimant acceptance, not just
+  an institution declaring the matter resolved.
 * **No perfection claim:** "Indestructible" is not testable. Targets are
   survivability, revocation, auditability, repair, independent challenge, and
   graceful failure. Findings should be reported rather than hidden.
