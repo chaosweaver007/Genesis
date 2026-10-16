@@ -48,8 +48,11 @@ class InstitutionalAccountabilityTests(unittest.TestCase):
         self.assertTrue(self.kernel.verify_chain(case_id))
         # No WORTH, financial threshold, token, social credit, or fee exists
         # in the open_case API or the public receipt.
-        self.assertNotIn("worth", json.dumps(self.kernel.receipts(case_id)).lower())
-        self.assertNotIn("fee", json.dumps(self.kernel.receipts(case_id)).lower())
+        receipt = self.kernel.receipts(case_id)[0]
+        self.assertEqual(set(receipt["details"]), {"category", "evidence_commitment"})
+        for forbidden in {"worth", "token_balance", "fee", "account_tier"}:
+            self.assertNotIn(forbidden, receipt)
+            self.assertNotIn(forbidden, receipt["details"])
 
     def test_anonymous_actor_cannot_create_case(self):
         with self.assertRaises(AccountabilityError):
