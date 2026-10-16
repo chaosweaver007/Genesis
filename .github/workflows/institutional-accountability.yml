@@ -1,0 +1,43 @@
+name: Institutional Accountability Conformance
+
+on:
+  pull_request:
+    paths:
+      - "Genesis/institutional_accountability.py"
+      - "tests/test_institutional_accountability.py"
+      - "examples/accountability_walkthrough.py"
+      - "docs/architecture/Institutional-Accountability-Reference-v0.1.md"
+      - ".github/workflows/institutional-accountability.yml"
+  push:
+    branches: [main]
+    paths:
+      - "Genesis/institutional_accountability.py"
+      - "tests/test_institutional_accountability.py"
+      - "examples/accountability_walkthrough.py"
+      - ".github/workflows/institutional-accountability.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Syntax verification
+        run: python -m compileall -q Genesis/institutional_accountability.py tests/test_institutional_accountability.py examples/accountability_walkthrough.py
+      - name: Due-process conformance tests
+        run: python -m unittest tests.test_institutional_accountability -v
+      - name: Executable lifecycle demonstration
+        run: python examples/accountability_walkthrough.py
