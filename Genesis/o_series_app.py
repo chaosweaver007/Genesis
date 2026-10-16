@@ -11,6 +11,7 @@ from __future__ import annotations
 from flask import Flask, jsonify, render_template, request
 
 from o_series.routes import register_o_series_routes
+from o_series.witness_receipt import PIPELINE_VERSION, POLICY_VERSION
 
 app = Flask(__name__)
 app.config.update(
@@ -23,8 +24,8 @@ ROOT_INFO = {
     "node": "O-Series Gate 0",
     "status": "running",
     "mode": "private-shadow",
-    "pipeline_version": "o-series-0.1.1",
-    "policy_version": "uds-0.1.1",
+    "pipeline_version": PIPELINE_VERSION,
+    "policy_version": POLICY_VERSION,
     "memory_write": "none",
     "chat_endpoint": "/api/o-series/chat",
     "status_endpoint": "/api/o-series/status",
@@ -99,8 +100,8 @@ def health():
         {
             "status": "ok",
             "service": "genesis-o-series",
-            "pipeline_version": "o-series-0.1.1",
-            "policy_version": "uds-0.1.1",
+            "pipeline_version": PIPELINE_VERSION,
+            "policy_version": POLICY_VERSION,
         }
     )
 

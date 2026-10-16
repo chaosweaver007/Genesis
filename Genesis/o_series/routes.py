@@ -10,6 +10,7 @@ from flask import Blueprint, Flask, jsonify, request
 
 from .pipeline import OSeriesPipeline
 from .selector_correction import MAX_CORRECTION_LENGTH, run_selector_confirmation
+from .witness_receipt import PIPELINE_VERSION, POLICY_VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +34,8 @@ def register_o_series_routes(
         return jsonify(
             {
                 "node": "Genesis O-Series Gate 0",
-                "pipeline_version": "o-series-0.2.0",
-                "policy_version": "uds-0.1.1",
+                "pipeline_version": PIPELINE_VERSION,
+                "policy_version": POLICY_VERSION,
                 "mode": "shadow",
                 "consent_level": "private",
                 "memory_write": "none",

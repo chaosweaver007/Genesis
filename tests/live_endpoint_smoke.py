@@ -120,7 +120,7 @@ def _assert_null_write_receipt(
 
     receipt = body.get("witness_receipt")
     assert isinstance(receipt, dict), f"Missing Witness Receipt: {body}"
-    assert receipt.get("pipeline_version") == "o-series-0.1.1", receipt
+    assert receipt.get("pipeline_version") == "o-series-0.2.0", receipt
     assert receipt.get("policy_version") == "uds-0.1.1", receipt
     assert receipt.get("memory_write") == "none", receipt
     assert receipt.get("tools_used") == [], receipt
@@ -136,11 +136,11 @@ def _assert_null_write_receipt(
 def test_health_and_status() -> None:
     health = _wait_for_health()
     assert health.get("service") == "genesis-o-series", health
-    assert health.get("pipeline_version") == "o-series-0.1.1", health
+    assert health.get("pipeline_version") == "o-series-0.2.0", health
     assert health.get("policy_version") == "uds-0.1.1", health
 
     _, status = _request_json("/api/o-series/status")
-    assert status.get("pipeline_version") == "o-series-0.1.1", status
+    assert status.get("pipeline_version") == "o-series-0.2.0", status
     assert status.get("policy_version") == "uds-0.1.1", status
     assert status.get("mode") == "shadow", status
     assert status.get("consent_level") == "private", status
