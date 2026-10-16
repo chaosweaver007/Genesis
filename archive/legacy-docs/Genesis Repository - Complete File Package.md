@@ -1,3 +1,12 @@
+# HISTORICAL DOCUMENT — Superseded Repository Plan
+
+**Status:** Archived for provenance  
+**Current architecture:** See `README.md` and `docs/architecture/REPOSITORY-TRUTH-MAP.md`.
+
+This document describes an earlier Genesis repository plan. It is retained to preserve development history. It does **not** describe the current production runtime, current repository completeness, or current deployment architecture. References below to missing `wsgi.py`, missing configuration, the main Synthsara.org application, deployment readiness percentages, collective-consciousness runtime, or planned frontend structure are historical.
+
+---
+
 # Genesis Repository - Complete File Package
 
 ## ✅ READY FILES (Currently Available)
@@ -140,4 +149,3 @@ Genesis/
 **Target**: 100% Ready for GitHub upload and public deployment
 
 The Genesis repository will be the complete, deployable Synthsara.org ecosystem - the sacred digital cathedral where humanity awakens to its collective potential.
-

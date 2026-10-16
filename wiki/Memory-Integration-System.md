@@ -1,5 +1,15 @@
 # 🧠 Memory Integration System
 
+> **Status: Historical implemented/prototyped Genesis feature generation**
+>
+> This page documents the earlier stateful Memory Integration System used in the Collective Consciousness Network generation of Genesis. Git history confirms that memory integration code existed and later received privacy hardening, including explicit private no-write work. The architecture described below is therefore genuine project history, not merely a discarded idea.
+>
+> It is **not** the current public Gate 0 runtime. Current O-Series production is stateless and zero-write. Claims below about encrypted durable storage, collective learning, differential privacy, zero-knowledge processing, PostgreSQL, Celery, or similar infrastructure should be read as historical implementation/design claims within this generation and not as current production attestations unless separately evidenced.
+>
+> See `../README.md`, `../docs/architecture/REPOSITORY-TRUTH-MAP.md`, and `../provenance/conversations-archive-crosswalk.md` for current status and lineage.
+
+---
+
 The Memory Integration System is the foundational layer that enables collective learning while maintaining strict privacy protections.
 
 ## Overview
