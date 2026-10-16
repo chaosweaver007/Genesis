@@ -147,11 +147,20 @@ class OSeriesRuntimeTests(unittest.TestCase):
         with module.app.test_client() as client:
             root = client.get("/")
             health = client.get("/health")
+            public_status = client.get("/api/o-series/status")
 
         self.assertEqual(root.status_code, 200)
         self.assertEqual(root.get_json()["status"], "running")
         self.assertEqual(health.status_code, 200)
         self.assertEqual(health.get_json()["status"], "ok")
+        self.assertEqual(
+            health.get_json()["pipeline_version"],
+            public_status.get_json()["pipeline_version"],
+        )
+        self.assertEqual(
+            root.get_json()["pipeline_version"],
+            public_status.get_json()["pipeline_version"],
+        )
         self.assertEqual(health.headers["X-Content-Type-Options"], "nosniff")
         self.assertEqual(health.headers["Cache-Control"], "no-store")
 
