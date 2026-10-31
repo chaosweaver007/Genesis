@@ -47,10 +47,14 @@ class ReceiverBrokerTests(unittest.TestCase):
         self.grant("possession")
 
     def grant(self, kind, **options):
-        self.broker.set_trusted_grant(
-            kind, subject="alice", scope="local:draft:inspect",
-            authority="draft:review", expires_at=self.now + 3600, **options,
-        )
+        args = {
+            "subject": "alice",
+            "scope": "local:draft:inspect",
+            "authority": "draft:review",
+            "expires_at": self.now + 3600,
+            **options,
+        }
+        self.broker.set_trusted_grant(kind, **args)
 
     def claims(self, **changed):
         return {
