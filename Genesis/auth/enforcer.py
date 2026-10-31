@@ -28,6 +28,7 @@ from uds_v1_1 import (
     ExecutionPermit,
     ExecutionPermitVerifier,
 )
+from uds_v1_1.canonical import canonical_json_bytes
 from uds_v1_1.models import parse_utc
 
 _DIGEST = re.compile(r"^sha256:[0-9a-f]{64}$")
@@ -219,6 +220,15 @@ class ReceiverEnforcer:
             return self._deny("UNSUPPORTED_EFFECT_CLASS")
 
         try:
+            # Verify signed claims BEFORE binding comparisons so tampering
+            # is reported as signature failure, not as an ordinary scope error.
+            if permit.signature_algorithm != self.verifier.signer.algorithm:
+                raise AuthorizationDenied("INVALID_SIGNATURE")
+            if not self.verifier.signer.verify(
+                canonical_json_bytes(permit.claims()), permit.broker_proof
+            ):
+                raise AuthorizationDenied("INVALID_SIGNATURE")
+
             # Existing verifier binds the signature, exact canonical request,
             # audience, action, resource, time bounds and authority epochs.
             status, _ = self.verifier.authorize_execution(
