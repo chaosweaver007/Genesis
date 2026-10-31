@@ -1,0 +1,38 @@
+name: UDS-AUTH receiver preview conformance
+
+on:
+  pull_request:
+    paths:
+      - "Genesis/auth/**"
+      - "tests/test_auth_broker.py"
+      - "docs/architecture/uds-auth-receiver-preview.md"
+      - ".github/workflows/uds-auth-preview.yml"
+  push:
+    branches: [main]
+    paths:
+      - "Genesis/auth/**"
+      - "tests/test_auth_broker.py"
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile authorization modules
+        run: python -m compileall -q Genesis/auth tests/test_auth_broker.py
+      - name: Run receiver and compiler conformance
+        run: python -Werror::ResourceWarning -m unittest tests.test_auth_broker tests.test_rtme_parser -v
