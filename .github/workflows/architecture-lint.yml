@@ -1,0 +1,25 @@
+name: Architecture evidence lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  architecture-lint:
+    name: architecture-lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Test the checker
+        run: python3 -m unittest discover -s tests -p 'test_lint_architecture.py' -v
+
+      - name: Enforce evidence boundaries on ADRs and specs
+        run: python3 scripts/lint_architecture.py

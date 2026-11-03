@@ -98,6 +98,12 @@ Genesis/
 └── tests/
 ```
 
+## Architecture Evidence & Decision Records
+
+Genesis' [architecture evidence index](docs/architecture/README.md) describes the **Ledger Before Spiral** documentation gate for new ADRs and architecture specifications. The [gate's ADR](docs/architecture/ADR-2026-11-03-evidence-lint-gate.md) records its evidence basis, claim ceiling, implementation safeguards, and verification method. The existing [Kernel v0.1 Source Map](docs/architecture/Genesis-Kernel-v0.1-Source-Map.md) remains unchanged.
+
+CI runs `architecture-lint` for structural completeness. This check is **not** a certification of runtime security or implementation correctness.
+
 ## Legacy boundary
 
 `collective_consciousness_home.py`, `unified_home.py`, and the SQLite-backed memory components remain historical and local-development surfaces. They are **not** the Vercel production entrypoint.
