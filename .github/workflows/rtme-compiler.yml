@@ -1,0 +1,36 @@
+name: RTME bounded compiler conformance
+
+on:
+  pull_request:
+    paths:
+      - "Genesis/rtme_parser.py"
+      - "tests/test_rtme_parser.py"
+      - "docs/architecture/rtme-intent-compiler.md"
+      - ".github/workflows/rtme-compiler.yml"
+  push:
+    branches: [main]
+    paths:
+      - "Genesis/rtme_parser.py"
+      - "tests/test_rtme_parser.py"
+
+permissions:
+  contents: read
+
+jobs:
+  bounded-compiler-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Confirm standalone compiler has no runtime dependencies
+        run: python -m compileall -q Genesis/rtme_parser.py tests/test_rtme_parser.py
+      - name: Test consent and physical-action isolation
+        run: python -m unittest tests.test_rtme_parser -v

@@ -39,6 +39,7 @@ The production node performs no database writes, tool calls, RTME actions, colle
 See:
 
 - `docs/architecture/Genesis-Kernel-v0.1-Source-Map.md`
+- `docs/architecture/rtme-intent-compiler.md` (SYN-RD-002 offline draft compiler; no execution or public route)
 - `docs/uds/d1/README.md`
 - `policies/uds_v0_1.yaml`
 - `policies/consent_v0_1.yaml`
