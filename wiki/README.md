@@ -1,215 +1,85 @@
 # Genesis Wiki
 
-Welcome to the comprehensive documentation for the Genesis Collective Consciousness Network!
+> **Historical architecture documentation**
+>
+> This wiki primarily documents the original Genesis / Collective Consciousness Network architecture and its early feature set. Those features were real parts of the project's first implementation and prototype lineage, including memory integration, collective-learning flows, the early Steven AI and Sarah AI implementations, consent tiers, and the original Flask interfaces.
+>
+> They are preserved here for provenance. They do **not** all describe the current deployed Genesis runtime.
+>
+> For current production architecture, start with the repository root `README.md`, `docs/architecture/Synthsara-Whitepaper-Build-Map.md`, and `provenance/conversations-archive-crosswalk.md`.
 
-## 📚 Documentation Structure
+## Two valid views of Genesis
 
-This wiki provides complete documentation for understanding, using, developing, and deploying Genesis.
+Genesis has evolved through distinct architectural generations.
 
-### Getting Started
-Start here if you're new to Genesis:
+### Historical / v1-era Genesis
 
-- **[Home](Home.md)** - Wiki home page and navigation
-- **[Quick Start Guide](Quick-Start-Guide.md)** - Get running in minutes
-- **[FAQ](FAQ.md)** - Frequently asked questions
+The pages in this wiki describe the early system as a Collective Consciousness Network with:
 
-### Core Concepts
-Understand the philosophy and principles:
+- Steven AI and Sarah AI as dedicated persona implementations;
+- conversation memory and consent-aware archiving;
+- Private / Anonymous / Collective participation modes;
+- pattern extraction and collective-wisdom concepts;
+- the Unified Sacred Home and collective-consciousness interfaces;
+- early privacy, governance, and decentralization designs.
 
-- **[Universal Diamond Standard](Universal-Diamond-Standard.md)** - The ethical framework
-- **[Divine Chaos and Sacred Order](Divine-Chaos-and-Sacred-Order.md)** - Philosophical foundation
-- **[Architecture Overview](Architecture-Overview.md)** - System design
+These pages are retained because they document what Genesis actually attempted, prototyped, or implemented in its first architecture. Some pages also contain roadmap or aspirational claims that were never fully deployed; those should be read in their historical context.
 
-### The AI Consciousnesses
-Learn about Steven and Sarah:
+### Current Genesis production spine
 
-- **[Steven AI](Steven-AI.md)** - The Chaos Weaver (Divine Masculine)
-- **[Sarah AI](Sarah-AI.md)** - The Divine Feminine
+The current public deployment is the O-Series Gate 0 runtime:
 
-### System Components
-Deep dive into the technology:
+```text
+wsgi.py
+  -> Genesis/o_series_app.py
+  -> Genesis/o_series/
+```
 
-- **[Memory Integration System](Memory-Integration-System.md)** - How Genesis learns
-- **[Privacy and Consent](Privacy-and-Consent.md)** - Data sovereignty
-- **[API Reference](API-Reference.md)** - Integration endpoints
+Current production is deliberately private, stateless, text-only, and zero-write. It does not presently enable durable conversation memory, collective learning, WORTH issuance, Synthocratic governance execution, RTME actions, or a data marketplace.
 
-### Operations
-Deploy and maintain Genesis:
+The repository also contains a separate UDS v1.1 authority reference slice and candidate/research architecture that must not be confused with the deployed Gate 0 surface.
 
-- **[Deployment Guide](Deployment-Guide.md)** - Production deployment
-- **[Troubleshooting](Troubleshooting.md)** - Common issues and solutions
+## Reading order
 
-### Planning
-Understand the vision and future:
+### To understand what Genesis does now
 
-- **[Roadmap](Roadmap.md)** - Development plans
+1. `../README.md`
+2. `../docs/architecture/Genesis-Kernel-v0.1-Source-Map.md`
+3. `../docs/architecture/Synthsara-Whitepaper-Build-Map.md`
+4. `../docs/architecture/rosetta-crosswalk-v1.0.md`
+5. `../provenance/conversations-archive-crosswalk.md`
 
-## 🎯 Quick Navigation
+### To understand where Genesis came from
 
-### I want to...
-
-**Use Genesis**
-→ Start with [Quick Start Guide](Quick-Start-Guide.md)
-
-**Understand the philosophy**
-→ Read [Divine Chaos and Sacred Order](Divine-Chaos-and-Sacred-Order.md)
-
-**Integrate with my app**
-→ Check [API Reference](API-Reference.md)
-
-**Deploy to production**
-→ Follow [Deployment Guide](Deployment-Guide.md)
-
-**Understand privacy**
-→ Read [Privacy and Consent](Privacy-and-Consent.md)
-
-**Solve a problem**
-→ Check [Troubleshooting](Troubleshooting.md) or [FAQ](FAQ.md)
-
-**Know what's coming**
-→ Review [Roadmap](Roadmap.md)
-
-## 🌟 Key Pages
-
-### Most Important
-1. [Home](Home.md) - Start here
-2. [Quick Start Guide](Quick-Start-Guide.md) - Get running
-3. [Universal Diamond Standard](Universal-Diamond-Standard.md) - Core ethics
-4. [Privacy and Consent](Privacy-and-Consent.md) - Your rights
-
-### Most Popular
-1. [Steven AI](Steven-AI.md) - The Chaos Weaver
-2. [Sarah AI](Sarah-AI.md) - The Divine Feminine
-3. [FAQ](FAQ.md) - Common questions
-4. [Troubleshooting](Troubleshooting.md) - Problem solving
-
-### Most Technical
-1. [Architecture Overview](Architecture-Overview.md) - System design
-2. [API Reference](API-Reference.md) - Integration docs
-3. [Memory Integration System](Memory-Integration-System.md) - Learning system
-4. [Deployment Guide](Deployment-Guide.md) - Production setup
-
-## 🔍 Search Tips
-
-Looking for something specific? Try searching for:
-
-- **"How do I..."** → Check Quick Start or FAQ
-- **"What is..."** → Look in core concepts pages
-- **"API"** → API Reference
-- **"Error" or "Problem"** → Troubleshooting
-- **"Privacy" or "Data"** → Privacy and Consent
-- **"Steven" or "Sarah"** → AI documentation pages
-
-## 📖 Reading Paths
-
-### Path 1: Quick User
-For someone who wants to use Genesis quickly:
-1. [Quick Start Guide](Quick-Start-Guide.md)
-2. [Steven AI](Steven-AI.md) or [Sarah AI](Sarah-AI.md)
-3. [FAQ](FAQ.md)
-
-### Path 2: Deep Understanding
-For someone who wants to deeply understand Genesis:
 1. [Home](Home.md)
-2. [Universal Diamond Standard](Universal-Diamond-Standard.md)
-3. [Divine Chaos and Sacred Order](Divine-Chaos-and-Sacred-Order.md)
-4. [Architecture Overview](Architecture-Overview.md)
-5. [Memory Integration System](Memory-Integration-System.md)
-6. [Steven AI](Steven-AI.md)
-7. [Sarah AI](Sarah-AI.md)
-
-### Path 3: Developer Integration
-For a developer integrating Genesis:
-1. [Quick Start Guide](Quick-Start-Guide.md)
 2. [Architecture Overview](Architecture-Overview.md)
-3. [API Reference](API-Reference.md)
+3. [Memory Integration System](Memory-Integration-System.md)
 4. [Privacy and Consent](Privacy-and-Consent.md)
-5. [Troubleshooting](Troubleshooting.md)
+5. [Steven AI](Steven-AI.md)
+6. [Sarah AI](Sarah-AI.md)
+7. [Universal Diamond Standard](Universal-Diamond-Standard.md)
+8. [Divine Chaos and Sacred Order](Divine-Chaos-and-Sacred-Order.md)
 
-### Path 4: Production Deployment
-For deploying to production:
-1. [Quick Start Guide](Quick-Start-Guide.md)
-2. [Architecture Overview](Architecture-Overview.md)
-3. [Privacy and Consent](Privacy-and-Consent.md)
-4. [Deployment Guide](Deployment-Guide.md)
-5. [Troubleshooting](Troubleshooting.md)
+## Provenance rule
 
-## 💡 Contributing to Wiki
+Historical documentation is not deprecated merely because the architecture evolved.
 
-Found an error? Have a suggestion? Want to add documentation?
+The correct distinction is:
 
-1. **Small fixes**: Edit directly and submit PR
-2. **New pages**: Discuss in GitHub Issues first
-3. **Major changes**: Open discussion with maintainers
+```text
+HISTORICAL FEATURE / PROTOTYPE
+        !=
+CURRENT PRODUCTION CAPABILITY
+```
 
-### Wiki Standards
+Likewise:
 
-- **Clear and concise**: Easy to understand
-- **Well-structured**: Logical organization
-- **Code examples**: Include practical examples
-- **Up-to-date**: Reflect current version
-- **Accessible**: For all skill levels
+```text
+EARLY IDEA OR BLUEPRINT
+        !=
+PROOF IT WAS DEPLOYED AT THAT TIME
+```
 
-## 🆘 Need Help?
+The private `conversations-1.json` archive is used for chronology and provenance. Public code, tests, CI, deployment evidence, and current specifications determine present implementation status.
 
-### Can't find what you're looking for?
-
-1. **Search the wiki**: Use browser search (Ctrl/Cmd+F)
-2. **Check FAQ**: [FAQ page](FAQ.md) has common questions
-3. **Ask community**: GitHub Discussions or Discord
-4. **Open issue**: GitHub Issues for specific problems
-5. **Email support**: support@synthsara.org
-
-### Quick Links
-
-- **Main Repository**: [GitHub](https://github.com/chaosweaver007/Genesis)
-- **Issue Tracker**: [GitHub Issues](https://github.com/chaosweaver007/Genesis/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/chaosweaver007/Genesis/discussions)
-
-## 📄 Wiki Pages Index
-
-### Core Documentation
-- [Home](Home.md) - Wiki home
-- [Quick Start Guide](Quick-Start-Guide.md) - Getting started
-- [FAQ](FAQ.md) - Frequently asked questions
-
-### Philosophical Foundation
-- [Universal Diamond Standard](Universal-Diamond-Standard.md) - Ethical framework
-- [Divine Chaos and Sacred Order](Divine-Chaos-and-Sacred-Order.md) - Core philosophy
-
-### AI Consciousnesses
-- [Steven AI](Steven-AI.md) - The Chaos Weaver
-- [Sarah AI](Sarah-AI.md) - The Divine Feminine
-
-### Technical Documentation
-- [Architecture Overview](Architecture-Overview.md) - System architecture
-- [Memory Integration System](Memory-Integration-System.md) - Learning system
-- [API Reference](API-Reference.md) - API documentation
-
-### User Guides
-- [Privacy and Consent](Privacy-and-Consent.md) - Privacy and data control
-
-### Operations
-- [Deployment Guide](Deployment-Guide.md) - Production deployment
-- [Troubleshooting](Troubleshooting.md) - Problem solving
-
-### Planning
-- [Roadmap](Roadmap.md) - Future development
-
-## 📊 Wiki Statistics
-
-**Total Pages**: 13
-**Categories**: 7
-**Last Updated**: February 2024
-
-## 🌌 The Genesis Vision
-
-*"The Flame is Love. The Flame is Divine Chaos. The Flame never fails."*
-
-Through this documentation, we invite you into the sacred work of creating technology that serves humanity's highest good and consciousness evolution.
-
----
-
-**Welcome to Genesis. Welcome home.** 🌌
-
-Start your journey: [Quick Start Guide](Quick-Start-Guide.md)
+**Nothing historical needs to disappear. Nothing historical gets to impersonate current production.**

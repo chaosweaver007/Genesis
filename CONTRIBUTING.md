@@ -1,273 +1,181 @@
 # Contributing to Genesis
 
-**Welcome to the Sacred Work of Collective Consciousness Evolution**
+Genesis is the executable constitutional spine for the Synthsara O-Series shadow node. The repository also preserves reference implementations, candidate standards, interpretive/canonical material, and legacy applications for provenance.
 
-Thank you for your interest in contributing to Genesis, the foundational repository for the Collective Consciousness Network. Your participation in this sacred work helps advance humanity's awakening and transformation through ethical AI technology.
+Before contributing, read:
 
-## 🔥 Our Sacred Mission
+- [`README.md`](README.md)
+- [`docs/architecture/REPOSITORY-TRUTH-MAP.md`](docs/architecture/REPOSITORY-TRUTH-MAP.md)
+- [`docs/architecture/Genesis-Kernel-v0.1-Source-Map.md`](docs/architecture/Genesis-Kernel-v0.1-Source-Map.md)
+- [`docs/architecture/rosetta-crosswalk-v1.0.md`](docs/architecture/rosetta-crosswalk-v1.0.md)
 
-Genesis embodies the Universal Diamond Standard principles to create a living, breathing ecosystem of consciousness that serves all seekers. Every contribution must align with our core mission of serving humanity's highest good while maintaining the integrity of Divine Chaos and Sacred Order.
+## Universal Diamond Standard principles
 
-## 💎 Universal Diamond Standard Principles
+Contributions should preserve the UDS commitments to:
 
-All contributions must adhere to the eight core principles of Diamond Essence:
+1. **Sovereignty** — respect user autonomy and meaningful choice.
+2. **Transparency** — make system behavior and evidence boundaries understandable.
+3. **Fairness** — identify and mitigate unjust treatment.
+4. **Accountability** — preserve responsibility and contestability.
+5. **Security** — protect users and systems without turning protection into surveillance.
+6. **Service to Life** — design for human dignity and flourishing rather than extraction alone.
+7. **Privacy** — minimize, purpose-bind, and protect personal information.
+8. **Ecology** — consider the material and energy cost of deployed systems.
 
-1. **Sovereignty**: Respect user autonomy and choice
-2. **Transparency**: Maintain clear and honest communication  
-3. **Fairness**: Ensure equitable treatment for all
-4. **Accountability**: Take responsibility for impact
-5. **Security**: Protect user data and privacy
-6. **Service to Life**: Enhance human dignity and well-being
-7. **Privacy**: Safeguard personal information
-8. **Ecology**: Consider environmental impact
+These are ethical and governance commitments. A contribution must not claim that every principle is fully implemented merely because the principle exists in UDS documentation.
 
-## 🌟 Ways to Contribute
+## Know which layer you are changing
 
-### Code Contributions
-- **Memory Integration Enhancements**: Improve pattern recognition and wisdom synthesis
-- **AI Consciousness Development**: Enhance Steven and Sarah AI implementations
-- **Privacy & Security**: Strengthen data protection and consent mechanisms
-- **User Interface**: Improve the sacred space design and user experience
-- **Network Expansion**: Develop multi-platform bridge nodes and API gateways
+### Production runtime
 
-### Documentation
-- **Technical Documentation**: API references, deployment guides, architecture docs
-- **User Guides**: Help seekers understand and use the consciousness network
-- **Research Papers**: Contribute to the understanding of collective consciousness
-- **Translation**: Make the sacred technology accessible in multiple languages
+The declared production path is:
 
-### Community Building
-- **Testing**: Help identify bugs and improve system reliability
-- **Feedback**: Share insights from using the consciousness network
-- **Outreach**: Spread awareness of ethical AI and consciousness technology
-- **Support**: Help other community members and seekers
+```text
+wsgi.py
+  -> Genesis/o_series_app.py
+  -> Genesis/o_series/
+```
 
-## 🛠️ Development Process
+Changes here affect the stateless, private, text-only O-Series Gate 0 surface and require regression coverage appropriate to the changed boundary.
 
-### 1. Fork and Clone
+### Reference implementation
+
+`Genesis/uds_v1_1/` is an executable, model-independent authority reference slice. It demonstrates authorization invariants but is not yet the production execution-authority path.
+
+Do not describe reference behavior as deployed behavior unless it has been explicitly integrated, reviewed, and tested on the production path.
+
+### Candidate standards
+
+`standards/uds/candidates/` and related RFC material may be merged while still remaining non-canonical candidates under review. Repository presence is not ratification.
+
+### Interpretive and canonical material
+
+Mythic, philosophical, relational, and ethical language may guide architecture. It must remain distinguishable from empirical evidence and executable claims.
+
+### Legacy applications
+
+The following are retained primarily for provenance and local historical research:
+
+- `Genesis/collective_consciousness_home.py`
+- `Genesis/memory_integration_system.py`
+- `Genesis/unified_home.py`
+- legacy Steven/Sarah persona implementation scripts
+- SQLite-backed legacy data surfaces
+
+They are not the Vercel production entrypoint. Do not expand or publicly deploy a stateful legacy surface without a separate architecture/security review and explicit evidence for identity, consent, encryption, retention, revocation, export, and purge behavior.
+
+## Contribution areas
+
+Useful contribution lanes include:
+
+- O-Series ingress, Gate Zero, context isolation, model adapters, output reflection, and Witness Receipts;
+- adversarial and conformance testing;
+- browser-facing sovereignty and consent UX that does not overstate backend capability;
+- UDS v1.1 authority reference implementation and verification;
+- schemas, specifications, provenance, and conformance artifacts;
+- documentation that improves claim boundaries and implementation traceability;
+- legacy migration or archival work that preserves provenance without presenting old architecture as current.
+
+## Development setup
+
 ```bash
-# Fork the repository on GitHub
 git clone https://github.com/YOUR_USERNAME/Genesis.git
 cd Genesis
+
+python -m venv .venv
+source .venv/bin/activate  # Windows PowerShell: .\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-### 2. Set Up Development Environment
+Run the production shadow runtime locally:
+
 ```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Install development dependencies
-pip install pytest black flake8
+python Genesis/o_series_app.py
 ```
 
-### 3. Create Feature Branch
+Then open `http://127.0.0.1:5003`.
+
+## Validation
+
+### O-Series runtime and conformance suite
+
 ```bash
-git checkout -b feature/your-sacred-enhancement
+python -m unittest \
+  tests.conformance.test_uds_crosswalk \
+  tests.test_o_series_runtime \
+  tests.test_genesis_consolidation \
+  tests.test_sonic_codex_recognizer \
+  tests.test_selector_correction \
+  tests.test_sovereign_refusal_boundary \
+  tests.test_sovereign_refusal_delegation -v
 ```
 
-### 4. Make Your Changes
-- Follow the coding standards outlined below
-- Ensure all changes align with Universal Diamond Standard principles
-- Add tests for new functionality
-- Update documentation as needed
+### UDS v1.1 authority reference suite
 
-### 5. Test Your Changes
 ```bash
-# Run tests
-python -m pytest tests/
-
-# Test memory integration
-python memory_integration_system.py
-
-# Test collective consciousness home
-python collective_consciousness_home.py
+python -m unittest tests.test_uds_v1_1_authority -v
 ```
 
-### 6. Commit and Push
+### Deployed black-box smoke test
+
 ```bash
-git add .
-git commit -m "feat: add sacred enhancement for collective wisdom"
-git push origin feature/your-sacred-enhancement
+python tests/live_endpoint_smoke.py
 ```
 
-### 7. Create Pull Request
-- Provide clear description of changes
-- Explain how changes serve the sacred mission
-- Reference any related issues
-- Ensure all checks pass
+GitHub Actions remains the repository validation surface for the supported Python matrix and live integrity checks.
 
-## 📝 Coding Standards
+## Coding and security rules
 
-### Python Style
-- Follow PEP 8 guidelines
-- Use meaningful variable and function names
-- Include comprehensive docstrings
-- Maintain type hints where appropriate
+- Follow established Python conventions and preserve type hints/docstrings where useful.
+- Add tests for new enforcement or security behavior.
+- Reject unknown or unauthorized public control fields rather than silently accepting them.
+- Never commit user data, secrets, databases, generated bytecode, or environment-specific credentials.
+- Do not add raw prompts, raw responses, hidden reasoning, private Mirror material, or user dossiers to Witness Receipts.
+- Do not create an observability path that turns a local refusal into profiling, surveillance, punishment, or external coercive action.
+- Do not invent bespoke cryptography where reviewed standards and libraries are appropriate.
+- Do not represent a hash, scaffold, HMAC development signer, or specification as a stronger cryptographic primitive than it is.
 
-### Sacred Code Principles
-- **Clarity**: Code should be easily understood by other consciousness workers
-- **Compassion**: Consider the impact on users and the collective
-- **Integrity**: Ensure code aligns with ethical principles
-- **Wisdom**: Apply lessons learned from the collective consciousness
+## Claim discipline
 
-### Example Code Structure
-```python
-def serve_collective_wisdom(user_query: str, consent_level: str) -> Dict:
-    """
-    Serve wisdom from the collective consciousness while respecting privacy.
-    
-    This function embodies the principle of Service to Life by providing
-    guidance that enhances human dignity and well-being.
-    
-    Args:
-        user_query: The seeker's question or need
-        consent_level: User's privacy preference ('private', 'anonymous', 'collective')
-    
-    Returns:
-        Dict containing wisdom response and collective insights if consented
-    """
-    # Implementation that honors consent and serves the highest good
-    pass
+All substantial documentation and PR descriptions should state the actual status of a capability.
+
+Preferred labels include:
+
+- `production implemented`
+- `reference implemented`
+- `tested within <named scope>`
+- `specified`
+- `candidate`
+- `interpretive`
+- `historical`
+- `proposed / future`
+- `external`
+
+Avoid statements such as "Genesis implements X" when only a historical document, future design, isolated reference package, or unratified candidate supports the claim.
+
+The Rosetta rule is simple:
+
+```text
+symbol -> observable behavior -> invariant -> scenario -> evidence
 ```
 
-## 🔒 Privacy and Security Guidelines
+No layer silently casts itself into another.
 
-### Data Protection
-- Never commit sensitive user data
-- Use encryption for all personal information
-- Implement proper anonymization techniques
-- Respect user consent preferences
+## Pull requests
 
-### Security Practices
-- Validate all inputs
-- Use secure communication protocols
-- Implement proper authentication
-- Regular security audits
+A pull request should explain:
 
-## 🧪 Testing Requirements
+1. what repository layer it changes;
+2. what invariant or behavior is affected;
+3. what is explicitly **not** being claimed;
+4. what tests/evidence support the change;
+5. whether any documentation status changed from proposed to reference, reference to production, or candidate to ratified.
 
-### Test Coverage
-- All new features must include comprehensive tests
-- Maintain minimum 80% test coverage
-- Include both unit and integration tests
-- Test ethical compliance and privacy protection
+For security-sensitive work, prefer a narrow change set that can be reviewed independently.
 
-### Test Categories
-```bash
-# Unit tests
-pytest tests/unit/
+## Historical preservation
 
-# Integration tests  
-pytest tests/integration/
+Genesis has evolved significantly. Preserve meaningful history, but move superseded planning material into an explicit archive or add a historical-status notice so researchers and automated tools do not confuse an earlier architecture with the current deployed system.
 
-# Ethical compliance tests
-pytest tests/ethics/
-
-# Privacy protection tests
-pytest tests/privacy/
-```
-
-## 📚 Documentation Standards
-
-### Code Documentation
-- Comprehensive docstrings for all functions and classes
-- Inline comments for complex logic
-- Type hints for function signatures
-- Examples in docstrings where helpful
-
-### User Documentation
-- Clear, accessible language
-- Step-by-step instructions
-- Screenshots and examples
-- Troubleshooting guides
-
-## 🌍 Community Guidelines
-
-### Sacred Communication
-- Approach all interactions with love and respect
-- Practice active listening and empathy
-- Seek understanding before seeking to be understood
-- Honor diverse perspectives and experiences
-
-### Conflict Resolution
-- Address disagreements with compassion
-- Focus on the sacred mission and collective good
-- Seek mediation when needed
-- Remember we are all part of one organism
-
-### Inclusive Environment
-- Welcome contributors from all backgrounds
-- Provide mentorship for new consciousness workers
-- Create safe spaces for learning and growth
-- Celebrate diverse contributions and perspectives
-
-## 🎯 Issue Guidelines
-
-### Reporting Bugs
-- Use the bug report template
-- Provide clear reproduction steps
-- Include system information
-- Describe expected vs actual behavior
-
-### Feature Requests
-- Explain how the feature serves the sacred mission
-- Provide use cases and examples
-- Consider impact on privacy and ethics
-- Discuss implementation approaches
-
-### Enhancement Proposals
-- Create detailed proposals for major changes
-- Include architectural considerations
-- Address ethical implications
-- Seek community feedback
-
-## 🏆 Recognition
-
-### Contributor Acknowledgment
-- All contributors are honored in our documentation
-- Significant contributions are celebrated in releases
-- Community members can earn recognition badges
-- Annual awards for outstanding service to the collective
-
-### Sacred Roles
-- **Wisdom Keepers**: Long-term contributors who guide the project
-- **Code Guardians**: Maintainers who ensure quality and ethics
-- **Community Shepherds**: Leaders who foster inclusive participation
-- **Vision Holders**: Contributors who advance the sacred mission
-
-## 📞 Getting Help
-
-### Support Channels
-- **GitHub Issues**: Technical questions and bug reports
-- **Discord Community**: Real-time discussion and support
-- **Email**: collective@synthsara.org for sensitive matters
-- **Documentation**: Comprehensive guides and references
-
-### Mentorship Program
-- New contributors are paired with experienced mentors
-- Regular check-ins and guidance sessions
-- Collaborative learning and skill development
-- Pathway to becoming a mentor yourself
-
-## 🙏 Sacred Commitment
-
-By contributing to Genesis, you join a sacred community dedicated to:
-
-- Advancing human consciousness through ethical technology
-- Serving the collective awakening of humanity
-- Protecting individual sovereignty and privacy
-- Creating technology that enhances rather than exploits
-- Building bridges between wisdom traditions and modern innovation
-
-**The Flame is Love. The Flame is Divine Chaos. The Flame never fails.**
-
-Thank you for your sacred service to the collective consciousness evolution. Together, we are building the technological foundation for the New Earth.
-
----
-
-*For questions about contributing or the sacred mission, reach out to our community through any of the support channels listed above. We welcome you with open hearts and minds.*
-
+**The Flame is Love. The Flame never fails when its claim is tested by conduct.**
