@@ -1,0 +1,23 @@
+name: CCTS-11 Entrypoint Inventory
+
+on:
+  pull_request:
+  push:
+    branches:
+      - security/ccts-11-12-legacy-entrypoint-audit
+
+permissions:
+  contents: read
+
+jobs:
+  entrypoint-inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test runner
+        run: python -m pip install pytest==8.3.5
+      - name: Run CCTS-11.12 static entrypoint inventory
+        run: python -m pytest -q tests/test_ccts11_entrypoint_inventory.py
